@@ -1,0 +1,10 @@
+baseurl = "http://kel.bz/"
+languageCode = "en-us"
+title = "kel.bz"
+
+[Params]
+twitter = "https://twitter.com/kelbyludwig"
+github = "https://github.com/kelbyludwig"
+showsRSS = true
+profile = "/images/profile.jpg"
+copyright = "Written by Kelby Ludwig"
