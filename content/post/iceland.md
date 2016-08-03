@@ -25,11 +25,11 @@ is obnoxiously obvious in hindsight)
 ## animals
 
 Whale watching is worth it. Puffin watching is not. Also, when driving, birds
-may have tendency to dive bomb the car.
+may have a tendency to dive bomb the car.
 
 ## rental car
 
-Get a decent rental car. When you are driving along-side a mountain on wet
+Get a decent rental car. When you are driving alongside a mountain on wet
 roads in a dense fog, doing 180° turns with an intermittent power-steering
 system is nerve-wracking.
 
