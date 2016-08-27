@@ -1,4 +1,4 @@
-baseurl = "http://kel.bz/"
+baseurl = "https://kel.bz/"
 languageCode = "en-us"
 title = "kel.bz"
 theme = "angels-ladder"
@@ -7,5 +7,5 @@ theme = "angels-ladder"
 twitter = "https://twitter.com/kelbyludwig"
 github = "https://github.com/kelbyludwig"
 showsRSS = true
-profile = "images/profile.jpg"
+profile = "https://kel.bz/profile.jpg"
 copyright = "Written by Kelby Ludwig"
