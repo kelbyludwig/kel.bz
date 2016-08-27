@@ -1,7 +1,7 @@
 +++
 date = "2016-08-20T13:52:18-05:00"
 draft = false
-title = "Modifying IP Headers with Netfilter"
+title = "modifying ip headers with netfilter"
 +++
 
 # Motivation
