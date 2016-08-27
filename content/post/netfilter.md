@@ -1,6 +1,6 @@
 +++
 date = "2016-08-20T13:52:18-05:00"
-draft = true
+draft = false
 title = "Modifying IP Headers with Netfilter"
 +++
 
@@ -292,7 +292,9 @@ module is loaded you should see that ping replies don't reach your machine.
 Perfect! If we monitor the Vagrant machine's network traffic, it may look like
 this Wireshark capture:
 
-{{< figure src="/static/ip_spoof_wireshark.png" >}}
+{{< figure src="/ip_spoof_wireshark.png" >}}
+
+Voila!
 
 
 # Collection of Useful Resources
