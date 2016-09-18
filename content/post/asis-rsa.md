@@ -1,7 +1,7 @@
 +++
 date = "2016-09-18T14:45:13-05:00"
 draft = false
-title = "ASIS CTF: RSA Write-Up"
+title = "asis ctf: rsa write-up"
 +++
 
 # The Problem
