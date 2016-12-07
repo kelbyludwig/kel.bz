@@ -12,11 +12,13 @@ Its pretty standard advice to avoid using user-input within code that executes
 operating system commands. However, most of that advice tends to revolve around
 how dangerous it is for a user to provide the *command* to execute and I have
 not seen (good) advice on whether other parts of a command (e.g. flags, flag
-parameters) can be user-controlled. The short answer is "Nope".
-Command injection does not necessarily require special shell directives or
+parameters) are safe to be user-controlled. 
+
+Command injection vulnerabilities do not necessarily require special shell directives or
 user-controlled commands. This form of command injection is fairly
 straightforward and has had [plenty written about
-it](https://www.owasp.org/index.php/Command_injection).
+it](https://www.owasp.org/index.php/Command_injection) so I will focus on
+less obvious examples.
 
 Consider the following code snippet that I'm borrowing from an [OWASP page on
 command injection](https://www.owasp.org/index.php/Command_injection_in_Java):
@@ -27,10 +29,10 @@ Process proc = runtime.exec("find" + " " + args[0]);
 ```
 
 The page claims "it is not possible to inject additional commands" so it must
-be secure. However, compiling the full Java file and running `java
-Example1 "bad -exec cat {} +"` on a Linux machine modifies the command being
-executed from a program that lists files matching the user-supplied argument to
-a program that *prints the contents* of the user-supplied file. 
+be secure! However, compiling the full Java file and running `java Example1
+"bad -exec cat {} +"` on a Linux machine modifies the command being executed. A
+program that originally listed file names matching the user-supplied argument
+is now a program that *prints the contents* of the user-supplied file. 
 
 What about `tar`? Consider the following two code snippets:
 
@@ -48,7 +50,8 @@ Process proc = Runtime.getRuntime().exec(cmdArray);
 ```
 
 Are they safe? In short the answer is "no" because user-controlled
-`tar` flags can lead to command injection. For example:
+`tar` flags can lead to command injection. The following example
+will execute `echo hello` (the `tar` version may affect results):
 
 ```
 tar tf file.tar --checkpoint=1 --checkpoint-action=exec="echo hello"
@@ -99,8 +102,8 @@ readOutput(proc3);
 There are a few interesting results I would like to point out. Suppose
 everything after `/usr/local/bin/gtar tf` was user-controlled. First, I find it
 interesting that Test 2 does executes `echo` and Test 3 does not. I have some
-suspicions but I need to poke through OpenJDK and figure out exactly why this
-is.  Second, I have included several comments on interesting behaviors of
+suspicions on why this is but I need to poke through OpenJDK and figure that
+out.  Second, I have included several comments on interesting behaviors of
 `Runtime.exec`'s method of parsing its parameters. Depending on the context,
 differences in input parsing could lead to input validation bypasses (and
 subsequently command injection).
