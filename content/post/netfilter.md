@@ -43,8 +43,7 @@ too easy though!
 
 # The Setup
 
-My router will be a Vagrant VM running Debian. TODO(kkl): Provide a link to a
-Vagrantfile that installs all necessary packages. To prepare the VM for kernel
+My router will be a Vagrant VM running Debian. To prepare the VM for kernel
 module writing the following command should be ran:
 
 ```
