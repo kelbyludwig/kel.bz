@@ -71,9 +71,11 @@ have not already. This document will be useful for some of the later key
 principles.
 
 *Doing this right:* 
-* Consider following one of the models suggested by [OWASP](https://www.owasp.org/index.php/Access_Control_Cheat_Sheet). How the document
-looks is up to your team. 
+
+* Consider following one of the models suggested by [OWASP](https://www.owasp.org/index.php/Access_Control_Cheat_Sheet). How the document looks is up to your team. 
+
 * Be sure this document is within reach of all developers.
+
 * Update it frequently.
 
 ### Key Principle 2: Don't trust client-provided data when authenticating or authorizing a user.
@@ -98,10 +100,14 @@ privilege level, it is a matter of time before those secret values are leaked
 in some fashion.
 
 *Doing this right:* 
+
 * Identify users strictly by their session identifier.
+
 * A user's session identifier should be directly tied to whatever permissions they
 may have (however that is represented by your system). 
+
 * This session identifier should be the _only_ item that is used when authorizing a user. 
+
 * Session identifiers should follow [current best practices](https://www.owasp.org/index.php/Session_Management_Cheat_Sheet).
 
 ### Key Principle 3: Deny access by default.
@@ -114,6 +120,7 @@ finds herself (or intentionally puts herself) in a state that is not currently h
 access control logic, it is best not to default to allowing access.
 
 *Doing this right:* 
+
 * This is highly dependent on implementation! However your access control
 mechanism is built, be sure to handle both the forgetful developer case and
 the unhandled state case. 
@@ -142,9 +149,11 @@ logic is centralized and abstract. This allows for a cleaner implementation and
 easier bug fixes.
 
 *Doing this right:* 
+
 * If you are using a framework that provides an access control
 API that obeys the listed key principles, that should be leveraged as much as
 possible. 
+
 * Generally, the [decorator design
 pattern](https://sourcemaking.com/design_patterns/decorator) is something we
 have seen work well as a method of verify a user's level of access.
