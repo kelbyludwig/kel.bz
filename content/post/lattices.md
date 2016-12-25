@@ -18,7 +18,7 @@ a given ciphertext (I said cool not secure).
 
 This blog post will serve as an introduction to lattices and some concepts
 surrounding lattice-based cryptography. After getting a feel for lattices and
-how GGH works, we will subsequently demonstrate that it is insecure when
+how GGH works, I will subsequently demonstrate that GGH is squishy when
 implemented as the author originally described it.
 
 ## Lattices 
@@ -246,35 +246,35 @@ second):
 c - m2s*B = (m - m2s)*B + e
 ```
 
-Note, that `(m - m2s)` will give a vector of the form `2*sigma*m'` (I had to puzzle
+Note, that `(m - m2s)` will give a vector of the form `2*sigma*m_p` (I had to puzzle
 this out in sage but a few small examples make it obvious). Now lets incorporate
 that into our previous equation:
 
 ``` python
 c - m2s*B = (m - m2s)*B + e
-c - m2s*B = 2*sigma*m'*B + e
-c - m2s*B = 2*sigma (m'*B + (e/2*sigma)
-(c - m2s*B) / (2*sigma) = m'*B + (e/2*sigma)
+c - m2s*B = 2*sigma*m_p*B + e
+c - m2s*B = 2*sigma (m_p*B + (e/2*sigma)
+(c - m2s*B) / (2*sigma) = m_p*B + (e/2*sigma)
 ```
 
 Yeah that looks awful. Okay. Hear me out. We know everything on the left-hand
-side there. Lets just call it `c'`. 
+side there. Lets just call it `c_p`. 
 
 ``` python
-c' = m'*B + (e/2*sigma)
+c_p = m_p*B + (e/2*sigma)
 ```
 
-`c'` is just a point in space. It is quite similar to a GGH ciphertext. Recall the equation
+`c_p` is just a point in space. It is quite similar to a GGH ciphertext. Recall the equation
 for a ciphertext in GGH:
 
 ``` python
 c = m*B + e
-c' = m'*B + (e/2*sigma)
+c_p = m_p*B + (e/2*sigma)
 ```
 
 We have reduced the original CVP problem to another CVP problem with an
-effectively random message using an error vector that is a much shorter version
-of the original. Considering this is a "special" case of the CVP problem, it
+effectively random message using an error vector that is a *much shorter version
+of the original*. Considering this is a "special" case of the CVP problem, it
 could be solved using specialized algorithms that solve CVP for points that are
 very close to a lattice point. Nguyen also mentions that the "traditional
 methods" of solving special CVP cases work better when an error vector is
@@ -282,7 +282,7 @@ smaller.
 
 ## So does this work?
 
-Oh yes! Story time...
+Oh yes! This attack has a fun story behind it too.
 
 Sometimes cryptographers will provide some form of a "challenge" to encourage
 analysis of their cryptosystems. If the system holds up, the challenge should
@@ -292,7 +292,7 @@ well-received because they are believed to be
 [unfair](https://www.schneier.com/crypto-gram/archives/1998/1215.html#1).
 
 GGH's authors hosted a challenge to demonstrate GGH's security. They presented
-5 public keys of varying dimensions and 5 messages encrypted using GGH.  This
+5 public keys of various security levels and 5 messages encrypted using GGH. This
 "Ciphertext Only" attack model is a pretty low bar. There are probably a good
 number of questionable cryptosystems that could stand-up to such an attack but
 would crumble instantly under increased pressure.
@@ -305,3 +305,7 @@ Goldwasser and Halevi. Learning the result of our experiments, one of the
 authors of GGH declared the scheme as “dead”`
 
 RIP
+
+<div class="meta">
+Thanks to X, Y, Z for providing feedback on this write-up.
+</div>
