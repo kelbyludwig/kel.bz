@@ -8,30 +8,29 @@ title = "the ggh cryptosystem"
 # The Goldreich–Goldwasser–Halevi (GGH) Cryptosystem
 
 GGH is an asymmetric cryptosystem based on lattices that can be used for
-encryption.  Lattices are an interesting primitive with neat properties but are
-not incredibly approachable. This purpose of this blog post is to introduce
-some of the core concepts behind the GGH cryptosystem and hopefully make it
-intuitive as well.
+encryption. Lattices are pretty cool because lattice-based cryptography has
+some very interesting properties (some lattice-based cryptosystems are believed
+to be quantum resistant!).
 
-## The End Result
+GGH is pretty cool because it is fairly straightforward to learn. GGH also has
+interesting properties that could allow an adversary to recover plaintext from
+a given ciphertext (I said cool not secure). 
 
-Lets start from the end so we know what we are working towards.
-
-First, a basic understanding of lattices will be established. There will be
-some introductory linear algebra involved but nothing too crazy.
-
-Then, we'll look at the GGH cryptosystem and how lattices are used. 
-
-Finally, I'll demonstrate code that encrypts and decrypts messages as
-well as some implementation details that I had to smooth out.
+This blog post will serve as an introduction to lattices and some concepts
+surrounding lattice-based cryptography. After getting a feel for lattices and
+how GGH works, we will subsequently demonstrate that it is insecure when
+implemented as the author originally described it.
 
 ## Lattices 
 
 If the words "linear algebra" make you nervous don't fret. I believe this
 walkthrough can be understood using knowledge at about the level of the
-["Essence of Linear Algebra"](https://www.youtube.com/playlist?list=PLZHQObOWTQDPD3MizzM2xVFitgF8hE_ab)
-from 3Blue1Brown. I plan on taking a similar approach to 3Blue1Brown by
-focusing less on the math and more on the intuition behind GGH.
+["Essence of Linear
+Algebra"](https://www.youtube.com/playlist?list=PLZHQObOWTQDPD3MizzM2xVFitgF8hE_ab)
+from 3Blue1Brown. At first, I plan on taking a similar approach to 3Blue1Brown
+by focusing less on the math and more on the intuition behind GGH. Nguyen's
+attack toward the end will be a bit less abstract but the math
+involved there is not terrible.
 
 ### What is a lattice?
 
@@ -61,6 +60,7 @@ requires non-integer coefficients. But `[3, 4]` is a lattice point
 because it can be written as a linear combination of the basis vectors
 with integer coefficients.
 
+
 ``` python
 sage: vector_a = vector(ZZ, [1,0]) 
 sage: vector_b = vector(ZZ, [0,1])
@@ -68,10 +68,12 @@ sage: 3*vector_a + 4*vector_b
 ```
 
 So with lattices, our span would not cover (for example) all possible
-2-dimensional points so we get this weird collection of dots. To assist with
-visualizing some of the concepts discussed here, I wrote [some
+2-dimensional points so we get this weird collection of dots. 
+
+
+To assist with visualizing some of the concepts discussed here, I wrote [some
 code](https://gist.github.com/kelbyludwig/201d08e3e8e9a4f3764f366398f12a47) for
-sage to plot a lattice from given basis vectors.
+sage to plot a lattice from given basis vectors. 
 
 ``` python
 sage: load("ggh.sage")
@@ -85,12 +87,36 @@ sage: vd = vector(ZZ, [25,2])
 sage: show(plot_2d_lattice(va, vd, xmin=0, xmax=50, ymin=0, ymax=50))
 ```
 
+It is important to note that a basis consists of only the vectors
+needed to span the lattice. In other words, a set of vectors that
+make up a lattice will not have any redundant vectors.
+
+``` python
+sage: va = vector(ZZ, [1,0])
+sage: vb = vector(ZZ, [0,1])
+sage: vc = vector(ZZ, [1,1])
+```
+
+In the above example, a lattice constructed with `va`, `vb`, and `vc` would not
+form a basis because `vc = va + vb`. Furthermore, any given lattice can have
+multiple bases. Below, `va` and `vb` span the same lattice as `vc` and `vd`
+(the plots created by `plot_2d_lattice` may look different but the lattices are
+the same).
+
+``` python
+sage: va = vector(ZZ, [1,0])
+sage: vb = vector(ZZ, [0,1])
+sage: vc = vector(ZZ, [1, 1])
+sage: vd = vector(ZZ, [-1,-2])
+sage: show(plot_2d_lattice(va, vb))
+sage: show(plot_2d_lattice(vc, vd))
+```
+
 ## Why are lattices so special?
 
 There are hard problems associated with lattices. GGH's security depends on the
 difficulty of the closest vector problem (CVP). Intuitively, CVP involves
-finding the closest lattice point to an arbitrary point that is not on the
-lattice. For example:
+finding the closest lattice point to an arbitrary point. For example:
 
 ``` python
 sage: ol = vector(RR, [1.7, 2]) # a point that is not on the lattice
@@ -100,34 +126,12 @@ sage: show(plot_2d_lattice(va, vb, xmin=-5, xmax=5, ymin=-5, ymax=5) + plot(poin
 In this example, the lattice point `[2, 2]` would be the solution to CVP as its
 closest to the off-lattice point `[1.7, 2]`.
 
-CVP appears to be fairly straightforward in the two-dimensional example but
-gets much more difficult as the dimension of the basis increases.
-Initially working with and visualizing higher-dimension vectors makes the brain
-sizzle so I plan on sticking with the two dimensional case.
+CVP appears to be fairly straightforward in the two-dimensional example but it
+is believed that CVP is very difficult for higher dimension lattices (say, 200
+- 400). Initially working with and visualizing higher-dimension vectors makes
+the brain sizzle so I plan on sticking with the two dimensional case.
 
-## How does GGH use CVP?
-
-GGH uses the difficulty of CVP to create an asymmetric key pair. A GGH keypair
-consists of two bases: one public, one private. A plaintext message is encoded
-as a vector with integer coefficients and a ciphertext is a vector that is not
-a lattice point. 
-
-When Alice wants to send a message to Bob, Alice encodes her message as a
-vector and computes `ic = message_vector * bobs_public_basis`. This is then
-"perturbed" with a small, randomly generated vector `r`. Alice's ciphertext
-is `ct = ic + r = message_vector*bobs_public_basis + r`.
-
-To decrypt the message, Bob uses his private basis to solve for `ic` and then
-retrieves the original plaintext by multiplying the result by the inverse
-of his public key. 
-
-Observant readers may have noticed that I completely glossed over a potentially
-important detail: When Bob is decrypting the ciphertext, he must solve an
-instance of CVP to recover `ic`. Remember when I said CVP was hard? GGH takes
-advantage of a property of certain bases to make solving CVP (technically
-approximate CVP) easily. 
-
-## Solving CVP
+## Solving CVP (in some cases)
 
 In a GGH keypair, a public key is a "bad" basis and a private key is a "good"
 basis. A "good" basis is a relatively orthogonal with short basis vectors.
@@ -141,17 +145,27 @@ rounding all coefficients `t1, ... , tn` to their nearest integer.
 
 For short and relatively orthogonal bases, Babai works well and will likely
 return the closest lattice point to `w`! For "bad" bases, Babai is likely to
-return a lattice point that is not close to `w`. 
+return a lattice point that is not close to `w`.
 
-To recap: If Alice's public basis is "bad", and decrypting a ciphertext
-requires solving an instance of CVP, the consistently malicious Mallory will
-not be able to use Babai's algorithm to decrypt a captured ciphertext. However,
-Alice can use her know of her private "good" basis to decrypt messages. Aside
-from some of the implementation details, that is all there is to it!
+## How does GGH use CVP?
 
-# Some Implementation Details
+GGH takes advantage CVP's assumed difficulty for "bad" bases to create an asymmetric
+key pair. A GGH keypair consists of two bases for the same lattice: one public,
+one private. A plaintext message is encoded as a vector with integer
+coefficients and a ciphertext is a vector that is not a lattice point. 
 
-## Why the perturbation vector? How should the perturbation vector be generated?
+When Alice wants to send a message to Bob, Alice encodes her message as a
+vector and computes `ic = message_vector * bobs_public_basis`. This is then
+"perturbed" with a small, randomly generated vector `r`. Alice's ciphertext
+is `ct = ic + r = message_vector*bobs_public_basis + r`.
+
+To decrypt the message, Bob uses his private basis to solve for `ic` and then
+retrieves the original plaintext by multiplying the result by the inverse
+of his public key. 
+
+## Some Implementation Details
+
+### Why the perturbation vector? How should the perturbation vector be generated?
 
 `message_vec * public_basis` will always return a lattice point. Why? Because
 `message_vec * public_basis` is just a linear combination of basis vectors, and
@@ -165,20 +179,129 @@ initially because my perturbation vector would be large enough (mostly because
 my basis was fairly small) where my ciphertext vector would be closer to a
 *different* lattice point other than my original `ic` point. :shrug:
 
-## How do you generate a public key from the private key? Why do you use unimodular matrices to generate the public key?
+### How do you generate a public key from the private key? Why do you use unimodular matrices to generate the public key?
 
 My code uses a loop that generates random small bases until a basis exceeds
-some orthogonality threshold (I determined the threshold experimentally). Once a 
-"good" private basis was generated, a public basis is generated by multiplying
-the private basis by randomly generated unimodular matrices.
+some orthogonality threshold (I determined the threshold experimentally). Once
+a "good" private basis was generated, a public basis is generated by
+multiplying the private basis by randomly generated unimodular matrices. I'm
+not 100% sure why the matrices here have to be unimodular, so if anyone knows
+please let me know!
 
-* TODO(kkl): I still have not determined exactly why the matrices need to be unimodular (or
-  if they don't need to be unimodular, why do they suggest such a thing?).
+### How do you measure "orthogonality" of a basis?
 
-## How do you measure "orthogonality" of a basis?
+Orthogonality can be measured with something called the Hadamard ratio. The
+provided sage code uses this to generate GGH keypairs.
 
-* TODO(kkl): Dot product, hadamard 
+## Nyguen's Attack
 
-# Putting it all together
+So GGH (as the author's originally described it) is basically toast. A couple
+years after GGH was published, [Phong Q.
+Nguyen](https://www.di.ens.fr/~pnguyen/pub_Ng08.htm) demonstrated an attack
+against GGH that allows an attacker to decrypt a ciphertext encrypted via a
+given a public key. Ouch. Nguyen's attack is also decently simple to follow!
 
-* TODO(kkl): a walkthrough of the GGH code.
+
+In the [original GGH
+paper](https://groups.csail.mit.edu/cis/pubs/shafi/1997-lncs-ggh.pdf), the
+error vector used during message encryption is an n-vector `e` with its entries
+set to `sigma` or `-sigma`(`sigma` is commonly 3). Recall that in GGH a
+message `m` is encrypted with a public key `B` using the following formula:
+
+``` python
+c = m*B + e
+```
+
+Nyguen attack works as follows. First, taking ciphertext modulo `sigma` causes
+`e` to disappear from the equation. Why? Because `e` is a vector consisting only
+of `sigma` and `-sigma` (which are both 0 modulo `sigma`).
+
+``` python
+c = m*B + e
+c = m*B (mod sigma)
+```
+
+While this leaked some information about `m`, more information could be leaked
+with a little algebra and a slightly larger modulus. This is accomplished by
+increasing the modulus to `2*sigma` and adding an all-`sigma` vector `s` to the
+equation.
+
+``` python
+c = m*B + e
+e + s = 0 (mod 2*sigma)
+c + s = m*B + e + s
+c + s = m*B + 0 (mod 2*sigma)
+c + s = m*B (mod 2*sigma) # nice!
+```
+
+Solving for `m` reveals `m (mod 2*sigma)`, which is decently interesting. So
+far, this is already not looking great for GGH. But it definitely gets worse. A solution
+to this equation is not guaranteed but Nyguen also demonstrated that in most
+cases it could be easily solved. Working under the assumption that we solved
+the previous equation, denote `m (mod 2*sigma)` by `m2s`. Using some more
+algebra magic we can create the following equation (I'll explain it in just a
+second):
+
+``` python
+c - m2s*B = (m - m2s)*B + e
+```
+
+Note, that `(m - m2s)` will give a vector of the form `2*sigma*m'` (I had to puzzle
+this out in sage but a few small examples make it obvious). Now lets incorporate
+that into our previous equation:
+
+``` python
+c - m2s*B = (m - m2s)*B + e
+c - m2s*B = 2*sigma*m'*B + e
+c - m2s*B = 2*sigma (m'*B + (e/2*sigma)
+(c - m2s*B) / (2*sigma) = m'*B + (e/2*sigma)
+```
+
+Yeah that looks awful. Okay. Hear me out. We know everything on the left-hand
+side there. Lets just call it `c'`. 
+
+``` python
+c' = m'*B + (e/2*sigma)
+```
+
+`c'` is just a point in space. It is quite similar to a GGH ciphertext. Recall the equation
+for a ciphertext in GGH:
+
+``` python
+c = m*B + e
+c' = m'*B + (e/2*sigma)
+```
+
+We have reduced the original CVP problem to another CVP problem with an
+effectively random message using an error vector that is a much shorter version
+of the original. Considering this is a "special" case of the CVP problem, it
+could be solved using specialized algorithms that solve CVP for points that are
+very close to a lattice point. Nguyen also mentions that the "traditional
+methods" of solving special CVP cases work better when an error vector is
+smaller.
+
+## So does this work?
+
+Oh yes! Story time...
+
+Sometimes cryptographers will provide some form of a "challenge" to encourage
+analysis of their cryptosystems. If the system holds up, the challenge should
+increase confidence in the scheme. These challenges, however, are not always
+well-received because they are believed to be
+[unrealistic](https://moxie.org/blog/telegram-crypto-challenge/) and/or
+[unfair](https://www.schneier.com/crypto-gram/archives/1998/1215.html#1).
+
+GGH's authors hosted a challenge to demonstrate GGH's security. They presented
+5 public keys of varying dimensions and 5 messages encrypted using GGH.  This
+"Ciphertext Only" attack model is a pretty low bar. There are probably a good
+number of questionable cryptosystems that could stand-up to such an attack but
+would crumble instantly under increased pressure.
+
+Nguyen used this technique to break *all five* of the GGH challenges in
+"reasonable time". A choice quote from Nguyen's paper:
+
+`This proves that GGH is insecure for the parameters suggested by Goldreich,
+Goldwasser and Halevi. Learning the result of our experiments, one of the
+authors of GGH declared the scheme as “dead”`
+
+RIP
