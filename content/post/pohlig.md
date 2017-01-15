@@ -23,9 +23,9 @@ knowledge of `h`, `g`, and `m`. If the order of `g` is smooth, we can recover
 bits of `x` with only a single element `h`. This is the "offline" case. You
 could think of this applying to some packet capture of an awful TLS
 implementation for a server that has since been shutdown. If all goes well, just
-given access to the pcap could lead to private key recovery.
+having access to the pcap could lead to private key recovery.
 
-Another context for subgroup confinement allow leverages an "online" oracle. In
+Another context for subgroup confinement leverages an "online" oracle. In
 this context, the target implementation could accept malicious group elements
 `g` and respond with `h = g^x (mod m)`. Dependent on the properties of `m` the
 attacker could generate many different values for `g` that make solving for `h`
@@ -33,6 +33,6 @@ easy(ish). This would apply to (for example) a live TLS server that an attacker
 is sending evil values to.
 
 When I was initially working on this attack, I was applying an offline
-algorithm to an online context. Once I figured out the problem, it was sorta
-enlightening to think about subgroup confinement from this "multiple context"
-perspective.
+algorithm to an online context. Once I figured out why my code was borked, it
+was enlightening to think about subgroup confinement from this "multiple
+context" perspective.
