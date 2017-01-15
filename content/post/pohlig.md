@@ -1,7 +1,6 @@
 +++
 date = "2017-01-14"
 title = "a note on subgroup confinement attacks"
-draft = true
 +++
 
 The Pohlig-Hellman algorithm is a efficient method of solving the discrete log
