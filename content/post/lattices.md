@@ -209,31 +209,34 @@ error vector used during message encryption is an n-vector `e` with its entries
 set to `sigma` or `-sigma`(`sigma` is commonly 3). Recall that in GGH a
 message `m` is encrypted with a public key `B` using the following formula:
 
-``` python
-c = m*B + e
-```
+<style>
+code.math {
+  display: block;
+  white-space: pre-wrap   
+}
+</style>
+
+<code class="math">c = m*B + e</code>
 
 Nyguen attack works as follows. First, taking the ciphertext modulo `sigma`
 causes `e` to disappear from the equation. Why? Because `e` is a vector
 consisting only of `sigma` and `-sigma` (which are both 0 modulo `sigma`).
 
-``` python
-c = m*B + e
+<code class="math">c = m*B + e 
 c = m*B (mod sigma)
-```
+</code>
 
 While this leaks some information about `m` (specifically `m (mod sigma)`),
 more information could be leaked with a little algebra and a slightly larger
 modulus. This is accomplished by increasing the modulus to `2*sigma` and adding
 an all-`sigma` vector `s` to the equation.
 
-``` python
-c = m*B + e 
+<code class="math">c = m*B + e 
 e + s = 0 (mod 2*sigma)
 c + s = m*B + e + s (mod 2*sigma)
 c + s = m*B + 0 (mod 2*sigma)
 c + s = m*B (mod 2*sigma) # nice!
-```
+</code>
 
 We know `c`, `s`, and `B` in this equation. If we solve for `m`, we reveal
 information about `m`. Specifically, we learn `m (mod 2*sigma)`. A solution to
@@ -245,35 +248,29 @@ Working under the assumption that we solved the previous equation, denote `m
 (mod 2*sigma)` by `m2s`. Using some more algebra magic we can create the
 following equation (I'll explain it in just a second):
 
-``` python
-c - m2s*B = (m - m2s)*B + e
-```
+<code class="math">c - m2s*B = (m - m2s)*B + e</code>
 
 Note, that `(m - m2s)` will give a vector of the form `2*sigma*m_p` (I had to puzzle
 this out in sage but a few small examples make it obvious). We don't know what `m_p`
 is just yet but that is fine. Now lets incorporate that into our previous equation:
 
-``` python
-c - m2s*B = (m - m2s)*B + e
+<code class="math">c - m2s*B = (m - m2s)*B + e
 c - m2s*B = 2*sigma*m_p*B + e
 c - m2s*B = 2*sigma (m_p*B + (e/2*sigma)
 (c - m2s*B) / (2*sigma) = m_p*B + (e/2*sigma)
-```
+</code>
 
 Yeah that looks awful. Okay. Hear me out. We know everything on the left-hand
 side there. Lets just call it `c_p`. 
 
-``` python
-c_p = m_p*B + (e/2*sigma)
-```
+<code class="math">c_p = m_p*B + (e/2*sigma)</code>
 
 `c_p` is just a point in space. It is quite similar to a GGH ciphertext. Recall the equation
 for a ciphertext in GGH:
 
-``` python
-c = m*B + e
+<code class="math">c = m*B + e
 c_p = m_p*B + (e/2*sigma)
-```
+</code>
 
 We have reduced the original CVP problem to another CVP problem with an
 effectively random message using an error vector that is a *much shorter version
