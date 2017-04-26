@@ -1,5 +1,4 @@
 +++
-draft = true
 date = "2016-11-23"
 title = "the ggh cryptosystem"
 
