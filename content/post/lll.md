@@ -172,6 +172,8 @@ def LLL(B, delta):
 LLL is concise, but there is definitely some seemingly magical logic at first
 glance. Let's start with the `mu` function.
 
+## the magic of `mu`
+
 So what does `mu(i,j)` measure? It is scalar projection of the `i`th lattice
 basis vector (`B[i]`) onto the `j`th Gram-Schmidt orthogonalized basis vector
 (`Q[j]`). One way to look at it, is an function that quantifies the angle
@@ -194,6 +196,39 @@ an ideal situation.
 the swap step. At first, we can focus on it's application in the length reduction
 step.
 
+## length reduction
+
+Isolating the length reduction pseudocode, we have:
+
+``` python
+1.  n, k = B.nrows(), 1
+2.  # outer loop condition
+3.  while k < n:
+4.      # length reduction loop
+5.      for j in reversed(range(k)):
+6.          if abs(mu(k,j)) > .5:
+7.              # reduce B[k]
+8.              B[k] = B[k] - round(mu(k,j))*B[j]
+9.              # re-calculate GS with new basis B
+10.              Q = gram_schmidt(B)
+```
+
+At line 1, we establish two variables: 
+
+* `n`: which is a constant that holds the number of rows in the basis `B`
+
+* `k`: which keeps track of the index of the vector we are focusing on 
+
+The outer loop condition is less of a concern during the length reduction step,
+so we can head straight to the length reduction loop. The length reduction loop
+iterates through the `k-1`th vector towards the `0`th vector and checks if the
+absolute value of `mu(k,j)` is greater than `1/2`. `1/2` is significant for
+several reasons:
+
+1) Since we are rounding the value of `mu(k,j)`, if its absolute value is less than
+   `1/2` then we would be subtracting a zero vector which wouldn't change the vector
+   at hand.
+
 # LLL Questions I Want to Answer
 
 * What is mu(i,j) measuring?
@@ -212,7 +247,7 @@ step.
 
 * How can we guarantee that computing `B[i] = B[i] - round(mu(i,j))*B[j]` (where `B[i]` is the ith lattice basis vector) will make `B[i]` "close" to orthogonal to `B[j]`?
 
-    * The rounded scalar projection `round(mu(i,j))` (or in other words, the rounded scalar projection of `B[i]` onto `B[j]`) will always result in a vector that lies between `-1/2*B[j]` and `1/2*B[j]`.
+    * `B[i] - round(mu(i,j))*B[j]` will always result in a vector whose projection onto `B[j]` lies between `-1/2*B[j]` and `1/2*B[j]`.
 
     * Why is that true? I didn't get this so [I asked StackOverflow :)](https://crypto.stackexchange.com/questions/46960/what-is-the-significance-of-the-value-1-2-within-the-first-property-of-a-lll-r). TODO(kkl) I did the algebra somewhere. Find those notes and throw them in here.
 
