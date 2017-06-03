@@ -5,7 +5,7 @@ draft = true
 title = "lattice reduction (LLL) intuitively"
 +++
 
-## LLL Motivations
+## LLL Motivation
 
 The Lenstra–Lenstra–Lovász (LLL) algorithm is an algorithm that efficiently
 transforms a "bad" basis for a lattice `L` into a "pretty good" basis for the
@@ -129,6 +129,57 @@ This is great for a couple reasons:
 * Gaussian lattice reduction is analogous to both Euclid's algorithm and LLL so it is like an analogy bridge
 
 * We can use 2D vectors which are easy to graph and visualize
+
+Gauss' algorithm is defined as follows:
+
+``` python
+def gauss_reduction(v1, v2):
+    while True:
+        if v2.norm() < v1.norm():
+            v1, v2 = v2, v1 # swap step
+        m = round( (v1 * v2) / (v1 * v1) )
+        if m == 0:
+            return (v1, v2)
+        v2 = v2 - m*v1 # reduction step
+```
+
+Let's break this down a bit. `gauss_reduction` takes in two vectors that
+represent our lattice basis. Ignoring the `while` loop for a second, the
+first step is the swap step. The swap step ensures that the length of `v1`
+is smaller than `v2`. Among other things, this will ensure that the result
+of `gauss_reduction` will be ordered according to length, which helps with
+some of the proofs that ensure this algorithm works well. 
+
+`TODO(kkl): Add a link to the proof 'spainers.`
+
+So what does `m` represent? `m` is the scalar projection of `v2` onto `v1` (the
+longer vector onto the shorter vector). This is the same scalar produced during
+the GS process but in Gauss's algorithm we round it to the nearest integer so
+we ensure we are still working with vectors within the lattice. This is a
+fairly important idea, so lets visualize this process.
+
+We first project `v2` onto `v1`. Here is what the projected vector looks
+like before and after rounding.
+
+{{< figure src="/gauss_m_before_after.gif" >}}
+
+We then compute our new reduced vector `v2 - m*v1`. Here is the reduction step
+before and after rounding `m`.
+
+{{< figure src="/gauss_reduction_before_after.gif" >}}
+
+Cool, huh? By rounding `m` prior to reduction we have sorta "knocked over" our
+new reduced vector `v2` so it becomes a vector in the basis. What is interesting
+is that the reduced `v2` appears to have a shorter length than original `v2`. 
+That is not a coincidence, that is a guarantee of the reduction step!
+
+`TODO(kkl): Add a link to the proof 'spainers for length reduction`
+
+Because we know that `v1` is shorter than `v2` and ....
+
+`TODO(kkl): Add a link to the proof 'splainer for near orthogonality`
+
+`TODO(kkl): For funsies, I think a gauss reduction gif visual would be dope.`
 
 ## LLL Pseudocode
 
