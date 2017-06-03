@@ -11,9 +11,11 @@ title = "lattice reduction (LLL) intuitively"
 
 * https://betterexplained.com/articles/adept-method/
 
+* https://home.ie.cuhk.edu.hk/~wkshum/wordpress/?p=442
+
 ## Suggested Background
 
-I don't think LLL will make sense if you don't have a decent grasp on (at least):
+I don't think LLL will make much sense if you don't have a decent grasp on (at least):
 
 * vector spaces and bases
 
@@ -27,6 +29,32 @@ I wrote another blog post on lattices and how they can be used to form an
 asymmetric cryptosystem. [I think it would be a good thing to read
 first](https://kel.bz/post/lattices/) as it covers some of the suggested
 background.
+
+## LLL Background and Motivations
+
+The Lenstra–Lenstra–Lovász (LLL) algorithm is an algorithm that efficiently
+transforms a "bad" basis for a lattice `L` into a "pretty good" basis for the
+same lattice.  This transformation of a "bad" basis into a better basis is
+known as lattice reduction, and it has many useful applications. For example,
+there is great attack against [ECDSA implementations that have biased
+RNGs](https://pdfs.semanticscholar.org/0eb1/8a42b623dd8e7cdd4221085a6fd5503708ea.pdf)
+that can lead to private key recovery. However, my experience learning why LLL
+works has been pretty rough. Most material covering LLL seems targeted towards
+mathematicians and I had to (well... I wanted to) spend a lot of time trying to
+weasel out the intuition and mechanics of the algorithm. This blog post is a
+semi-organized brain dump of that process. My goal is to cover LLL in such a
+way that slowly ratchets down the hand-waving level, so feel free to read the
+blog post until you are happy with your level of understanding.
+
+## LLL In-Relation to Other Algorithms
+
+LLL often gets compared to Euclid's Algorithm for GCD.
+
+## Euclid's Algorithm
+
+## Gaussian Lattice Reduction
+
+## onto LLL
 
 ## LLL Pseudocode
 
@@ -164,14 +192,9 @@ _integer_ components of `B[j]` from `B[k]`, therefore, the resultant
 projection of `B[k]` onto `B[j]` must lie between `-1/2*B[j]` and `1/2B[j]`.
 Why does this guarantee we have achieved "near" orthogonality?
 
-`soh cah toa => `
-`proj_B[k]_onto_B[j] = (B[k]*B[j] / B[j]*B[j])*B[j]`
-`abs(B[k]*B[j] / B[j]*B[j]) <= 1/2 #due to previous fact`
-`B[k] / proj_B[k]_onto_B[j] = cos(theta)`
 
-<!--
-{{< figure src="/angle.png" >}}
 
+<!-- 
 * Why is that relevant to "almost" orthogonality? [This is why](http://mathinsight.org/media/image/image/dot_product_projection.png). If the scalar projection of `B[i]` onto `B[j]` is between `-1/2` and `1/2`, then the cosine of the angle between the two vectors is between 60 and 120 degrees (i.e. 90 degrees +/- 30)
 
     ```
