@@ -5,13 +5,21 @@ draft = true
 title = "lattice reduction (LLL) intuitively"
 +++
 
-# TODO
+## LLL Motivations
 
-* https://betterexplained.com/about/
-
-* https://betterexplained.com/articles/adept-method/
-
-* https://home.ie.cuhk.edu.hk/~wkshum/wordpress/?p=442
+The Lenstra–Lenstra–Lovász (LLL) algorithm is an algorithm that efficiently
+transforms a "bad" basis for a lattice `L` into a "pretty good" basis for the
+same lattice.  This transformation of a "bad" basis into a better basis is
+known as lattice reduction, and it has many useful applications. For example,
+there is great attack against [ECDSA implementations that have biased
+RNGs](https://pdfs.semanticscholar.org/0eb1/8a42b623dd8e7cdd4221085a6fd5503708ea.pdf)
+that can lead to private key recovery. However, my experience learning why LLL
+works has been pretty rough. Most material covering LLL seems targeted towards
+mathematicians and I had to (I guess I _wanted_ to) spend a lot of time trying to
+weasel out the intuition and mechanics of the algorithm. This blog post is a
+semi-organized brain dump of that process. My goal is to cover LLL in such a
+way that slowly ratchets down the hand-waving level, so feel free to read the
+blog post until you are happy with your level of understanding.
 
 ## Suggested Background
 
@@ -30,31 +38,106 @@ asymmetric cryptosystem. [I think it would be a good thing to read
 first](https://kel.bz/post/lattices/) as it covers some of the suggested
 background.
 
-## LLL Background and Motivations
+## LLL In-Relation to Euclid's Algorithm
 
-The Lenstra–Lenstra–Lovász (LLL) algorithm is an algorithm that efficiently
-transforms a "bad" basis for a lattice `L` into a "pretty good" basis for the
-same lattice.  This transformation of a "bad" basis into a better basis is
-known as lattice reduction, and it has many useful applications. For example,
-there is great attack against [ECDSA implementations that have biased
-RNGs](https://pdfs.semanticscholar.org/0eb1/8a42b623dd8e7cdd4221085a6fd5503708ea.pdf)
-that can lead to private key recovery. However, my experience learning why LLL
-works has been pretty rough. Most material covering LLL seems targeted towards
-mathematicians and I had to (well... I wanted to) spend a lot of time trying to
-weasel out the intuition and mechanics of the algorithm. This blog post is a
-semi-organized brain dump of that process. My goal is to cover LLL in such a
-way that slowly ratchets down the hand-waving level, so feel free to read the
-blog post until you are happy with your level of understanding.
+LLL often gets compared to [Euclid's Algorithm for
+GCD](https://holdenlee.wordpress.com/2015/10/09/the-lll-lattice-basis-reduction-algorithm/).
+This is an imperfect analogy, but at a high-level they have a core similarity.
+Namely, both LLL and Euclid's algorithm could be broken down into two steps:
+"reduction" and "swap". To illustrate consider the following pseudocode for
+both algorithms:
 
-## LLL In-Relation to Other Algorithms
+``` python
+def euclid_gcd(a, b):
+    if b == 0: # base case
+        return a 
+    x = a mod b # reduction step 
+    return euclid_gcd(b, x) # swap step
+```
 
-LLL often gets compared to Euclid's Algorithm for GCD.
+``` python
+def lll(basis):
+    while k <= n:
+        for j in reverse(range(k-1, 0)): # reduction step loop
+            m = mu(k,j)
+            basis[k] = basis[k] - mu*basis[j] # vector reduction
+            # update orthogonalized basis 
+    if lovasz_condition:
+        k += 1
+    else:
+        basis[k], basis[k+1] = basis[k+1], basis[k] # swap step
+        # update orthogonalized basis
+        k = max(k-1,1)
+    return basis
+```
 
-## Euclid's Algorithm
+If you squint a bit you can see the similarities in the pseudocode, but I think
+the core idea is that both algorithms use a reduce-and-then-swap technique to
+achieve their goals. So at this point, we can roughly say that LLL is an
+extension of Euclid's algorithm that applies to a set of `n` vectors instead of
+integers. 
 
-## Gaussian Lattice Reduction
+Personally, I don't find that explanation to be very satisfying but I can see
+why it could be a useful in developing understanding.
 
-## onto LLL
+## LLL In-Relation to Gram-Schmidt
+
+Another algorithm that shares quite a few similarities with LLL is the
+[Gram-Schmidt](https://en.wikipedia.org/wiki/Gram%E2%80%93Schmidt_process)
+orthogonalization process. At a high-level, Gram-Schmidt (GS) takes in an input
+basis for a vector space and returns an orthogonalized (i.e. all vectors in the
+basis are orthogonal to one-another) basis that spans the same space.  It does
+this by leveraging vector projections to "decompose" each vector into related
+components and removing redundant components from all vectors.  If GS
+doesn't make too much sense to you, I suggest checking it out before going too
+much further in this post. Not only is the algorithm similar to LLL, but LLL
+uses Gram-Schmidt as a subroutine. 
+
+You may say: "Why don't we use GS to reduce our lattice basis?" and we cant
+because life sucks sometimes. GS may get us closer to the basis we want, but GS is
+not guaranteed to produce orthogonal vectors that form a basis for our lattice.
+Check it:
+
+``` python 
+sage: from mage import matrix_utils # https://github.com/kelbyludwig/mage; use the install.sh script to install
+sage: b1 = vector(ZZ, [3,5])
+sage: b2 = vector(ZZ, [8,3])
+sage: B  = Matrix(ZZ, [b1,b2])
+sage: Br,_ = B.gram_schmidt()
+sage: pplot = matrix_utils.plot_2d_lattice(B[0], B[1]) 
+sage: pplot += plot(Br[0], color='grey', linestyle='-.', legend_label='unmodified', legend_color='blue') 
+sage: pplot += plot(Br[1], color='grey', linestyle='-.', legend_label='orthogonalized', legend_color='grey')
+sage: pplot
+```
+
+{{< figure src="/gs_compare.png" >}}
+
+Notice how the orthogonalized (grey) vectors are not pointing to a lattice
+"point"? Bummer. However, as I mentioned, GS is still pretty useful to
+understanding LLL so its not a total loss.
+
+## LLL In-Relation to Gaussian Lattice Reduction
+
+Unless you are basically a sorceress, I imagine you may find starting with
+2-dimensional lattice basis reduction useful. Thankfully, we have [Gauss'
+algorithm for reducing bases in
+dimension 2](https://www.math.auckland.ac.nz/~sgal018/crypto-book/ch17.pdf).
+This is great for a couple reasons:
+
+* Gaussian lattice reduction is also pretty similar to LLL
+
+* Gaussian lattice reduction is analogous to both Euclid's algorithm and LLL so it is like an analogy bridge
+
+* We can use 2D vectors which are easy to graph and visualize
+
+<!--
+<!--
+<!--
+================
+# Old Stuff that I don't like anymore
+----------------
+----------------
+----------------
 
 ## LLL Pseudocode
 
@@ -156,7 +239,6 @@ modifications.  Here is another way to write the length reduction step
 B[k] = B[k] - round(mu(k, k-1))*Q[k-1] - round(mu(k, k-2))*Q[k-2] - ... - round(mu(k, 0))*Q[0]
 ```
 
-<!--
 ``` python
 B[0] = B[0]
 B[1] = B[1] - round(mu(1, 0))*Q[0]
@@ -164,7 +246,6 @@ B[2] = B[2] - round(mu(2, 1))*Q[1] - round(mu(2, 0))*Q[0]
 ...
 B[k] = B[k] - round(mu(k, k-1))*Q[k-1] - round(mu(k, k-2))*Q[k-2] - ... - round(mu(k, 0))*Q[0]
 ```
--->
 
 Just for comparison here is how the `k`th Gram-Schmidt vector is calculated:
 
@@ -194,7 +275,6 @@ Why does this guarantee we have achieved "near" orthogonality?
 
 
 
-<!-- 
 * Why is that relevant to "almost" orthogonality? [This is why](http://mathinsight.org/media/image/image/dot_product_projection.png). If the scalar projection of `B[i]` onto `B[j]` is between `-1/2` and `1/2`, then the cosine of the angle between the two vectors is between 60 and 120 degrees (i.e. 90 degrees +/- 30)
 
     ```
@@ -205,20 +285,8 @@ Why does this guarantee we have achieved "near" orthogonality?
     for x in range(0, 180, 10):
         print("cos_deg(%d) = %.2f" % (x, cos_deg(x)))
     ```
--->
-
-
 
 * Dependent on ordering of input basis
-
-
-
-================
-# Old Stuff that I don't like anymore
-----------------
-----------------
-----------------
-
 
 ## Two Dimensional Reduction and Gram-Schmidt
 
@@ -353,6 +421,14 @@ step.
 
 # LLL Questions I Want to Answer
 
+# TODO
+
+* https://betterexplained.com/about/
+
+* https://betterexplained.com/articles/adept-method/
+
+* https://home.ie.cuhk.edu.hk/~wkshum/wordpress/?p=442
+
 * What is mu(i,j) measuring?
 
     * mu(i,j) is the scalar projection of the `i`th lattice basis vector (`B[i]`) onto the `j`th Gram-Schmidt orthogonalized basis vector (`Q[j]`)
@@ -413,3 +489,4 @@ step.
 * Is LLL guaranteed to terminate?
 
     * [3.2](https://ocw.mit.edu/courses/mathematics/18-409-topics-in-theoretical-computer-science-an-algorithmists-toolkit-fall-2009/lecture-notes/MIT18_409F09_scribe20.pdf)
+-->
