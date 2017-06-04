@@ -179,13 +179,11 @@ new reduced vector `v2` so it becomes a vector in the basis. What is
 interesting is that the reduced `v2` appears to have a shorter length than
 original `v2`.  That is not a coincidence, that is a guarantee of the reduction
 step! Additionally, the resultant basis vectors will be "nearly" orthogonal,
-which is exactly what we want! I don't want to bog anyone down with details
-for why this works just yet, but if you are impatient you can jump to the more
-technical explanation.
+which is exactly what we want! I don't want to bog anyone down with details for
+why this works just yet, but if you are impatient you can jump to [some of  my
+technical explanations](#stumped).
 
-`TODO(kkl): Add a link to the proof 'spainers for length reduction`
-
-`TODO(kkl): Add a link to the proof 'splainer for near orthogonality`
+`TODO(kkl): Add a link to the proof 'spainers for length reduction and near orthogonality`
 
 For now, lets just wave our hands and say `gauss_reduction` will terminate, and
 return a "good" basis for dimension 2 bases.
@@ -341,9 +339,8 @@ Extracting the "swap" step from our Wikipedia pseudocode gets us:
 
 At this point, the algorithm has finished a round of length-reduction. From
 there LLL must determine what vector to focus on next. The Lovász condition
-provides a heuristic that tells us whether to continue on to the next basis
-vector (Line 3), or whether to place the `k`'th basis vector in position `k-1`
-(Lines 5-7). 
+will tell us us whether to continue on to the next basis vector (Line 3), or
+whether to place the `k`'th basis vector in position `k-1` (Lines 5-7). 
 
 Putting the meaning of the Lovász condition aside for now, this swap step is is
 reminiscent of a sorting algorithm. Recall that `k` is the index of the basis
@@ -352,158 +349,32 @@ Lovász condition is true, from there LLL just moves onto the `k+1`th vector
 (Line 3). At this stage, LLL is basically saying that the `0`th to `k`th
 vectors are roughly sorted by length (this may change after the next round of
 reductions though). If the Lovász condition is false, the `k`th basis vector is
-placed at position `k-1` (Line 5), and LLL then re-focuses (Line 7) on the same vector
-which is now at position `k-1`. Another way to describe LLL: LLL is a vector sorting
-algorithm that occasionally screws up the ordering by making vectors smaller.
+placed at position `k-1` (Line 5), and LLL then re-focuses (Line 7) on the same
+vector which is now at position `k-1`. Another reduction round is done, and
+then back to the swap step.  This brings me to another way to describe LLL: LLL
+is a vector sorting algorithm that occasionally screws up the ordering by
+making vectors smaller so it has to re-sort.
 
-## Things that Stumped Me When Learning LLL
+What about the Lovász condition, itself? As I said earlier, it's basically a
+heuristic that determines if the vectors are in a "good" order. Aside from
+that, I don't have too much to add here unfortunately as my intuition is shaky. There
+are multiple equivalent representations for the Lovász and none of them have
+really felt right to me. The best explanations that I have found thus far are:
 
-* Why doesn't Gaussian lattice reduction easily generalize to work with lattices with more than 2 vectors?
+* [This StackOverflow post](https://crypto.stackexchange.com/questions/39532/why-is-the-lov%C3%A1sz-condition-used-in-the-lll-algorithm/39534#39534).
 
-    * https://www.math.auckland.ac.nz/~sgal018/crypto-book/ch17.pdf - Speaks to this on page 4 (in the paragraph before 17.1.1)
+* ["An Introduction to Mathematical
+  Cryptography"](https://www.amazon.com/Introduction-Mathematical-Cryptography-Undergraduate-Mathematics/dp/1441926747)
+discusses an equivalent representation of the Lovász condition that is a
+comparison of the lengths of the projection of basis vectors onto the
+orthogonal complement of a space spanned by a subset of basis vectors.
 
-    * How does LLL beat this? One way of resolving the "how do i hold all these dimensions" problem is to break the problem down into a bunch of 2D cases (which LLL does in some sense).
+If anyone reading this has a link to a decently intuitive explanation or can
+describe the Lovász in a memorable way please let me know!
 
-* How does LLL use GS as a guide?
+## Things that Stumped Me When Learning LLL {#stumped}
 
-    * https://www.math.auckland.ac.nz/~sgal018/crypto-book/ch17.pdf 
-    ```
-    "As we have noted in Example 16.3.3, computational problems in lattices can be easy
-    if one has a basis that is orthogonal, or “sufficiently close to orthogonal”. A simple but
-    important observation is that one can determine when a basis is close to orthogonal by
-    considering the lengths of the Gram-Schmidt vectors. More precisely, a lattice basis is
-    “close to orthogonal” if the lengths of the Gram-Schmidt vectors do not decrease too
-    rapidly."
-    ```
-
-## Does LLL Work? / Various Relevant Proofs that I Felt Were Under-Explained
-
-<!--
-<!--
-<!--
-================
-# Old Stuff that I don't like anymore
-----------------
-----------------
-----------------
-
-## LLL Pseudocode
-
-Getting right into it, here is some python pseudocode repurposed from
-[wikipedia](https://en.wikipedia.org/wiki/Lenstra%E2%80%93Lenstra%E2%80%93Lov%C3%A1sz_lattice_basis_reduction_algorithm):
-
-``` python
-def LLL(B, delta):
-    Q = gram_schmidt(B)
-
-    def mu(i,j):
-        v = B[i]
-        u = Q[j]
-        return (v*u) / (u*u)   
-
-    n, k = B.nrows(), 1
-    while k < n:
-
-        # length reduction step
-        for j in reversed(range(k)):
-            if abs(mu(k,j)) > .5:
-                B[k] = B[k] - round(mu(k,j))*B[j]
-                Q = gram_schmidt(B)
-
-        # swap step
-        if Q[k]*Q[k] >= (delta - mu(k,k-1)**2)*(Q[k-1]*Q[k-1]):
-            k = k + 1
-        else:
-            B[k], B[k-1] = B[k-1], B[k]
-            Q = gram_schmidt(B)
-            k = max(k-1, 1)
-
-   return B 
-```
-
-LLL is concise, but there is definitely some seemingly magical logic at first
-glance. Let's start with the `mu` function.
-
-## mu
-
-`mu` is the same function used in Gram-Schmidt orthogonalization. Suppose `B`
-is our input basis and `Q` is the result of Gram-Schmidt applied to `B`
-(without normalization). The constant produced by `mu(i,j)` is the scalar
-projection of the `i`th lattice basis vector (`B[i]`) onto the `j`th
-Gram-Schmidt orthogonalized basis vector (`Q[j]`). The GIF below is
-a brief demonstration of `mu`. 
-
-{{< figure src="/mu.gif" >}}
-
-Gram-Schmidt uses `mu` as follows:
-
-``` python
-Q[0] = B[0]
-Q[1] = B[1] - mu(1, 0)*Q[0]
-Q[2] = B[2] - mu(2, 1)*Q[1] - mu(2, 0)*Q[0]
-...
-Q[k] = B[k] - mu(k, k-1)*Q[k-1] - mu(k, k-2)*Q[k-2] - ... - mu(k, 0)*Q[0]
-```
-
-If Gram-Schmidt and vectors don't make sense, `mu` won't make too much sense.
-
-## length reduction
-
-Isolating the length reduction pseudocode, we have:
-
-``` python
-1.  n, k = B.nrows(), 1
-2.  # outer loop condition
-3.  while k < n:
-4.      # length reduction loop
-5.      for j in reversed(range(k)):
-6.          if abs(mu(k,j)) > .5:
-7.              # reduce B[k]
-8.              B[k] = B[k] - round(mu(k,j))*B[j]
-9.              # re-calculate GS with new basis B
-10.              Q = gram_schmidt(B)
-```
-
-At line 1, we establish two variables: 
-
-* `n`: which is a constant that holds the number of rows in the basis `B`
-
-* `k`: which keeps track of the index of the vector we are focusing on 
-
-The outer loop condition is less of a concern during the length reduction step,
-so we can head straight to the length reduction loop. The length reduction loop
-iterates through the `k-1`th vector towards the `0`th vector and checks if the
-absolute value of `mu(k,j)` is greater than `1/2`. `1/2` is significant for
-since we are rounding the value of `mu(k,j)`, if its absolute value is less
-than `1/2` then we would be subtracting a zero vector which wouldn't change the
-vector at hand. We could remove that `if` statement on line 6 but we would then
-have superfluous assignments (i.e. `B[k] = B[k]`) for some iterations.
-
-The length reduction step is basically Gram-Schmidt with a few minor
-modifications.  Here is another way to write the length reduction step
-(omitting the `if` condition) for a particular `k`th vector.
-
-``` python
-B[k] = B[k] - round(mu(k, k-1))*Q[k-1] - round(mu(k, k-2))*Q[k-2] - ... - round(mu(k, 0))*Q[0]
-```
-
-``` python
-B[0] = B[0]
-B[1] = B[1] - round(mu(1, 0))*Q[0]
-B[2] = B[2] - round(mu(2, 1))*Q[1] - round(mu(2, 0))*Q[0]
-...
-B[k] = B[k] - round(mu(k, k-1))*Q[k-1] - round(mu(k, k-2))*Q[k-2] - ... - round(mu(k, 0))*Q[0]
-```
-
-Just for comparison here is how the `k`th Gram-Schmidt vector is calculated:
-
-``` python
-Q[k] = B[k] - mu(k, k-1)*Q[k-1] - mu(k, k-2)*Q[k-2] - ... - mu(k, 0)*Q[0]
-```
-
-Pretty similar, eh? 
-
-## does length reduction work?
+#### Is the length-reduction step guaranteed to provide "short" and "nearly orthogonal" vectors?
 
 It may not seem obvious that rounding the result of `mu` and using as a scalar
 would produce a good basis. In Gram-Schmidt using the exact value of `mu`
@@ -521,127 +392,28 @@ _integer_ components of `B[j]` from `B[k]`, therefore, the resultant
 projection of `B[k]` onto `B[j]` must lie between `-1/2*B[j]` and `1/2B[j]`.
 Why does this guarantee we have achieved "near" orthogonality?
 
+#### Why doesn't Gaussian lattice reduction easily generalize to work with lattices with more than 2 vectors?
 
+* https://www.math.auckland.ac.nz/~sgal018/crypto-book/ch17.pdf - Speaks to this on page 4 (in the paragraph before 17.1.1)
 
-* Why is that relevant to "almost" orthogonality? [This is why](http://mathinsight.org/media/image/image/dot_product_projection.png). If the scalar projection of `B[i]` onto `B[j]` is between `-1/2` and `1/2`, then the cosine of the angle between the two vectors is between 60 and 120 degrees (i.e. 90 degrees +/- 30)
+* How does LLL beat this? One way of resolving the "how do i hold all these dimensions" problem is to break the problem down into a bunch of 2D cases (which LLL does in some sense).
 
-    ```
-    # just a quick demo of this property if you are bad at trig like me
-    def cos_deg(deg):
-        return cos(deg / 360 * (2*pi))
+#### How does LLL use GS as a guide?
 
-    for x in range(0, 180, 10):
-        print("cos_deg(%d) = %.2f" % (x, cos_deg(x)))
-    ```
+* https://www.math.auckland.ac.nz/~sgal018/crypto-book/ch17.pdf 
 
-* Dependent on ordering of input basis
-
-## Two Dimensional Reduction and Gram-Schmidt
-
-To get a sense of LLL it helps to consider the two-dimensional case. Suppose
-we have the following kinda crappy basis.
-
-``` python
-sage: b1 = vector(ZZ, [30,40])
-sage: b2 = vector(ZZ, [40,50])
-sage: from mage import matrix_utils # https://github.com/kelbyludwig/mage; use the install.sh script to install
-sage: matrix_utils.plot_2d_lattice(b1, b2, xmin=-60, xmax=60, ymin=-60, ymax=60)
+```
+"As we have noted in Example 16.3.3, computational problems in lattices can be easy
+if one has a basis that is orthogonal, or “sufficiently close to orthogonal”. A simple but
+important observation is that one can determine when a basis is close to orthogonal by
+considering the lengths of the Gram-Schmidt vectors. More precisely, a lattice basis is
+“close to orthogonal” if the lengths of the Gram-Schmidt vectors do not decrease too
+rapidly."
 ```
 
-{{< figure src="/bad_basis.png" >}}
-
-Why is it crappy? Well, for one, the vectors are pretty long. They are also not
-close to orthogonal, which would be ideal (see my lattices post from above for more
-intuitive justification). Just from a visual inspection, there are clearly
-"better" bases for this lattice.
-
-A good first step in improving this hunk-o-junk basis is applying
-[Gram-Schmidt](https://en.wikipedia.org/wiki/Gram%E2%80%93Schmidt_process).
-Gram-Schmidt (GS) will take a basis for a vector space (like our lattice) and transform
-the basis vectors into a set of (optionally normalized) orthogonal vectors. 
-
-_TODO(kkl): Intuition behind GS here?_
-
-GS gets us closer to the basis we want, but GS is not guaranteed to produce
-orthogonal vectors that form a basis for our lattice. Check it:
-
-``` python 
-sage: b1 = vector(ZZ, [3,5])
-sage: b2 = vector(ZZ, [8,3])
-sage: B  = Matrix(ZZ, [b1,b2])
-sage: Br,_ = B.gram_schmidt()
-sage: pplot = matrix_utils.plot_2d_lattice(B[0], B[1]) 
-sage: pplot += plot(Br[0], color='grey', linestyle='-.', legend_label='unmodified', legend_color='blue') 
-sage: pplot += plot(Br[1], color='grey', linestyle='-.', legend_label='orthogonalized', legend_color='grey')
-sage: pplot
-```
-
-{{< figure src="/gs_compare.png" >}}
-
-And to show just how close Gram-Schmidt could get us, lets compare the
-orthogonalized basis to the LLL-reduced basis.
-
-``` python
-sage: b1 = vector(ZZ, [3,5])
-sage: b2 = vector(ZZ, [8,3])
-sage: B = Matrix(ZZ, [b1,b2])
-sage: Bl = B.LLL()
-sage: pplot = matrix_utils.plot_2d_lattice(Bl[0], Bl[1])
-sage: pplot += plot(Br[0], color='grey', linestyle='-.', legend_label='LLL-reduced', legend_color='blue')
-sage: pplot += plot(Br[1], color='grey', linestyle='-.', legend_label='orthogonalized',legend_color='grey')
-sage: pplot
-```
-
-{{< figure src="/lll_gs_compare.png" >}}
-
-Note that the orthogonalized (grey) vectors are not included in the original
-lattice. We can, however, modify the internals of GS to produce vectors that
-_are_ in the original basis.  Instead of *just* taking the projection of each
-vector onto subsequent vectors, we can round the scalar produced during the
-projection and use a guaranteed integer scalar. Before, GS used vector
-projection code that would look something like this:
-
-``` python
-def proj(u, v):
-    zv = zero_vector(len(u))
-    if u == zv:
-        return zv
-    return ((v*u) / (u*u)) * u
-```
-
-Now, we can just modify the return:
-
-``` python
-def proj_round(u, v):
-    zv = zero_vector(len(u))
-    if u == zv:
-        return zv
-    return round((v*u) / (u*u)) * u
-```
-<s>
-Is the vector result of `proj_round` a lattice vector?  Yup. `round((v*u) /
-(u*u))` is just a integer scalar of `u`. By the definition of a lattice, if `u`
-is a lattice vector the value returned by `proj_round` is a lattice vector.
-
-Say we took Gram-Schmidt, and replaced `proj` with `proj_round`. Let's
-call it `gs_round`. Would `gs_round` give us a better basis? I believe it would
-in some cases but I don't think that is true for all cases. Gram-Schmidt works
-well because it is removing every possible component of previous basis vectors
-from a vector. `gs_round` only approximates this behavior. As the number of
-vectors in the basis grows larger, each iteration would likely produce worse
-results as we are dealing with approximations of approximations.
-</s>
-
-## LLL and GS - Friends Forever
-
-Tampering with the internals of Gram-Schmidt didn't get us what we want.
-However, Gram-Schmidt will still be very useful as we start our path to LLL. In
-fact, part of the reason why I started with Gram-Schmidt is because there are
-some similarities between their processes. Not only are there outputs similar
-(i.e. a basis that is "better" than the input, yet spans the same space), but
-both leverage vector projections as a way to remove redundancy from a basis.
-More than that, LLL uses Gram-Schmidt as a sub-routine to assist in determining
-what to do.
+<!--
+<!--
+<!--
 
 ## the magic of `mu`
 
@@ -668,12 +440,6 @@ the swap step. At first, we can focus on it's application in the length reductio
 step.
 
 # LLL Questions I Want to Answer
-
-# TODO
-
-* https://betterexplained.com/about/
-
-* https://betterexplained.com/articles/adept-method/
 
 * https://home.ie.cuhk.edu.hk/~wkshum/wordpress/?p=442
 
@@ -708,10 +474,6 @@ step.
             print("cos_deg(%d) = %.2f" % (x, cos_deg(x)))
         ```
 
-* What does it mean when `abs(mu(i,j))` is greater than .5?
-
-    * It means that we have at least one integral component of `B[j]` that we can remove from `B[i]`
-
 * What does the first inner loop (length reduction step) accomplish in LLL?
 
     * TODO(kkl): Include some LLL pseduocode
@@ -731,8 +493,6 @@ step.
     * LLL is dealing with ordered bases. While the length reduction step will (probably) shorten basis vectors, the ordering of the basis could affect results.
 
     * For example, [this StackOverflow post](https://crypto.stackexchange.com/questions/39532/why-is-the-lov%C3%A1sz-condition-used-in-the-lll-algorithm?rq=1) gives an example of a basis whose order negatively affects the quality of the reduction.
-
-    * TODO(kkl) I don't have a great intuitive explanation for why the Lovasz condition works but it does 
 
 * Is LLL guaranteed to terminate?
 
