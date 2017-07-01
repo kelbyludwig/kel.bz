@@ -5,8 +5,6 @@ draft = true
 title = "lattice reduction (LLL) intuitively"
 +++
 
-* TODO(kkl): You say "we" alot. Maybe don't do that.
-
 ## LLL Motivation
 
 The Lenstra–Lenstra–Lovász (LLL) algorithm is an algorithm that efficiently
@@ -413,107 +411,45 @@ mistake but I don't have a proof either) so I cannot say much more than that.
 
 #### Why doesn't Gaussian lattice reduction easily generalize to work with lattices with more than 2 vectors?
 
-* https://www.math.auckland.ac.nz/~sgal018/crypto-book/ch17.pdf - Speaks to this on page 4 (in the paragraph before 17.1.1)
+I found the explanation from ["Mathematics of Public Key Cryptography"](https://www.math.auckland.ac.nz/~sgal018/crypto-book/ch17.pdf)
+to explain this well.
 
-* How does LLL beat this? One way of resolving the "how do i hold all these dimensions" problem is to break the problem down into a bunch of 2D cases (which LLL does in some sense).
+<blockquote>
+Finally, we remark that there is a natural analogue of [Gaussian Reduction] for
+any dimension. Hence, it is natural to try to generalise the Lagrange-Gauss
+algorithm to higher dimensions. Generalisations to dimension three have been
+given by Vall´ee and Semaev. There are a number of problems when generalising
+to higher dimensions. For example, choosing the right linear combination to
+size reduce bn using b1,...,bn−1 is solving the CVP in a sublattice (which is a
+hard problem). Furthermore, there is no guarantee that the resulting basis
+actually has good properties in high dimension. We refer to Nguyen and Stehl´e
+ for a full discussion of these issues and an algorithm that works in
+dimensions 3 and 4
+</blockquote>
+
+How does LLL overcome this? I like to think that LLL breaks an n-dimensional
+problem down into a bunch of 2-dimensional cases and works a little at a time.
+That technique, plus length-sorting approximations, seems to work well in
+practice.
 
 #### How does LLL use GS as a guide?
 
-* https://www.math.auckland.ac.nz/~sgal018/crypto-book/ch17.pdf 
+Again, [quoting
+others](https://www.math.auckland.ac.nz/~sgal018/crypto-book/ch17.pdf) that are
+smarter than I am:
 
-```
-"As we have noted in Example 16.3.3, computational problems in lattices can be easy
+<blockquote>
+As we have noted in Example 16.3.3, computational problems in lattices can be easy
 if one has a basis that is orthogonal, or “sufficiently close to orthogonal”. A simple but
 important observation is that one can determine when a basis is close to orthogonal by
 considering the lengths of the Gram-Schmidt vectors. More precisely, a lattice basis is
 “close to orthogonal” if the lengths of the Gram-Schmidt vectors do not decrease too
-rapidly."
-```
+rapidly.
+</blockquote>
 
-<!--
-<!--
-<!--
+#### You Didn't Explain X, You were wrong about Y, I think of Z in this way...
 
-## the magic of `mu`
+Please feel free to [tweet](https://twitter.com/kelbyludwig) at me if I screwed
+up. Its super possible I did. 
 
-So what does `mu(i,j)` measure? It is scalar projection of the `i`th lattice
-basis vector (`B[i]`) onto the `j`th Gram-Schmidt orthogonalized basis vector
-(`Q[j]`). One way to look at it, is an function that quantifies the angle
-between `B[i]` and `Q[j]`. If `mu(i,j)` is close to 0 then the angle between
-the two vectors are almost orthogonal. As the angle between the two vectors
-gets farther from 90 degrees, the absolute value of `mu(i,j)` grows larger.
-Below is a GIF demonstrating this behavior. Notice how `mu(1,0)` gets
-closer to 0 as `B[1]` is closer to orthogonality with `Q[0]`.
-
-{{< figure src="/mu.gif" >}}
-
-Why is `mu` comparing lattice vectors to orthogonalized vectors that are not
-likely lattice vectors? `Q` is pretty much the "ideal" situation. Every vector
-within `Q` is orthogonal to all other vectors in `Q`. We may not be able to use
-`Q` directly nor will we necessarily have a completely orthogonal lattice
-basis, however, we can use `Q` as a guide for how close our lattice basis is to
-an ideal situation.
-
-`mu` is important to LLL as it is used in both the length reduction step and
-the swap step. At first, we can focus on it's application in the length reduction
-step.
-
-# LLL Questions I Want to Answer
-
-* https://home.ie.cuhk.edu.hk/~wkshum/wordpress/?p=442
-
-* What is mu(i,j) measuring?
-
-    * mu(i,j) is the scalar projection of the `i`th lattice basis vector (`B[i]`) onto the `j`th Gram-Schmidt orthogonalized basis vector (`Q[j]`)
-
-    * mu(i,j) leverages the orthogonalized basis (which is unlikely to be a basis for the same lattice) as a guide-post.
-
-    * mu(i,j) provides a measurement of the angle formed by `B[i]` and the `Q[j]` 
-
-    * if mu(i,j) is close to 0 then the angle between the two vectors are almost orthogonal. as the angle between the two vectors grows close to 0 degrees or 180 degrees, the absolute value of mu(i,j) gets larger 
-
-    * so if `mu(i,j)` suggests the `i`th lattice vector is that close to orthogonality with the `j`th GS vector, its probably the case that the `i`th lattice vector is close to orthogonal to the `j` lattice vector. 
-
-    * by subtracting `round(mu(i,j))*jth_lattice_vector` from the `i`th lattice vector, we are removing all integral components of the `j`th lattice vector from the `i`th lattice vector. this result will be close to orthogonal (more on this in a second).
-
-* How can we guarantee that computing `B[i] = B[i] - round(mu(i,j))*B[j]` (where `B[i]` is the ith lattice basis vector) will make `B[i]` "close" to orthogonal to `B[j]`?
-
-    * `B[i] - round(mu(i,j))*B[j]` will always result in a vector whose projection onto `B[j]` lies between `-1/2*B[j]` and `1/2*B[j]`.
-
-    * Why is that true? I didn't get this so [I asked StackOverflow :)](https://crypto.stackexchange.com/questions/46960/what-is-the-significance-of-the-value-1-2-within-the-first-property-of-a-lll-r). TODO(kkl) I did the algebra somewhere. Find those notes and throw them in here.
-
-    * Why is that relevant to "almost" orthogonality? [This is why](http://mathinsight.org/media/image/image/dot_product_projection.png). If the scalar projection of `B[i]` onto `B[j]` is between `-1/2` and `1/2`, then the cosine of the angle between the two vectors is between 60 and 120 degrees (i.e. 90 degrees +/- 30)
-
-        ```
-        # just a quick demo of this property if you are bad at trig like me
-        def cos_deg(deg):
-            return cos(deg / 360 * (2*pi))
-   
-        for x in range(0, 180, 10):
-            print("cos_deg(%d) = %.2f" % (x, cos_deg(x)))
-        ```
-
-* What does the first inner loop (length reduction step) accomplish in LLL?
-
-    * TODO(kkl): Include some LLL pseduocode
-
-    * Starting from `j = k-1` and decrementing towards `j = 0`, `mu(k,j)` is computed
-
-        * e.g. suppose k = 3; then the loop computes `mu(3,2); mu(3,1); mu(3,0)` at each iteration
-
-    * For each `mu(k,j)` computation, it is checked if `B[k]` can be reduced using `Q` as a guide-post
-
-    * At the end of this loop `B[k]` is (probably) quite a bit shorter, since all integral components of `B[0:k-1]` have been removed.
-
-    * `B[k]` is also pretty close to orthogonal to `B[0:k-1]`. This process is kinda like fuzzy Gram-Schmidt.
-
-* What is the significance of the Lovasz condition?
-
-    * LLL is dealing with ordered bases. While the length reduction step will (probably) shorten basis vectors, the ordering of the basis could affect results.
-
-    * For example, [this StackOverflow post](https://crypto.stackexchange.com/questions/39532/why-is-the-lov%C3%A1sz-condition-used-in-the-lll-algorithm?rq=1) gives an example of a basis whose order negatively affects the quality of the reduction.
-
-* Is LLL guaranteed to terminate?
-
-    * [3.2](https://ocw.mit.edu/courses/mathematics/18-409-topics-in-theoretical-computer-science-an-algorithmists-toolkit-fall-2009/lecture-notes/MIT18_409F09_scribe20.pdf)
--->
+I also would be happy to review better explanations of the concepts I covered.
