@@ -9,17 +9,17 @@ title = "lattice reduction (LLL) intuitively"
 
 The Lenstra–Lenstra–Lovász (LLL) algorithm is an algorithm that efficiently
 transforms a "bad" basis for a lattice `L` into a "pretty good" basis for the
-same lattice.  This transformation of a "bad" basis into a better basis is
-known as lattice reduction, and it has many useful applications. For example,
-there is great attack against [ECDSA implementations that have biased
+same lattice.  This transformation of a bad basis into a better basis is known
+as lattice reduction, and it has many useful applications. For example, there
+is attack against [ECDSA implementations that leverage biased
 RNGs](https://pdfs.semanticscholar.org/0eb1/8a42b623dd8e7cdd4221085a6fd5503708ea.pdf)
 that can lead to private key recovery. However, my experience learning why LLL
 works has been pretty rough. Most material covering LLL seems targeted towards
-mathematicians and I had to (I guess I _wanted_ to) spend a lot of time trying to
-weasel out the intuition and mechanics of the algorithm. This blog post is a
+mathematicians and I had to (I guess I _wanted_ to) spend a lot of time trying
+to weasel out the intuition and mechanics of the algorithm. This blog post is a
 semi-organized brain dump of that process. My goal is to cover LLL in such a
-way that slowly ratchets down the hand-waving level, so feel free to read the
-blog post until you are happy with your level of understanding.
+way that slowly ratchets down the hand-waving, so feel free to read until you
+are happy with your level of understanding.
 
 As an aside: if I'm wrong anywhere, please correct me! Hitting a nice balance
 of mathematical accuracy and intuition is tough, but I don't aim to be
@@ -45,8 +45,8 @@ background.
 
 ## LLL In-Relation to Euclid's Algorithm
 
-LLL often gets compared to [Euclid's Algorithm for
-GCD](https://holdenlee.wordpress.com/2015/10/09/the-lll-lattice-basis-reduction-algorithm/).
+LLL often gets compared to [Euclid's Algorithm for finding
+GCDs](https://holdenlee.wordpress.com/2015/10/09/the-lll-lattice-basis-reduction-algorithm/).
 This is an imperfect analogy, but at a high-level they have a core similarity.
 Namely, both LLL and Euclid's algorithm could be broken down into two steps:
 "reduction" and "swap". To illustrate consider the following pseudocode for
@@ -61,6 +61,7 @@ def euclid_gcd(a, b):
 ```
 
 ``` python
+# dont try to grok this yet...
 def lll(basis):
     while k <= n:
         for j in reverse(range(k-1, 0)): # reduction step loop
@@ -79,7 +80,7 @@ def lll(basis):
 If you squint a bit you can see the similarities in the pseudocode, but I think
 the core idea is that both algorithms use a reduce-and-then-swap technique to
 achieve their goals. So at this point, we can roughly say that LLL is an
-extension of Euclid's algorithm that applies to a set of `n` vectors instead of
+extension of Euclid's algorithm that applies to a set of `n`-vectors instead of
 integers.
 
 Personally, I don't find that explanation to be very satisfying but I can see
@@ -91,7 +92,7 @@ Another algorithm that shares quite a few similarities with LLL is the
 [Gram-Schmidt](https://en.wikipedia.org/wiki/Gram%E2%80%93Schmidt_process)
 orthogonalization process. At a high-level, Gram-Schmidt (GS) takes in an input
 basis for a vector space and returns an orthogonalized (i.e. all vectors in the
-basis are orthogonal to one-another) basis that spans the same space.  It does
+basis are orthogonal to one another) basis that spans the same space.  It does
 this by leveraging vector projections to "decompose" each vector into related
 components and removing redundant components from all vectors.  If GS
 doesn't make too much sense to you, I suggest checking it out before going too
@@ -117,9 +118,9 @@ sage: pplot
 
 {{< figure src="/gs_compare.png" >}}
 
-Notice how the orthogonalized (grey) vectors are not pointing to a lattice
-"point"? Bummer. However, as I mentioned, GS is still pretty useful to
-understanding LLL so its not a total loss.
+Notice how not all orthogonalized (grey) vectors are touching a lattice
+"point"? Bummer. However, GS is still pretty useful to understanding LLL so
+this is not a total loss.
 
 ## LLL In-Relation to Gaussian Lattice Reduction
 
@@ -131,7 +132,8 @@ This is great for a couple reasons:
 
 * Gaussian lattice reduction is also pretty similar to LLL
 
-* Gaussian lattice reduction is analogous to both Euclid's algorithm and LLL so it is like an analogy bridge
+* Gaussian lattice reduction is analogous to *both* Euclid's algorithm and LLL so it is a bridge
+  between these two analogies
 
 * We can use 2D vectors which are easy to graph and visualize
 
@@ -304,10 +306,10 @@ Just for comparison here is how Gram-Schmidt vectors are calculated:
 
 ``` python
 Q[0] = B[0]
-Q[1] = B[1] - round(mu(1, 0))*Q[0]
-Q[2] = B[2] - round(mu(2, 1))*Q[1] - round(mu(2, 0))*Q[0]
+Q[1] = B[1] - mu(1, 0)*Q[0]
+Q[2] = B[2] - mu(2, 1)*Q[1] - mu(2, 0)*Q[0]
 ...
-Q[k] = B[k] - round(mu(k, k-1))*Q[k-1] - round(mu(k, k-2))*Q[k-2] - ... - round(mu(k, 0))*Q[0]
+Q[k] = B[k] - mu(k, k-1)*Q[k-1] - mu(k, k-2)*Q[k-2] - ... - mu(k, 0)*Q[0]
 ```
 
 And finally, after we modify our basis `B`, we need to keep our orthogonalized
@@ -337,7 +339,7 @@ whether to place the `k`'th basis vector in position `k-1` (Lines 5-7).
 
 Putting the meaning of the Lovász condition aside for now, this swap step is is
 reminiscent of a sorting algorithm. Recall that `k` is the index of the basis
-vector that LLL is "focusing on".  Suppose LLL is at the `k`th vector and the
+vector that LLL is "focusing on". Suppose LLL is at the `k`th vector and the
 Lovász condition is true, from there LLL just moves onto the `k+1`th vector
 (Line 3). At this stage, LLL is basically saying that the `0`th to `k`th
 vectors are roughly sorted by length (this may change after the next round of
@@ -365,7 +367,7 @@ orthogonal complement of a space spanned by a subset of basis vectors.
 If anyone reading this has a link to a decently intuitive explanation or can
 describe the Lovász in a memorable way please let me know!
 
-## Things that Stumped Me When Learning LLL {#stumped}
+## Various Things that Stumped Me When Learning LLL {#stumped}
 
 #### Is the Gaussian length-reduction step guaranteed to provide short and nearly orthogonal vectors?
 
