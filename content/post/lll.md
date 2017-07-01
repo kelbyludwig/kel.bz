@@ -22,8 +22,9 @@ way that slowly ratchets down the hand-waving level, so feel free to read the
 blog post until you are happy with your level of understanding.
 
 As an aside: if I'm wrong anywhere, please correct me! Hitting a nice balance
-of mathematical accuracy and intuition is pretty tough, but I don't aim to
-be blatantly wrong.
+of mathematical accuracy and intuition is tough, but I don't aim to be
+blatantly wrong. Please feel free to [tweet](https://twitter.com/kelbyludwig)
+at me if I screwed up. Its super possible I did. 
 
 ## Suggested Background
 
@@ -151,10 +152,8 @@ Let's break this down a bit. `gauss_reduction` takes in two vectors that
 represent our lattice basis. Ignoring the `while` loop for a second, the
 first step is the swap step. The swap step ensures that the length of `v1`
 is smaller than `v2`. Among other things, this will ensure that the result
-of `gauss_reduction` will be ordered according to length, which helps with
-some of the proofs that ensure this algorithm works well. 
-
-`TODO(kkl): Add a link to the proof 'spainers.`
+of `gauss_reduction` will be ordered according to length, [which helps with
+some of the proofs](#stumped) that ensure this algorithm works well. 
 
 So what does `m` represent? `m` is the scalar projection of `v2` onto `v1` (the
 longer vector onto the shorter vector). This is the same scalar produced during
@@ -446,10 +445,3 @@ considering the lengths of the Gram-Schmidt vectors. More precisely, a lattice b
 “close to orthogonal” if the lengths of the Gram-Schmidt vectors do not decrease too
 rapidly.
 </blockquote>
-
-#### You Didn't Explain X, You were wrong about Y, I think of Z in this way...
-
-Please feel free to [tweet](https://twitter.com/kelbyludwig) at me if I screwed
-up. Its super possible I did. 
-
-I also would be happy to review better explanations of the concepts I covered.
