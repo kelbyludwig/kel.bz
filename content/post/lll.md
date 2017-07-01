@@ -183,12 +183,8 @@ which is exactly what we want! I don't want to bog anyone down with details for
 why this works just yet, but if you are impatient you can jump to [some of  my
 technical explanations](#stumped).
 
-`TODO(kkl): Add a link to the proof 'spainers for length reduction and near orthogonality`
-
 For now, lets just wave our hands and say `gauss_reduction` will terminate, and
 return a "good" basis for dimension 2 bases.
-
-`TODO(kkl): For funsies, I think a gauss reduction gif visual would be dope.`
 
 ## LLL Approximately 
 
@@ -359,7 +355,7 @@ What about the Lovász condition, itself? As I said earlier, it's basically a
 heuristic that determines if the vectors are in a "good" order. Aside from
 that, I don't have too much to add here unfortunately as my intuition is shaky. There
 are multiple equivalent representations for the Lovász and none of them have
-really felt right to me. The best explanations that I have found thus far are:
+really felt 100% right to me. The best explanations that I have found thus far are:
 
 * [This StackOverflow post](https://crypto.stackexchange.com/questions/39532/why-is-the-lov%C3%A1sz-condition-used-in-the-lll-algorithm/39534#39534).
 
@@ -374,14 +370,16 @@ describe the Lovász in a memorable way please let me know!
 
 ## Things that Stumped Me When Learning LLL {#stumped}
 
-#### Is the length-reduction step guaranteed to provide "short" and "nearly orthogonal" vectors?
+#### Is the Gaussian length-reduction step guaranteed to provide short and nearly orthogonal vectors?
 
-It may not seem obvious that rounding the result of `mu` and using as a scalar
-would produce a good basis. In Gram-Schmidt using the exact value of `mu`
-allows for the ideal decomposition of a vector, which can be used to
-orthogonalize the vector. Now, we are rounding the result of `mu` which would
-affect the orthogonality of the result.  Fortunately, even after rounding `mu`
-the length reduction step will produce nearly orthogonal vectors.
+If you have not made the connection yet, the `m` value from Gaussian reduction
+is the nearest integer of the `mu` value from Gram-Schmidt. It may not seem
+obvious that rounding the result of `mu` and using as a scalar would produce a
+good basis. In Gram-Schmidt using the exact value of `mu` allows for the ideal
+decomposition of a vector, which can be used to orthogonalize the vector. Now,
+we are rounding that result which could affect the orthogonality of the result.
+Fortunately, even after rounding `mu` the length reduction step will produce
+"nearly orthogonal" vectors.
 
 In fact, a new length-reduced vector `B[k]` where `B[k] = B[k] -
 round(mu(i,j))*B[j]` will always have an angle with `B[j]` that lies between 60
@@ -390,7 +388,28 @@ projection onto `B[j]` will always lie between `-1/2*B[j]` and `1/2B[j]`.
 Why is the latter fact true? Intuitively, we have removed all possible
 _integer_ components of `B[j]` from `B[k]`, therefore, the resultant
 projection of `B[k]` onto `B[j]` must lie between `-1/2*B[j]` and `1/2B[j]`.
-Why does this guarantee we have achieved "near" orthogonality?
+
+Suppose we have just reduced `B[k]`, so we know the projection of `B[k]` onto
+`B[j]` will lie between `-1/2*B[j]` and `1/2*B[j]`.  Using the definition of
+vector projection (see image below), we can re-write our inequality:
+
+{{< figure src="/angle.png" >}}
+
+```
+|B[k]|*cos(theta) = proj B[k] onto B[j]
+=>
+|B[k]|*abs(cos(theta)) <= 1/2*|B[j]|
+(|B[k]|/|B[j]|)*abs(cos(theta)) <= 1/2
+```
+
+I alluded to this earlier, but Gaussian two dimensional reduction will make it
+such that the reduced vector `B[k]` is shorter than `B[j]` (there is a proof of
+this in "Introduction to Mathematical Cryptography"). According to [this
+StackOverflow
+post](https://crypto.stackexchange.com/questions/47909/why-are-vectors-approximately-orthogonal-after-gaussian-lattice-reduction/47924),
+these two facts prove the "nearly" orthogonal property of the output vectors.
+I am actually not 100% sure these proofs are correct (I think they made a
+mistake but I don't have a proof either) so I cannot say much more than that. 
 
 #### Why doesn't Gaussian lattice reduction easily generalize to work with lattices with more than 2 vectors?
 
