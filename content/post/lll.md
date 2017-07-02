@@ -185,20 +185,20 @@ technical explanations](#stumped).
 For now, lets just wave our hands and say `gauss_reduction` will terminate, and
 return a "good" basis for dimension 2 bases.
 
-## LLL Approximately 
+## LLL tl;dr
 
 LLL extends Gauss' algorithm for reduction to work with `n` vectors. At a
 high-level, LLL iterates through the input basis vectors and performs a length
-reduction to each vector (very close Gauss' algorithm at this point). However,
-we are dealing with `n` vectors instead of just two so we need a way to ensure
-that the [ordering of the input basis doesn't bite us in the
+reduction to each vector (this is very close Gauss' algorithm at this point).
+However, we are dealing with `n` vectors instead of just two so we need a way
+to ensure that the [ordering of the input basis doesn't bite us in the
 ass](https://crypto.stackexchange.com/questions/39532/why-is-the-lov%C3%A1sz-condition-used-in-the-lll-algorithm/39534#39534).
 To assist with ordering the reduced basis by length, LLL uses a heuristic
 called the Lovász condition to determine if vectors in the input basis need to
-be swapped. LLL returns after all basis vectors have gone through at least
-one reduction, and the new basis is roughly ordered by length.
+be swapped. LLL returns after all basis vectors have gone through at least one
+reduction, and the new basis is roughly ordered by length.
 
-## LLL Pseudocode
+## The Mechanics of LLL 
 
 To help understand the mechanics of LLL, we can dig into an implementation of
 the algorithm. Here is some python pseudocode repurposed from
@@ -375,10 +375,10 @@ If you have not made the connection yet, the `m` value from Gaussian reduction
 is the nearest integer of the `mu` value from Gram-Schmidt. It may not seem
 obvious that rounding the result of `mu` and using as a scalar would produce a
 good basis. In Gram-Schmidt using the exact value of `mu` allows for the ideal
-decomposition of a vector, which can be used to orthogonalize the vector. Now,
-we are rounding that result which could affect the orthogonality of the result.
-Fortunately, even after rounding `mu` the length reduction step will produce
-"nearly orthogonal" vectors.
+decomposition of a vector, which can be used to orthogonalize the vector in
+relation to the other basis vectors. Now, we are rounding that result which
+could affect the orthogonality. Fortunately, even after rounding `mu` the
+length reduction step will produce "nearly orthogonal" vectors.
 
 In fact, a new length-reduced vector `B[k]` where `B[k] = B[k] -
 round(mu(i,j))*B[j]` will always have an angle with `B[j]` that lies between 60
@@ -447,3 +447,7 @@ considering the lengths of the Gram-Schmidt vectors. More precisely, a lattice b
 “close to orthogonal” if the lengths of the Gram-Schmidt vectors do not decrease too
 rapidly.
 </blockquote>
+
+<div class="meta">
+Thanks to Chris Bellavia for providing valuable feedback on this write-up.
+</div>
