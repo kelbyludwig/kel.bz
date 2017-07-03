@@ -198,7 +198,7 @@ called the Lovász condition to determine if vectors in the input basis need to
 be swapped. LLL returns after all basis vectors have gone through at least one
 reduction, and the new basis is roughly ordered by length.
 
-## The Mechanics of LLL 
+## A Deeper Dive into LLL
 
 To help understand the mechanics of LLL, we can dig into an implementation of
 the algorithm. Here is some python pseudocode repurposed from
@@ -316,7 +316,7 @@ And finally, after we modify our basis `B`, we need to keep our orthogonalized
 basis up-to-date. So in line 10, we update `Q`. This is definitely not the
 most efficient way to keep `Q` up-to-date, but I just copied Wikipedia here so ¯\\_(ツ)_/¯.
 
-## The Lovász Condition and the Swap Step
+### The Lovász Condition and the Swap Step
 
 Extracting the "swap" step from our Wikipedia pseudocode gets us:
 
