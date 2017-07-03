@@ -380,6 +380,7 @@ relation to the other basis vectors. Now, we are rounding that result which
 could affect the orthogonality. Fortunately, even after rounding `mu` the
 length reduction step will produce "nearly orthogonal" vectors.
 
+
 In fact, a new length-reduced vector `B[k]` where `B[k] = B[k] -
 round(mu(i,j))*B[j]` will always have an angle with `B[j]` that lies between 60
 and 120 degrees. This is guarantee that stems from another fact that `B[k]`'s
