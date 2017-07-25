@@ -1,8 +1,7 @@
 +++
-date = "2017-05-27"
+date = "2017-07-25"
 description = ""
-draft = true
-title = "lattice reduction (LLL) intuitively"
+title = "building lattice reduction (LLL) intuition"
 +++
 
 ## LLL Motivation
