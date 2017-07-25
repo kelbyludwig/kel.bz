@@ -92,9 +92,9 @@ Another algorithm that shares quite a few similarities with LLL is the
 [Gram-Schmidt](https://en.wikipedia.org/wiki/Gram%E2%80%93Schmidt_process)
 orthogonalization process. At a high-level, Gram-Schmidt (GS) takes in an input
 basis for a vector space and returns an orthogonalized (i.e. all vectors in the
-basis are orthogonal to one another) basis that spans the same space.  It does
+basis are orthogonal to one another) basis that spans the same space. It does
 this by leveraging vector projections to "decompose" each vector into related
-components and removing redundant components from all vectors.  If GS
+components and removing redundant components from all vectors. If GS
 doesn't make too much sense to you, I suggest checking it out before going too
 much further in this post. Not only is the algorithm similar to LLL, but LLL
 uses Gram-Schmidt as a subroutine. 
@@ -119,7 +119,7 @@ sage: pplot
 {{< figure src="/gs_compare.png" >}}
 
 Notice how not all orthogonalized (grey) vectors are touching a lattice
-"point"? Bummer. However, GS is still pretty useful to understanding LLL so
+"point"? Fortunately for us, GS is still pretty useful to understanding LLL so
 this is not a total loss.
 
 ## LLL In-Relation to Gaussian Lattice Reduction
@@ -132,8 +132,8 @@ This is great for a couple reasons:
 
 * Gaussian lattice reduction is also pretty similar to LLL
 
-* Gaussian lattice reduction is analogous to *both* Euclid's algorithm and LLL so it is a bridge
-  between these two analogies
+* Gaussian lattice reduction is analogous to *both* Euclid's algorithm and LLL
+  so it can act as a bridge between these two analogies
 
 * We can use 2D vectors which are easy to graph and visualize
 
@@ -154,7 +154,7 @@ Let's break this down a bit. `gauss_reduction` takes in two vectors that
 represent our lattice basis. Ignoring the `while` loop for a second, the
 first step is the swap step. The swap step ensures that the length of `v1`
 is smaller than `v2`. Among other things, this will ensure that the result
-of `gauss_reduction` will be ordered according to length, [which helps with
+of `gauss_reduction` will be ordered according to length [which helps with
 some of the proofs](#stumped) that ensure this algorithm works well. 
 
 So what does `m` represent? `m` is the scalar projection of `v2` onto `v1` (the
@@ -178,12 +178,12 @@ new reduced vector `v2` so it becomes a vector in the basis. What is
 interesting is that the reduced `v2` appears to have a shorter length than
 original `v2`.  That is not a coincidence, that is a guarantee of the reduction
 step! Additionally, the resultant basis vectors will be "nearly" orthogonal,
-which is exactly what we want! I don't want to bog anyone down with details for
-why this works just yet, but if you are impatient you can jump to [some of  my
+which is exactly what we want. I don't want to bog anyone down with details for
+why this works just yet, but if you are impatient you can jump to [the more
 technical explanations](#stumped).
 
 For now, lets just wave our hands and say `gauss_reduction` will terminate, and
-return a "good" basis for dimension 2 bases.
+return a "good" (i.e. short and nearly orthogonal) basis for dimension 2 bases.
 
 ## LLL tl;dr
 
@@ -191,8 +191,7 @@ LLL extends Gauss' algorithm for reduction to work with `n` vectors. At a
 high-level, LLL iterates through the input basis vectors and performs a length
 reduction to each vector (this is very close Gauss' algorithm at this point).
 However, we are dealing with `n` vectors instead of just two so we need a way
-to ensure that the [ordering of the input basis doesn't bite us in the
-ass](https://crypto.stackexchange.com/questions/39532/why-is-the-lov%C3%A1sz-condition-used-in-the-lll-algorithm/39534#39534).
+to ensure that the [ordering of the input basis doesn't affect our result](https://crypto.stackexchange.com/questions/39532/why-is-the-lov%C3%A1sz-condition-used-in-the-lll-algorithm/39534#39534).
 To assist with ordering the reduced basis by length, LLL uses a heuristic
 called the Lovász condition to determine if vectors in the input basis need to
 be swapped. LLL returns after all basis vectors have gone through at least one
@@ -346,15 +345,16 @@ vectors are roughly sorted by length (this may change after the next round of
 reductions though). If the Lovász condition is false, the `k`th basis vector is
 placed at position `k-1` (Line 5), and LLL then re-focuses (Line 7) on the same
 vector which is now at position `k-1`. Another reduction round is done, and
-then back to the swap step.  This brings me to another way to describe LLL: LLL
+then back to the swap step. This brings about another way to describe LLL: LLL
 is a vector sorting algorithm that occasionally screws up the ordering by
 making vectors smaller so it has to re-sort.
 
 What about the Lovász condition, itself? As I said earlier, it's basically a
 heuristic that determines if the vectors are in a "good" order. Aside from
-that, I don't have too much to add here unfortunately as my intuition is shaky. There
-are multiple equivalent representations for the Lovász and none of them have
-really felt 100% right to me. The best explanations that I have found thus far are:
+that, I don't have too much to add here unfortunately as my intuition is still
+shaky. There are multiple equivalent representations for the Lovász and none of
+them have really felt 100% right to me. The best explanations that I have found
+thus far are:
 
 * [This StackOverflow post](https://crypto.stackexchange.com/questions/39532/why-is-the-lov%C3%A1sz-condition-used-in-the-lll-algorithm/39534#39534).
 
@@ -376,10 +376,10 @@ is the nearest integer of the `mu` value from Gram-Schmidt. It may not seem
 obvious that rounding the result of `mu` and using as a scalar would produce a
 good basis. In Gram-Schmidt using the exact value of `mu` allows for the ideal
 decomposition of a vector, which can be used to orthogonalize the vector in
-relation to the other basis vectors. Now, we are rounding that result which
-could affect the orthogonality. Fortunately, even after rounding `mu` the
-length reduction step will produce "nearly orthogonal" vectors.
-
+relation to the other basis vectors. With Gaussian reduction, we are rounding
+that result which could affect the orthogonality. Fortunately, even after
+rounding `mu` the length reduction step will produce "nearly orthogonal"
+vectors.
 
 In fact, a new length-reduced vector `B[k]` where `B[k] = B[k] -
 round(mu(i,j))*B[j]` will always have an angle with `B[j]` that lies between 60
