@@ -1,2 +1,2 @@
 hugo -d ./output -b https://kel.bz -t angels-ladder 
-scp -r output/* dilla:/srv/http/www/html
+scp -r output/* blog:/var/www/blog/
