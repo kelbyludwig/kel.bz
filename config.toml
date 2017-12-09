@@ -6,6 +6,7 @@ theme = "angels-ladder"
 [Params]
 twitter = "https://twitter.com/kelbyludwig"
 github = "https://github.com/kelbyludwig"
+about = "/about/me"
 showsRSS = true
 profile = "https://kel.bz/profile.jpg"
-copyright = "Written by Kelby Ludwig"
+copyright = "written by kelby ludwig"
