@@ -4,7 +4,7 @@
 <!-- Main Section Layout
 –––––––––––––––––––––––––––––––––––––––––––––––––– -->
 <main id="index" role="main">
-  <div class="article-header light-gray"><h1>Recent Articles</h1></div>
+  <div class="article-header light-gray"><h1>recent articles</h1></div>
   {{ $paginator := .Paginate (where .Data.Pages "Type" "post") }}
   {{ range $paginator.Pages }}
   <div class="summary">
