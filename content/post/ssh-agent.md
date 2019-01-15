@@ -6,7 +6,7 @@ title = "what is the value-add of ssh-agent?"
 
 ## `ssh-agent` overview
 
-`ssh-agent` [is an authentication agent](https://linux.die.net/man/1/ssh-agent). It is a long-running process that (among other things) decrypts your SSH private keys and does private key operations on behalf of your SSH client.
+`ssh-agent` [is an authentication agent](https://linux.die.net/man/1/ssh-agent). It is a long-running process that (among other things) does private key operations on behalf of your SSH client.
 
 One reason why `ssh-agent` exists is to protect private keys on-disk. It's likely that your SSH private keys are encrypted with a key derived from a password you have set. That is why you may occasionally have to enter a password prior to establishing a SSH connection with some server.
 
