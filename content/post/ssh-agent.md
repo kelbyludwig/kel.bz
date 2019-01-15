@@ -20,11 +20,11 @@ This improvement, however, assumes that encrypting your private keys on the file
 
 What if you do have FDE enabled? What would encrypting your private keys get you from a security perspective? Given that the primary UX win of `ssh-agent` is dependent on caching cleartext private keys we could just skip the password entry step all together if it didn't meaningfully improve security.
 
-## does `ssh-agent` prevent malware from doing bad things?
+## malware
 
 One potential security control you may want from `ssh-agent` is protecting you from malicious processes running on your machine. This is reasonable, but whether `ssh-agent` helps you here is complex. Why? Reasons include:
 
-* The location of your `ssh-agent` socket is often specified by an environment variable. It may be trivial for a malicious process to overwrite this environment variable and point to a socket that steals your `ssh-agent` password.
+* The location of your `ssh-agent` socket is often specified by an environment variable. It may be trivial for a malicious process to overwrite this environment variable and point to a socket that steals your `ssh-agent` password or your private keys when they are loaded into the agent.
 
 * ["The default OpenSSH key encryption is worse than plaintext"](https://latacora.micro.blog/2018/08/03/the-default-openssh.html). Do you have a stellar password protecting your private keys?
 
@@ -32,18 +32,18 @@ One potential security control you may want from `ssh-agent` is protecting you f
 
 One could imagine attacks or vulnerabilities where the attacker either doesn't have persistent access or only has e.g. file read capabilities. `ssh-agent` does provide some level of security control from weaker local attacks like these.
 
-## what about remote backups?
+## remote backups
 
 Off-site backups are a strong reason in-favor of keeping cleartext private keys off-disk (Another point for `ssh-agent`!). That is, if you write your private keys in plaintext to disk, it's possible that these files may end up on Google Drive or something. While it's reasonable to place some amount of trust in Google not sniffing around for your private keys, I imagine this isn't an ideal outcome either.
 
 Should you use an encrypted backup service like [tarsnap](https://www.tarsnap.com/)? Yeah. Probably!
 
-## can we do better?
-
-Yes! Well, somewhat.
+## possible improvements
 
 It is an arguable improvement if you use a Yubikey as an `ssh-agent`. That is, if your SSH private keys are stored in hardware and never touch your disk, the evil processes running on your laptop have to work harder to SSH into your blog.
 
 Additionally, keys that require physical interaction (e.g. TouchID authZ, Yubikey taps) may further limit exposure.
 
 In both of these cases, however, you need at least a halfway decent backup plan in case you lose/break/swallow your security key.
+
+It is still worthwhile to use `ssh-agent` unless you have a strong reason not to.
