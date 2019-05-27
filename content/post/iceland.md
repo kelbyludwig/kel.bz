@@ -19,7 +19,7 @@ sleepmask helped with the initial adjustments from near-constant daylight.
 ## driving through fjords
 
 Driving through fjords is visually fascinating but time consuming. If you are
-using a paper map, what appears to be a "short" drive can be quite long. (This
+using a paper map, what appears to be a "short" drive can be long. (This
 is obnoxiously obvious in hindsight)
 
 ## animals
@@ -40,9 +40,9 @@ system is nerve-wracking.
 * [BRAUÐ & CO](http://www.braudogco.is/) - Reykjavík
     * Get the blueberry licorice danish and a personal loaf of bread.
 * [Nora Magasin](https://www.facebook.com/NoraMagasin) - Reykjavík
-    * Get several small plates.
+    * Get small plates.
 * [Baejarins Beztu Pylsur](http://www.bbp.is/) - Reykjavík
-    * Get several hotdogs with everything on it.
+    * Get hotdogs with everything on it.
 * [Microbar](https://www.facebook.com/MicroBarIceland/) - Reykjavík
     * Get beer.
 * [Fjöruhúsið](http://www.west.is/en/inspiration/services/fjoruhusid-cafe-restaurant) - Hellnar
