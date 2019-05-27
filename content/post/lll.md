@@ -9,7 +9,7 @@ title = "building lattice reduction (LLL) intuition"
 The Lenstra–Lenstra–Lovász (LLL) algorithm is an algorithm that efficiently
 transforms a "bad" basis for a lattice `L` into a "pretty good" basis for the
 same lattice.  This transformation of a bad basis into a better basis is known
-as lattice reduction, and it has many useful applications. For example, there
+as lattice reduction, and it has useful applications. For example, there
 is attack against [ECDSA implementations that leverage biased
 RNGs](https://pdfs.semanticscholar.org/0eb1/8a42b623dd8e7cdd4221085a6fd5503708ea.pdf)
 that can lead to private key recovery. However, my experience learning why LLL
@@ -82,12 +82,12 @@ achieve their goals. So at this point, we can roughly say that LLL is an
 extension of Euclid's algorithm that applies to a set of `n`-vectors instead of
 integers.
 
-Personally, I don't find that explanation to be very satisfying but I can see
+Personally, I don't find that explanation to be satisfying but I can see
 why it could be a useful in developing understanding.
 
 ## LLL In-Relation to Gram-Schmidt
 
-Another algorithm that shares quite a few similarities with LLL is the
+Another algorithm that is similar to LLL is the
 [Gram-Schmidt](https://en.wikipedia.org/wiki/Gram%E2%80%93Schmidt_process)
 orthogonalization process. At a high-level, Gram-Schmidt (GS) takes in an input
 basis for a vector space and returns an orthogonalized (i.e. all vectors in the
@@ -156,11 +156,11 @@ is smaller than `v2`. Among other things, this will ensure that the result
 of `gauss_reduction` will be ordered according to length [which helps with
 some of the proofs](#stumped) that ensure this algorithm works well. 
 
-So what does `m` represent? `m` is the scalar projection of `v2` onto `v1` (the
+What does `m` represent? `m` is the scalar projection of `v2` onto `v1` (the
 longer vector onto the shorter vector). This is the same scalar produced during
 the GS process but in Gauss's algorithm we round it to the nearest integer so
 we ensure we are still working with vectors within the lattice. This is a
-fairly important idea, so lets visualize this process.
+important idea, so lets visualize this process.
 
 We first project `v2` onto `v1`. Here is what the projected vector looks
 like before and after rounding.
@@ -188,7 +188,7 @@ return a "good" (i.e. short and nearly orthogonal) basis for dimension 2 bases.
 
 LLL extends Gauss' algorithm for reduction to work with `n` vectors. At a
 high-level, LLL iterates through the input basis vectors and performs a length
-reduction to each vector (this is very close Gauss' algorithm at this point).
+reduction to each vector (this is close to Gauss' algorithm at this point).
 However, we are dealing with `n` vectors instead of just two so we need a way
 to ensure that the [ordering of the input basis doesn't affect our result](https://crypto.stackexchange.com/questions/39532/why-is-the-lov%C3%A1sz-condition-used-in-the-lll-algorithm/39534#39534).
 To assist with ordering the reduced basis by length, LLL uses a heuristic
@@ -236,7 +236,7 @@ first glance. Let's start with the `mu`.
 
 #### mu
 
-`mu` is a function that produces a scalar for vector reduction. Its very
+`mu` is a function that produces a scalar for vector reduction. Its 
 similar to the scalar projections from Gram-Schmidt orthogonalization and
 Gaussian reduction. The only major difference is `mu` is not projecting a
 lattice vector onto a vector that is also in the lattice (like Gauss' algorithm
@@ -279,7 +279,7 @@ At line 1, we establish two variables:
 * `k`: which keeps track of the index of the vector we are focusing on 
 
 The outer loop condition is less of a concern during the length reduction step,
-so we can head straight to the length reduction loop. The length reduction loop
+we can head straight to the length reduction loop. The length reduction loop
 iterates through the `k-1`th basis vector towards the `0`th basis vector and
 checks if the absolute value of `mu(k,j)` is greater than `1/2`. `1/2` is
 significant for since we are rounding the value of `mu(k,j)`, if its absolute
@@ -288,7 +288,7 @@ wouldn't reduce the vector. We could remove that `if` statement on line 6 but
 we would then have superfluous assignments (i.e. `B[k] = B[k]`) for some
 iterations.
 
-The length reduction step is basically Gram-Schmidt's reduction step with a few
+The length reduction step is basically Gram-Schmidt's reduction step with 
 minor modifications. Here is another way to write the LLL length reduction step
 (omitting the `if` condition) for each vector in a length reduction loop:
 
@@ -311,7 +311,7 @@ Q[k] = B[k] - mu(k, k-1)*Q[k-1] - mu(k, k-2)*Q[k-2] - ... - mu(k, 0)*Q[0]
 ```
 
 And finally, after we modify our basis `B`, we need to keep our orthogonalized
-basis up-to-date. So in line 10, we update `Q`. This is definitely not the
+basis up-to-date. In line 10, we update `Q`. This is definitely not the
 most efficient way to keep `Q` up-to-date, but I just copied Wikipedia here so ¯\\_(ツ)_/¯.
 
 ### The Lovász Condition and the Swap Step
@@ -366,7 +366,7 @@ orthogonal complement of a space spanned by a subset of basis vectors.
 If anyone reading this has a link to a decently intuitive explanation or can
 describe the Lovász in a memorable way please let me know!
 
-## Various Things that Stumped Me When Learning LLL {#stumped}
+## Things that Stumped Me When Learning LLL {#stumped}
 
 #### Is the Gaussian length-reduction step guaranteed to provide short and nearly orthogonal vectors?
 
@@ -419,9 +419,9 @@ to explain this well.
 Finally, we remark that there is a natural analogue of [Gaussian Reduction] for
 any dimension. Hence, it is natural to try to generalise the Lagrange-Gauss
 algorithm to higher dimensions. Generalisations to dimension three have been
-given by Vall´ee and Semaev. There are a number of problems when generalising
-to higher dimensions. For example, choosing the right linear combination to
-size reduce bn using b1,...,bn−1 is solving the CVP in a sublattice (which is a
+given by Vall´ee and Semaev. Generalising to higher dimensions introduces
+problems. For example, choosing the right linear combination to size reduce bn 
+using b1,...,bn−1 is solving the CVP in a sublattice (which is a
 hard problem). Furthermore, there is no guarantee that the resulting basis
 actually has good properties in high dimension. We refer to Nguyen and Stehl´e
  for a full discussion of these issues and an algorithm that works in
