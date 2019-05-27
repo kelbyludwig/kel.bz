@@ -15,7 +15,7 @@ not seen (good) advice on whether other parts of a command (e.g. flags, flag
 parameters) are safe to be user-controlled. 
 
 Command injection vulnerabilities do not necessarily require special shell directives or
-user-controlled commands. This form of command injection is fairly
+user-controlled commands. This form of command injection is 
 straightforward and has had [plenty written about
 it](https://www.owasp.org/index.php/Command_injection) so I will focus on
 less obvious examples.
@@ -99,11 +99,11 @@ Process proc3 = Runtime.getRuntime().exec(cmdArray);
 readOutput(proc3);
 ```
 
-There are a few interesting results I would like to point out. Suppose
+This produces interesting results I would like to point out. Suppose
 everything after `/usr/local/bin/gtar tf` was user-controlled. First, I find it
 interesting that Test 2 does executes `echo` and Test 3 does not. I have some
 suspicions on why this is but I need to poke through OpenJDK and figure that
-out.  Second, I have included several comments on interesting behaviors of
+out.  Second, I have included comments on interesting behaviors of
 `Runtime.exec`'s method of parsing its parameters. Depending on the context,
 differences in input parsing could lead to input validation bypasses (and
 subsequently command injection).
@@ -112,7 +112,7 @@ subsequently command injection).
 
 `Runtime.exec` is (still) unsafe for user-controlled input! I imagine this is
 not specific to Java or `Runtime.exec` either. Code that constructs OS commands
-using user-input is scary and error-prone. It should be avoided completely!
+using user-input is scary and error-prone. It should be avoided!
 
 If there are not high-level and secure libraries to perform a task without
 resorting to OS-level commands I recommend coming up with a solution that
