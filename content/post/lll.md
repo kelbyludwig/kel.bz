@@ -332,10 +332,10 @@ Extracting the "swap" step from our Wikipedia pseudocode gets us:
 
 At this point, the algorithm has finished a round of length-reduction. From
 there LLL must determine what vector to focus on next. The Lovász condition
-will tell us us whether to continue on to the next basis vector (Line 3), or
+will tell us whether to continue on to the next basis vector (Line 3), or
 whether to place the `k`'th basis vector in position `k-1` (Lines 5-7). 
 
-Putting the meaning of the Lovász condition aside for now, this swap step is is
+Putting the meaning of the Lovász condition aside for now, this swap step is
 reminiscent of a sorting algorithm. Recall that `k` is the index of the basis
 vector that LLL is "focusing on". Suppose LLL is at the `k`th vector and the
 Lovász condition is true, from there LLL just moves onto the `k+1`th vector

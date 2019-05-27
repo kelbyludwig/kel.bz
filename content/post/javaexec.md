@@ -24,8 +24,8 @@ Consider the following code snippet that I'm borrowing from an [OWASP page on
 command injection](https://www.owasp.org/index.php/Command_injection_in_Java):
 
 ```
-Runtime runtime = Runtime.getRuntime();
-Process proc = runtime.exec("find" + " " + args[0]);
+Runtime rntime = Runtime.getRuntime();
+Process proc = rntime.exec("find" + " " + args[0]);
 ```
 
 The page claims "it is not possible to inject additional commands" so it must
