@@ -8,10 +8,10 @@ title = "the ggh cryptosystem"
 
 GGH is an asymmetric cryptosystem based on lattices that can be used for
 encryption. Lattices are pretty cool because lattice-based cryptography has
-some very interesting properties (some lattice-based cryptosystems are believed
+some interesting properties (some lattice-based cryptosystems are believed
 to be quantum resistant!).
 
-GGH is pretty cool because it is fairly straightforward to learn. GGH also has
+GGH is pretty cool because it is straightforward to learn. GGH also has
 interesting properties that could allow an adversary to recover plaintext from
 a given ciphertext (I said cool not secure). 
 
@@ -35,7 +35,7 @@ involved there is not terrible.
 
 A *lattice* can be defined as all linear combinations of a set of vectors where
 the coefficients are integers. If you are familiar with the concept of
-vector spaces, a lattice is very similar (If you aren't watch [this](https://www.youtube.com/watch?v=k7RM-ot2NWY)). 
+vector spaces, a lattice is similar (If you aren't watch [this](https://www.youtube.com/watch?v=k7RM-ot2NWY)). 
 To be concrete, consider the set of vectors constructed using `sage`:
 
 ``` python
@@ -125,15 +125,15 @@ sage: show(plot_2d_lattice(va, vb, xmin=-5, xmax=5, ymin=-5, ymax=5) + plot(poin
 In this example, the lattice point `[2, 2]` would be the solution to CVP as its
 closest to the off-lattice point `[1.7, 2]`.
 
-CVP appears to be fairly straightforward in the two-dimensional example but it
-is believed that CVP is very difficult for higher dimension lattices (say, 200
+CVP appears to be straightforward in the two-dimensional example but it
+is believed that CVP is difficult for higher dimension lattices (say, 200
 - 400). Initially working with and visualizing higher-dimension vectors makes
 the brain sizzle so I plan on sticking with the two dimensional case.
 
 ## Solving CVP (in some cases)
 
 In a GGH keypair, a public key is a "bad" basis and a private key is a "good"
-basis. A "good" basis is a relatively orthogonal with short basis vectors.
+basis. A "good" basis is a close to orthogonal with short basis vectors.
 There are algorithms for approximating CVP for a "good" basis. One
 such algorithm is called Babai's Closest Vector algorithm.
 
@@ -142,7 +142,7 @@ as input. The algorithm then solves `w = t1*v1 + ... + tn*vn` where `[t1, ... , 
 *real number* coefficients. Babai then approximates a solution to CVP by
 rounding all coefficients `t1, ... , tn` to their nearest integer.
 
-For short and relatively orthogonal bases, Babai works well and will likely
+For short and approximately orthogonal bases, Babai works well and will likely
 return the closest lattice point to `w`! For "bad" bases, Babai is likely to
 return a lattice point that is not close to `w`.
 
@@ -174,8 +174,8 @@ the lattice.
 Generating the perturbation vector is almost as simple as generating a random
 vector. Resources I found suggesting picking a parameter `d` and generating a
 n-dimensional vector with elements from `-d -> d`. This threw me for a loop
-initially because my perturbation vector would be large enough (mostly because
-my basis was fairly small) where my ciphertext vector would be closer to a
+initially because my perturbation vector would be large enough (because
+my basis was small) where my ciphertext vector would be closer to a
 *different* lattice point other than my original `ic` point. :shrug:
 
 ### How do you generate a public key from the private key? Why do you use unimodular matrices to generate the public key?
@@ -196,7 +196,7 @@ provided sage code uses this to generate GGH keypairs.
 
 ## Nyguen's Attack
 
-So GGH (as the author's originally described it) is basically toast. A couple
+GGH (as the author's originally described it) is basically toast. A couple
 years after GGH was published, [Phong Q.
 Nguyen](https://www.di.ens.fr/~pnguyen/pub_Ng08.htm) demonstrated an attack
 against GGH that allows an attacker to decrypt a ciphertext encrypted via a
@@ -241,7 +241,7 @@ c + s = m*B (mod 2*sigma) # nice!
 We know `c`, `s`, and `B` in this equation. If we solve for `m`, we reveal
 information about `m`. Specifically, we learn `m (mod 2*sigma)`. A solution to
 `m` is not guaranteed but Nyguen also demonstrated that in most cases it could
-be easily solved. So far, this is already not looking great for GGH. But it
+be easily solved. This is already not looking great for GGH but it
 definitely gets worse. 
 
 Working under the assumption that we solved the previous equation, denote `m
@@ -251,7 +251,7 @@ following equation (I'll explain it in just a second):
 <code class="math">c - m2s*B = (m - m2s)*B + e</code>
 
 Note, that `(m - m2s)` will give a vector of the form `2*sigma*m_p` (I had to puzzle
-this out in sage but a few small examples make it obvious). We don't know what `m_p`
+this out in sage but some small examples make it obvious). We don't know what `m_p`
 is just yet but that is fine. Now lets incorporate that into our previous equation:
 
 <code class="math">c - m2s*B = (m - m2s)*B + e
@@ -265,7 +265,7 @@ side there. Lets just call it `c_p`.
 
 <code class="math">c_p = m_p*B + (e/2*sigma)</code>
 
-`c_p` is just a point in space. It is quite similar to a GGH ciphertext. Recall the equation
+`c_p` is just a point in space. It is similar to a GGH ciphertext. Recall the equation
 for a ciphertext in GGH:
 
 <code class="math">c = m*B + e
@@ -276,7 +276,7 @@ We have reduced the original CVP problem to another CVP problem with an
 effectively random message using an error vector that is a *much shorter version
 of the original*. Considering this is a "special" case of the CVP problem, it
 could be solved using specialized algorithms that solve CVP for points that are
-very close to a lattice point. Nguyen also mentions that the "traditional
+close to a lattice point. Nguyen also mentions that the "traditional
 methods" of solving special CVP cases work better when an error vector is
 smaller.
 
@@ -292,7 +292,7 @@ well-received because they are believed to be
 [unfair](https://www.schneier.com/crypto-gram/archives/1998/1215.html#1).
 
 GGH's authors hosted a challenge to demonstrate GGH's security. They presented
-5 public keys of various security levels and 5 messages encrypted using GGH. This
+5 public keys of differing security levels and 5 messages encrypted using GGH. This
 "Ciphertext Only" attack model is a pretty low bar. There are probably a good
 number of questionable cryptosystems that could stand-up to such an attack but
 would crumble instantly under increased pressure.
