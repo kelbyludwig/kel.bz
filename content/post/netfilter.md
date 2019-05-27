@@ -8,8 +8,8 @@ title = "modifying ip headers with netfilter"
 
 I recently read the ["Off-Path TCP
 Exploits"](http://www.cs.ucr.edu/~zhiyunq/pub/sec16_TCP_pure_offpath.pdf)
-whitepaper (Its very good!) and it made me a bit curious. How would I approach
-recreating a PoC for this attack? While the authors mention several hurdles
+whitepaper and it made me a bit curious. How would I approach
+recreating a PoC for this attack? While the authors mention hurdles
 that they had to overcome for their experiments, the first snag I ran into is
 one of the core assumptions in the paper: An attacker can send packets with a
 spoofed source IP address across the Internet. I'm skeptical that my ISP would
@@ -24,7 +24,7 @@ came up with two approaches.
 2. I could route traffic through a router that rewrites the source IP.
 
 Option 1 seemed interesting, but I was concerned it wasn't flexible enough. I
-was fairly sure after I constructed the IP-layer headers I would have to
+was assuming after I constructed the IP-layer headers I would have to
 manually build the TCP layer as well. Option 2 seemed more re-usable. I could
 just configure my host OS to send TCP traffic through the router and it would
 re-write the source IP. In this configuration, I only have to send TCP traffic
@@ -57,7 +57,7 @@ router, and let the kernel hooks work their magic.
 
 # Writing and Building A Kernel Module
 
-To begin, we start with a very basic "Hello, world!" kernel module.
+To begin, we start with a basic "Hello, world!" kernel module.
 
 ```
 #Filename: Makefile
@@ -182,9 +182,9 @@ Stack"](http://phrack.org/issues/61/13.html).
 
 # Modifying Packets Using Netfilter
 
-Making minor modifications to packets appeared to be fairly simple (at least
+Making minor modifications to packets appeared to be simple (at least
 what I tried). If you google something similar to "modify packets netfilter"
-you will may not see many results. However, after a bit of research I learned
+you may not see a ton of results. However, after a bit of research I learned
 that the data structure that represents a packet in Netfilter hooks is not
 specific to Netfilter but, the `sk_buff` type is a key Linux kernel data
 structure. Socket buffers are pretty large so I won't cover them in their
