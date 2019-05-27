@@ -9,7 +9,7 @@ Authorization is a strange beast. In theory, it appears to be rather
 straight-forward: a user should not be able to create, read, update, or delete
 data that it does not have access to. However, from our experience, theory
 tends to deviate from practice. Missing or incorrect access controls are
-a dime a dozen for applications we test and this very rarely stems from a
+a dime a dozen for applications we test and this rarely stems from a
 complete lack of access controls. More often then not, authorization issues
 spring up during assessments where the application manages a complex
 authorization model and an incorrect assumption was made or an edge case was
@@ -17,7 +17,7 @@ missed. Conversely, we have seen applications that have incredibly
 complicated authorization models that have zero access control problems.
 
 Authorization may seem like a trivial engineering problem, but consider a
-mobile phone. Many smart phones support configuring a lock screen that should
+mobile phone. Smart phones support configuring a lock screen that should
 prevent unauthorized users from accessing the device. This seems
 straight-forward, but allowing this leads to interesting edge cases. What
 features should be exposed to users without a lock screen code?  Most smart
@@ -38,7 +38,7 @@ access controls are designed to thwart.
 
 There are two primary classes of bugs that access controls attempt to prevent:
 horizontal and vertical privilege escalation. Vertical privilege escalation is
-fairly intuitive: a user should not be able to perform actions above her
+intuitive: a user should not be able to perform actions above her
 privilege level (e.g. a low-privilege user should not be able to perform
 administrative actions).  The somewhat unintuitively named "horizontal
 privilege escalation" is when a user can perform actions at her privilege level
@@ -87,8 +87,8 @@ identifier, an authenticated claim). When access control decisions are made it
 is of critical importance that client-provided data is not trusted without
 verification. 
 
-This description is a bit general because identifying a user can
-be done in several ways, but for the sake of clarity, one particularly egregious
+This description is a bit general as there is no one true way to identify a
+user, but for the sake of clarity, one particularly egregious
 example of using meaningful data would be including a parameter "admin=False"
 in requests. If this "admin" parameter is used to determine whether the user
 has administrative permissions, a malicious user could easily exploit a
@@ -139,7 +139,7 @@ error-prone.
 
 There are design patterns that can be leveraged to abstract access control
 checks that are less problematic than conditional statements throughout the
-codebase. We have seen many cases where conditional statements have preceding
+codebase. We have seen cases where conditional statements have preceding
 logic that affect access control decisions and complicate or cause
 authorization flaws. Additionally, conditional statements could be easily
 forgotten (Hopefully key principle 2 is obeyed). Wouldn't life be so much
@@ -190,10 +190,10 @@ still allows the events to be coupled if necessary.
 ## Testing For Authorization Flaws
 
 Authorization testing is too important to pass up but is error-prone (and a bit
-boring) to test manually. Fortunately, in many cases, access control testing
+boring) to test manually. Fortunately access control testing
 can be trivially automated. We are partial to Burp so I wrote a plugin to
-automate authorization testing. I am calling it Otter. There are a few Burp
-plugins that have a similar premise but they didn't quite satisfy our needs
+automate authorization testing. I am calling it Otter. There are existing Burp
+plugins that have a similar premise but they didn't satisfy our needs
 (namely, less-than-stellar UX and atypical assumptions about sessions). In a
 nutshell, Otter browses the target web application alongside the web browser.
 While browsing, Otter is transparently capturing requests and replaying them
