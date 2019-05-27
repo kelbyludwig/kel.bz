@@ -153,7 +153,7 @@ Well that won't work because the numeric representation of the ciphertext was
 _much_ larger than the modulus. If you follow the python script, you may notice
 that the public key written to `pubkey.pem` is not necessarily the public key
 used to encrypt the flag. This is where that weird exception handling code
-within the `while` loop comes into play. After a few unsuccessful attempts
+within the `while` loop comes into play. After a multiple unsuccessful attempts
 (most took too long) the following script eventually gave the first parameters
 that were large enough to decrypt the ciphertext.
 
