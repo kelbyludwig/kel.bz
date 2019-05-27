@@ -160,7 +160,7 @@ have seen work well as a method of verify a user's level of access.
 
 ## Authorization Bonus Points
 
-There are also other commendable access control principles that we recommend.
+We recommend other access control principles as well.
 These may not prevent authorization flaws, but they may help identify or limit
 issues considerably.
 
