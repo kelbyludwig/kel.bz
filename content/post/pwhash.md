@@ -1,6 +1,6 @@
 +++
 date = "2016-03-03"
-title = "secure password storage in various languages"
+title = "secure password storage"
 +++
 
 # Secure Password Storage in Go, Python, Ruby, Java, Haskell, and NodeJS
