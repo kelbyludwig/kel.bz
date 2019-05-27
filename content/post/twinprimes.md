@@ -6,7 +6,7 @@ title = "tokyo westerns / mma ctf: twin primes write-up"
 
 # The Problem
 
-The premise for the challenge was fairly straightforward. Given two RSA public
+The premise for the challenge was straightforward. Given two RSA public
 keys, a ciphertext, and the code that generated the keys and ciphertext,
 decrypt the ciphertext. The provided code was as follows:
 
@@ -79,7 +79,7 @@ And finally, the ciphertext:
 
 # The Solution
 
-It seemed pretty obvious that the twin prime key generation (which is fairly
+It seemed pretty obvious that the twin prime key generation (which is 
 atypical for RSA key generation) was contributing to some sort of flaw. Because
 each modulus was derived from the same `p` and `q`, I suspected I could come
 up with an expression would help discover some component of the private key.
