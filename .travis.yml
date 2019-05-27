@@ -8,4 +8,4 @@ install:
     - npm install -g write-good
 
 script:
-    - write-good content/post/*.md --so --weasel
+    - write-good content/post/*.md --so --weasel --thereIs --illusion --passive --adverb
