@@ -5,7 +5,7 @@ title = "a note on subgroup confinement attacks"
 
 The Pohlig-Hellman algorithm is a efficient method of solving the discrete log
 problem for groups whose order is a `smooth integer`. A smooth integer is just
-an integer whose prime factorization consists of mostly small prime numbers.
+an integer whose prime factorization consists of small prime numbers.
 
 Pohlig-Hellman could be used to efficiently recover private keys from broken
 (EC)DH implementations. There are some cryptopals exercise that use it (its in
@@ -27,7 +27,7 @@ having access to the pcap could lead to private key recovery.
 Another context for subgroup confinement leverages an "online" oracle. In
 this context, the target implementation could accept malicious group elements
 `g` and respond with `h = g^x (mod m)`. Dependent on the properties of `m` the
-attacker could generate many different values for `g` that make solving for `h`
+attacker could generate different values for `g` that make solving for `h`
 easy(ish). This would apply to (for example) a live TLS server that an attacker
 is sending evil values to.
 
