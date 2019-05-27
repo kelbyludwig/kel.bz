@@ -231,9 +231,8 @@ more information could be leaked with a little algebra and a slightly larger
 modulus. This is accomplished by increasing the modulus to `2*sigma` and adding
 an all-`sigma` vector `s` to the equation.
 
-<code class="math">
-c = m*B + e 
-e + s = 0 (mod 2*sigma)
+<code class="math">c = m*B + e 
+s + e = 0 (mod 2*sigma)
 c + s = m*B + e + s (mod 2*sigma)
 c + s = m*B + 0 (mod 2*sigma)
 c + s = m*B (mod 2*sigma) # nice!
