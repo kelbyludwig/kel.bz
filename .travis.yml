@@ -1,0 +1,11 @@
+language: node_js
+node_js:
+  - "7"
+
+sudo: false
+
+install:
+    - npm install -g write-good
+
+script:
+    - write-good content/post/*.md --so --weasel
