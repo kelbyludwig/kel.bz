@@ -113,7 +113,7 @@ sage: show(plot_2d_lattice(vc, vd))
 
 ## Why are lattices so special?
 
-There are hard problems associated with lattices. GGH's security depends on the
+Lattices have hard problems associated with them. GGH's security depends on the
 difficulty of the closest vector problem (CVP). Intuitively, CVP involves
 finding the closest lattice point to an arbitrary point. For example:
 
@@ -134,7 +134,7 @@ the brain sizzle so I plan on sticking with the two dimensional case.
 
 In a GGH keypair, a public key is a "bad" basis and a private key is a "good"
 basis. A "good" basis is a close to orthogonal with short basis vectors.
-There are algorithms for approximating CVP for a "good" basis. One
+There exist algorithms for approximating CVP for a "good" basis. One
 such algorithm is called Babai's Closest Vector algorithm.
 
 Babai's algorithm takes a point `w` and a set of basis vectors `[v1, ... , vn]`
@@ -231,7 +231,8 @@ more information could be leaked with a little algebra and a slightly larger
 modulus. This is accomplished by increasing the modulus to `2*sigma` and adding
 an all-`sigma` vector `s` to the equation.
 
-<code class="math">c = m*B + e 
+<code class="math">
+c = m*B + e 
 e + s = 0 (mod 2*sigma)
 c + s = m*B + e + s (mod 2*sigma)
 c + s = m*B + 0 (mod 2*sigma)
