@@ -33,7 +33,7 @@ We could do better if Player 1 was highly favored to win. We could encode
 (say, 6). The outcome of that tournament has less entropy since the winner is
 more predictable.
 
-There is no single method of measuring entropy. Some measurements [only rely on
+Entropy can be measured in multiple ways. Some measurements [only rely on
 the number of possible outcomes](#hartley) while others [factor in the
 probability of each possible outcome](#shannon). Others only measure [specific
 properties of the random variable](#minentropy). This post explores
@@ -41,7 +41,7 @@ multiple entropy measurements and how they differ.
 
 ## Hartley entropy {#hartley}
 
-Hartley entropy is a simple measurement that only relies only on the
+Hartley entropy is a simple measurement that only relies on the
 cardinality of the set of possible outcomes. Hartley entropy assumes the
 distribution of outcomes are uniform. 
 
@@ -61,7 +61,7 @@ hartley_entropy(dice_roll) #=> 2.58 bits
 ## Shannon entropy {#shannon}
 
 Shannon entropy is a generalization of Hartley entropy. Shannon entropy takes
-the probability of each outcome into account giving an "average" measure of
+the probability of each outcome into account given an "average" measure of
 entropy across all outcomes. Given a uniform set of outcomes, Shannon entropy
 is equivalent to Hartley entropy.
 
