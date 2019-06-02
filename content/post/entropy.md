@@ -25,7 +25,7 @@ could encode the outcome as:
 | Player 31 | 11110    |
 | Player 32 | 11111    |
 
-Due to the completely uniform outcome the result of the tournament has higher
+Due to the uniform outcome the result of the tournament has higher
 entropy and there is no better bit encoding of winner.
 
 We could do better if Player 1 was highly favored to win. We could encode
