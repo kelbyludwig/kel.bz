@@ -30,8 +30,10 @@ entropy and there is no better bit encoding of winner.
 
 We could do better if Player 1 was highly favored to win. We could encode
 "Player 1" in fewer bits (say, 1 bit) and encode other players in *more* bits
-(say, 6). The outcome of that tournament has less entropy since the winner is
-more predictable.
+(say, 6). Dependent on exactly how probable Player 1's victory is, encoding the
+outcome of this tournament could be more efficient than the 5-bit encoding
+above. The tournament where Player 1 is favored has less entropy since the
+winner is more predictable.
 
 Entropy can be measured in multiple ways. Some measurements [only rely on
 the number of possible outcomes](#hartley) while others [factor in the
