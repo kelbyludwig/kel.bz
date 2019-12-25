@@ -1,8 +1,12 @@
-+++
-date = "2016-08-20T13:52:18-05:00"
-draft = false
-title = "modifying ip headers with netfilter"
-+++
+---
+date: "2016-08-20T13:52:18-05:00"
+draft: false
+title: "modifying ip headers with netfilter"
+tags: [
+    "networking",
+    "c",
+]
+---
 
 # Motivation
 
@@ -46,7 +50,7 @@ too easy though!
 My router will be a Vagrant VM running Debian. To prepare the VM for kernel
 module writing the following command should be ran:
 
-```
+```shell
 sudo apt-get update
 sudo apt-get install build-essential linux-headers-$(uname -r) make vim
 ```
@@ -59,7 +63,7 @@ router, and let the kernel hooks work their magic.
 
 To begin, we start with a basic "Hello, world!" kernel module.
 
-```
+```makefile
 #Filename: Makefile
 obj-m := hello.o
 KDIR := /lib/modules/$(shell uname -r)/build
@@ -71,7 +75,7 @@ clean:
         rm *o
 ```
 
-```
+```c
 //Filename: hello.c
 #include <linux/module.h> 
 #include <linux/init.h>   
@@ -95,7 +99,7 @@ Once those files are created, the module can be compiled by running `make` and t
 as a module by running `insmod hello.ko`. To see our module it action, run `dmesg | tail`.
 You should see something like the following:
 
-```
+```shell
 [14843.182893] hello: module license 'unspecified' taints kernel.
 [14843.182896] Disabling lock debugging due to kernel taint
 [14843.183267] Hello, world!
@@ -104,7 +108,7 @@ You should see something like the following:
 To remove our module, we can run `rmmod hello`. Running `dmesg | tail` again will show us
 the results of our super fantastic teardown function:
 
-```
+```shell
 [14843.182893] hello: module license 'unspecified' taints kernel.
 [14843.182896] Disabling lock debugging due to kernel taint
 [14843.183267] Hello, world!
@@ -130,7 +134,7 @@ Netfilter's pre-routing hook. (A lot of Netfilter tutorials like to just drop
 packets at this stage. Considering we are SSH'd into our Vagrant VM that is not
 a great idea.) We can use roughly the same Makefile as our previous example.
 
-```
+```c
 //Filename: hello-netfilter.c
 #include <linux/module.h>
 #include <linux/init.h>
@@ -193,7 +197,7 @@ Structure" below. I also included some (hopefully) useful commented code to
 highlight some socket buffer components. The following kernel module will
 modify the source IP address of incoming ICMP packets.
 
-```
+```c
 #include <linux/module.h>
 #include <linux/kernel.h>
 #include <linux/init.h>
