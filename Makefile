@@ -4,7 +4,11 @@ test:
 	echo "no tests configured"
 
 demo:
-	hugo server -t angels-ladder -D -w
+	docker run \
+		-p 1313:1313 \
+		-v $(PWD):/home/kelby/ \
+		--cap-drop=all \
+		-it hugo:latest hugo server -t angels-ladder -D -w --bind 0.0.0.0
 
 deploy:
 	hugo -d ./output -b https://kel.bz -t angels-ladder 
