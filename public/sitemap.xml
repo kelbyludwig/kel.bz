@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  
+  <url>
+    <loc>/tags/cryptography/</loc>
+    <lastmod>2019-08-10T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/</loc>
+    <lastmod>2019-08-10T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/post/</loc>
+    <lastmod>2019-08-10T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/</loc>
+    <lastmod>2019-08-10T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/post/hnp/</loc>
+    <lastmod>2019-08-10T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/post/ecdsa-is-weird/</loc>
+    <lastmod>2019-07-28T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/post/entropy/</loc>
+    <lastmod>2019-06-02T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/post/kem/</loc>
+    <lastmod>2019-05-27T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/post/designreview/</loc>
+    <lastmod>2019-05-12T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/software-security/</loc>
+    <lastmod>2019-05-12T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/post/ssh-agent/</loc>
+    <lastmod>2019-01-14T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/post/lll/</loc>
+    <lastmod>2017-07-25T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/post/pohlig/</loc>
+    <lastmod>2017-01-14T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/java/</loc>
+    <lastmod>2016-12-06T19:21:35-06:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/post/javaexec/</loc>
+    <lastmod>2016-12-06T19:21:35-06:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/post/lattices/</loc>
+    <lastmod>2016-11-23T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/post/asis-rsa/</loc>
+    <lastmod>2016-09-18T14:45:13-05:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/post/twinprimes/</loc>
+    <lastmod>2016-09-01T13:52:18-05:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/c/</loc>
+    <lastmod>2016-08-20T13:52:18-05:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/post/netfilter/</loc>
+    <lastmod>2016-08-20T13:52:18-05:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/networking/</loc>
+    <lastmod>2016-08-20T13:52:18-05:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/food/</loc>
+    <lastmod>2016-08-01T21:00:29-05:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/post/iceland/</loc>
+    <lastmod>2016-08-01T21:00:29-05:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/travel/</loc>
+    <lastmod>2016-08-01T21:00:29-05:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/authnz/</loc>
+    <lastmod>2016-08-01T20:53:18-05:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/software-testing/</loc>
+    <lastmod>2016-08-01T20:53:18-05:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/post/authz-design-patterns/</loc>
+    <lastmod>2016-08-01T20:53:18-05:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/post/password-hash-migrations/</loc>
+    <lastmod>2015-11-27T20:42:26-05:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/post/fuzzing-servers/</loc>
+    <lastmod>2015-11-11T18:13:14-05:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/about/me/</loc>
+  </url>
+  
+  <url>
+    <loc>/about/</loc>
+  </url>
+  
+  <url>
+    <loc>/categories/</loc>
+  </url>
+  
+</urlset>

@@ -1,12 +1,26 @@
 baseurl = "https://kel.bz/"
 languageCode = "en-us"
 title = "kel.bz"
-theme = "angels-ladder"
+theme = "hugo-notepadium"
 
-[Params]
-twitter = "https://twitter.com/kelbyludwig"
-github = "https://github.com/kelbyludwig"
-about = "/about/me"
-showsRSS = true
-profile = "https://kel.bz/profile.jpg"
-copyright = "written by kelby ludwig"
+[params]
+slogan = "where i take notes"
+
+[params.nav]
+# Add a top-level /tags/ page
+showTags = true       
+
+[[params.nav.custom]]
+# Add a top-level /about/ page
+title = "About"
+url = "/about/me"
+
+[[params.nav.custom]]
+# Add a top-level link to Github
+title = "Github"
+url = "https://github.com/kelbyludwig"
+
+[[params.nav.custom]]
+# Add a top-level link to Twitter
+title = "Twitter"
+url = "https://twitter.com/kelbyludwig"

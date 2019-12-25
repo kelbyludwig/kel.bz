@@ -1,2 +1,0 @@
-hugo -d ./output -b https://kel.bz -t angels-ladder 
-scp -r output/* blog:/var/www/blog/

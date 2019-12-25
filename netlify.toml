@@ -1,0 +1,6 @@
+[context.production.environment]
+  HUGO_VERSION = "0.62.0"
+
+[build]
+publish = "public"
+command = "hugo --gc -b https://kel.bz -t hugo-notepadium"

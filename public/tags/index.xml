@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Tags on kel.bz</title>
+    <link>https://kel.bz/tags/</link>
+    <description>Recent content in Tags on kel.bz</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 10 Aug 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://kel.bz/tags/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>cryptography</title>
+      <link>https://kel.bz/tags/cryptography/</link>
+      <pubDate>Sat, 10 Aug 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://kel.bz/tags/cryptography/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>software-security</title>
+      <link>https://kel.bz/tags/software-security/</link>
+      <pubDate>Sun, 12 May 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://kel.bz/tags/software-security/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>java</title>
+      <link>https://kel.bz/tags/java/</link>
+      <pubDate>Tue, 06 Dec 2016 19:21:35 -0600</pubDate>
+      
+      <guid>https://kel.bz/tags/java/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>c</title>
+      <link>https://kel.bz/tags/c/</link>
+      <pubDate>Sat, 20 Aug 2016 13:52:18 -0500</pubDate>
+      
+      <guid>https://kel.bz/tags/c/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>networking</title>
+      <link>https://kel.bz/tags/networking/</link>
+      <pubDate>Sat, 20 Aug 2016 13:52:18 -0500</pubDate>
+      
+      <guid>https://kel.bz/tags/networking/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>food</title>
+      <link>https://kel.bz/tags/food/</link>
+      <pubDate>Mon, 01 Aug 2016 21:00:29 -0500</pubDate>
+      
+      <guid>https://kel.bz/tags/food/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>travel</title>
+      <link>https://kel.bz/tags/travel/</link>
+      <pubDate>Mon, 01 Aug 2016 21:00:29 -0500</pubDate>
+      
+      <guid>https://kel.bz/tags/travel/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>authnz</title>
+      <link>https://kel.bz/tags/authnz/</link>
+      <pubDate>Mon, 01 Aug 2016 20:53:18 -0500</pubDate>
+      
+      <guid>https://kel.bz/tags/authnz/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>software-testing</title>
+      <link>https://kel.bz/tags/software-testing/</link>
+      <pubDate>Mon, 01 Aug 2016 20:53:18 -0500</pubDate>
+      
+      <guid>https://kel.bz/tags/software-testing/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>

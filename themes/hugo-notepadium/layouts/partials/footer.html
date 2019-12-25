@@ -1,0 +1,41 @@
+<section id="footer" class="footer max-body-width">
+  {{ $copyright := .Site.Copyright }}
+  {{ if not $copyright }}
+    {{ $copyright = .Site.Title | htmlUnescape }}
+  {{ end }}
+  <p>{{ $copyright | htmlUnescape }}</p>
+  <p>
+    <span>Powered by</span>
+    <a href="https://gohugo.io">Hugo</a>
+    <span>and the</span>
+    <a href="https://themes.gohugo.io/hugo-notepadium/">Notepadium</a>
+  </p>
+</section>
+
+{{ if or (eq .Site.Params.MathJax.enable true) (eq .Params.math true) }}
+  {{ $url := "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.6/MathJax.js?config=TeX-AMS-MML_HTMLorMML" }}
+  {{ $maxJax := .Site.Params.MathJax }}
+  {{ if and (isset $maxJax "url") (ne $maxJax.url "") }}{{ $url = $maxJax.url }}{{ end }}
+  <script type="text/javascript" src={{ $url | relURL }}></script>
+  <script type="text/x-mathjax-config">MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$'], ['\\(','\\)']] } });</script>
+{{ end }}
+
+{{ with .Site.Params.syntax }}
+  {{ $use := "none" }}
+  {{ if and (isset . "use") (ne .use "") }}{{ $use = .use | lower }}{{ end }}
+
+  {{ $syntaxJS := "" }}
+  {{ if eq $use "hljs" }}
+    {{ $syntaxJS = "js/hljs.js" }}
+  {{ else if eq $use "prismjs" }}
+    {{ $syntaxJS = "js/prism.js" }}
+  {{ end }}
+
+  {{ if ne $syntaxJS "" }}
+    {{ $js := resources.Get $syntaxJS | resources.Minify | resources.Fingerprint "sha384" }}
+    <script src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}"></script>
+    {{ if eq $use "hljs" }}
+    <script>hljs.initHighlightingOnLoad();</script>
+    {{ end }}
+  {{ end }}
+{{ end }}

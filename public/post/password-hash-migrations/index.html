@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8">
+<meta name="generator" content="Hugo 0.62.0" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light only">
+<meta name="supported-color-schemes" content="light only">
+
+
+  
+  
+    <title>secure password hash migrations &ndash; kel.bz</title>
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/core.min.871c51706cba837f31c3028126e8801b3ced6615f16b6ef7dbba11efc23280f506ef819d15b556880689cd71206843b7.css" integrity="sha384-hxxRcGy6g38xwwKBJuiAGzztZhXxa27327oR78IygPUG74GdFbVWiAaJzXEgaEO3">
+<body>
+      <div class="base-body max-width"><section id="header" class="header max-body-width">
+  <p>
+    <a class="site-name" href="/">
+      
+        kel.bz
+      
+    </a>
+    
+      <span class="site-slogan">where i take notes</span>
+    
+  </p>
+</section><div id="content" class="flex-body max-body-width">
+  
+  
+
+  <section class="article-header" >
+      <h1>secure password hash migrations</h1>
+      <p class="article-date">2015-11-27</p>
+  </section>
+
+  <article class="markdown-body" >
+    <p>Suppose you are in a situation where you need to migrate from one password
+hashing mechanism to another. Common suggestions on StackOverflow suggest that
+you should update the database schema to have two new fields: one for the
+current password hash and one for the new password hash. To be concise, lets
+call these fields <code>old_password_hash</code> and <code>new_password_hash</code>. After the
+database migration is complete d something similar to the following
+authentication mechanism is commonly suggested:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">if</span> <span style="color:#a6e22e">old_password_hash</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+        <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">old_password_hash_algorithm</span>(<span style="color:#a6e22e">password</span>) <span style="color:#f92672">==</span> <span style="color:#a6e22e">old_password_hash</span> {
+                <span style="color:#a6e22e">new_password_hash</span> = <span style="color:#a6e22e">new_password_hash_algorithm</span>(<span style="color:#a6e22e">password</span>)
+                <span style="color:#a6e22e">old_password_hash</span> = <span style="color:#66d9ef">nil</span>
+                <span style="color:#75715e">// Successful authentication
+</span><span style="color:#75715e"></span>        } <span style="color:#66d9ef">else</span> {
+                <span style="color:#75715e">// Unsuccessful authentication
+</span><span style="color:#75715e"></span>        }
+} <span style="color:#66d9ef">else</span> {
+        <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">new_password_hash_algorithm</span>(<span style="color:#a6e22e">password</span>) <span style="color:#f92672">==</span> <span style="color:#a6e22e">new_password_hash</span> {
+                <span style="color:#75715e">// Successful authentication
+</span><span style="color:#75715e"></span>        } <span style="color:#66d9ef">else</span> {
+                <span style="color:#75715e">// Unsuccessful authentication
+</span><span style="color:#75715e"></span>        }
+
+}
+</code></pre></div><p>This scheme is okay. It is transparent to the user (yay!) but leaves old and
+presumably weak password hashes in the database for longer than necessary
+(boo!). Users who do not authenticate often or have abandoned their account
+are stuck with old password hashes.</p>
+<p>Alternatively, one can do the same database migration and add
+<code>old_password_hash</code> and <code>new_password_hash</code> but also replace the value stored
+in all user's <code>old_password_hash</code> field with:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">new_password_hash_algorithm(old_password_hash)
+</code></pre></div><p>Now an authentication scheme similar to the previous suggestion can be
+implemented. But in this scheme, users with an old password hash would have
+their stored hash compared with:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">new_password_hash_algorithm(old_password_hash_algorithm(password))
+</code></pre></div><p>Once the user's password is validated, the <code>old_password_hash</code> value can be
+deleted and then the new password hash can be computed and stored.</p>
+<p>My suggestion requires a little more legwork up-front, but remains transparent
+to the user (yay!) and does not leave crusty password hashes in the database
+longer than necessary (also yay!). 
+
+<a href="http://www.fortune.com/2015/09/11/ashley-madison-passwords/"  target="_blank">Ashley Madison had to deal with this</a>.</p>
+<p>If you are not using scrypt, bcrypt, or PBKDF2 to store user passwords it is
+highly probable that your password hashes are not as secure as they could be.
+If you have influence over a system that is not using one of those three
+algorithms to mask user passwords I would suggest that you implement a
+migration plan soon.</p>
+<p>If anyone has concerns or questions about this scheme, feel free to contact me
+on 
+
+<a href="https://twitter.com/kelbyludwig"  target="_blank">Twitter</a>.</p>
+<p>I realize that those are not the only 3 &ldquo;good&rdquo; options. But in most cases, they
+are the 
+
+<a href="https://gist.github.com/tqbf/be58d2d39690c3b366ad"  target="_blank">right answer</a>.</p>
+
+  </article>
+
+  
+  
+
+  
+
+  
+    <section class="article-labels">
+      
+          
+            
+            <a class="article-tag li" href=/tags/cryptography/><span class="hashtag">#</span>cryptography</a>
+          
+    </section>
+  
+
+  
+    <section class="article-navigation">
+      
+        
+        <p>
+          <a class="link" href="/post/authz-design-patterns/"><span class="li"></span>well-tested authorization design patterns</a>
+          
+          
+              
+              <a class="article-tag" href=/tags/authnz/><span class="hashtag">#</span>authnz</a>
+          
+              
+              <a class="article-tag" href=/tags/software-security/><span class="hashtag">#</span>software-security</a>
+          
+              
+              <a class="article-tag" href=/tags/software-testing/><span class="hashtag">#</span>software-testing</a>
+          
+        </p>
+        
+
+        
+          <p>
+            <a class="link" href="/post/fuzzing-servers/"><span class="li"></span>when fuzzing servers</a class="link">
+            
+            
+                
+                <a class="article-tag" href=/tags/software-testing/><span class="hashtag">#</span>software-testing</a>
+            
+                
+                <a class="article-tag" href=/tags/software-security/><span class="hashtag">#</span>software-security</a>
+            
+          </p>
+        
+      
+    </section>
+  
+
+  
+
+
+        </div><section id="footer" class="footer max-body-width">
+  
+  
+    
+  
+  <p>kel.bz</p>
+  <p>
+    <span>Powered by</span>
+    <a href="https://gohugo.io">Hugo</a>
+    <span>and the</span>
+    <a href="https://themes.gohugo.io/hugo-notepadium/">Notepadium</a>
+  </p>
+</section>
+
+
+
+
+</div>
+    </body>
+</html>

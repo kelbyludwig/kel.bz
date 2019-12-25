@@ -1,8 +1,11 @@
-+++
-draft = false
-date = "2019-01-14"
-title = "what is the value-add of ssh-agent?"
-+++
+---
+date: "2019-01-14"
+title: "what is the value-add of ssh-agent?"
+tags: [
+    "software-security",
+]
+summary: "The purpose of ssh-agent and observations how ssh-agent improves UX and security."
+---
 
 ## `ssh-agent` overview
 

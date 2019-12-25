@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8">
+<meta name="generator" content="Hugo 0.62.0" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light only">
+<meta name="supported-color-schemes" content="light only">
+
+
+  
+  
+    <title>building lattice reduction (LLL) intuition &ndash; kel.bz</title>
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/core.min.871c51706cba837f31c3028126e8801b3ced6615f16b6ef7dbba11efc23280f506ef819d15b556880689cd71206843b7.css" integrity="sha384-hxxRcGy6g38xwwKBJuiAGzztZhXxa27327oR78IygPUG74GdFbVWiAaJzXEgaEO3">
+<body>
+      <div class="base-body max-width"><section id="header" class="header max-body-width">
+  <p>
+    <a class="site-name" href="/">
+      
+        kel.bz
+      
+    </a>
+    
+      <span class="site-slogan">where i take notes</span>
+    
+  </p>
+</section><div id="content" class="flex-body max-body-width">
+  
+  
+
+  <section class="article-header" >
+      <h1>building lattice reduction (LLL) intuition</h1>
+      <p class="article-date">2017-07-25</p>
+  </section>
+
+  <article class="markdown-body" >
+    <h2 id="lll-motivation">LLL Motivation</h2>
+<p>The Lenstra–Lenstra–Lovász (LLL) algorithm is an algorithm that efficiently
+transforms a &ldquo;bad&rdquo; basis for a lattice <code>L</code> into a &ldquo;pretty good&rdquo; basis for the
+same lattice.  This transformation of a bad basis into a better basis is known
+as lattice reduction, and it has useful applications. For example, there
+is attack against 
+
+<a href="https://pdfs.semanticscholar.org/0eb1/8a42b623dd8e7cdd4221085a6fd5503708ea.pdf"  target="_blank">ECDSA implementations that leverage biased
+RNGs</a>
+that can lead to private key recovery. However, my experience learning why LLL
+works has been pretty rough. Most material covering LLL seems targeted towards
+mathematicians and I had to (I guess I <em>wanted</em> to) spend a lot of time trying
+to weasel out the intuition and mechanics of the algorithm. This blog post is a
+semi-organized brain dump of that process. My goal is to cover LLL in such a
+way that slowly ratchets down the hand-waving, so feel free to read until you
+are happy with your level of understanding.</p>
+<p>As an aside: if I'm wrong anywhere, please correct me! Hitting a nice balance
+of mathematical accuracy and intuition is tough, but I don't aim to be
+blatantly wrong. Please feel free to 
+
+<a href="https://twitter.com/kelbyludwig"  target="_blank">tweet</a>
+at me if I screwed up. Its super possible I did.</p>
+<h2 id="suggested-background">Suggested Background</h2>
+<p>I don't think LLL will make much sense if you don't have a decent grasp on (at least):</p>
+<ul>
+<li>
+<p>vector spaces and bases</p>
+</li>
+<li>
+<p>what a lattice is</p>
+</li>
+<li>
+<p>why lattice basis reduction is useful</p>
+</li>
+<li>
+<p>vector projections and the Gram-Schmidt process</p>
+</li>
+</ul>
+<p>I wrote another blog post on lattices and how they can be used to form an
+asymmetric cryptosystem. 
+
+<a href="https://kel.bz/post/lattices/"  target="_blank">I think it would be a good thing to read
+first</a> as it covers some of the suggested
+background.</p>
+<h2 id="lll-in-relation-to-euclids-algorithm">LLL In-Relation to Euclid's Algorithm</h2>
+<p>LLL often gets compared to 
+
+<a href="https://holdenlee.wordpress.com/2015/10/09/the-lll-lattice-basis-reduction-algorithm/"  target="_blank">Euclid's Algorithm for finding
+GCDs</a>.
+This is an imperfect analogy, but at a high-level they have a core similarity.
+Namely, both LLL and Euclid's algorithm could be broken down into two steps:
+&ldquo;reduction&rdquo; and &ldquo;swap&rdquo;. To illustrate consider the following pseudocode for
+both algorithms:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">euclid_gcd</span>(a, b):
+    <span style="color:#66d9ef">if</span> b <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>: <span style="color:#75715e"># base case</span>
+        <span style="color:#66d9ef">return</span> a 
+    x <span style="color:#f92672">=</span> a mod b <span style="color:#75715e"># reduction step </span>
+    <span style="color:#66d9ef">return</span> euclid_gcd(b, x) <span style="color:#75715e"># swap step</span>
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e"># dont try to grok this yet...</span>
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">lll</span>(basis):
+    <span style="color:#66d9ef">while</span> k <span style="color:#f92672">&lt;</span><span style="color:#f92672">=</span> n:
+        <span style="color:#66d9ef">for</span> j <span style="color:#f92672">in</span> reverse(range(k<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">0</span>)): <span style="color:#75715e"># reduction step loop</span>
+            m <span style="color:#f92672">=</span> mu(k,j)
+            basis[k] <span style="color:#f92672">=</span> basis[k] <span style="color:#f92672">-</span> mu<span style="color:#f92672">*</span>basis[j] <span style="color:#75715e"># vector reduction</span>
+            <span style="color:#75715e"># update orthogonalized basis </span>
+    <span style="color:#66d9ef">if</span> lovasz_condition:
+        k <span style="color:#f92672">+</span><span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>
+    <span style="color:#66d9ef">else</span>:
+        basis[k], basis[k<span style="color:#f92672">+</span><span style="color:#ae81ff">1</span>] <span style="color:#f92672">=</span> basis[k<span style="color:#f92672">+</span><span style="color:#ae81ff">1</span>], basis[k] <span style="color:#75715e"># swap step</span>
+        <span style="color:#75715e"># update orthogonalized basis</span>
+        k <span style="color:#f92672">=</span> max(k<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>,<span style="color:#ae81ff">1</span>)
+    <span style="color:#66d9ef">return</span> basis
+</code></pre></div><p>If you squint a bit you can see the similarities in the pseudocode, but I think
+the core idea is that both algorithms use a reduce-and-then-swap technique to
+achieve their goals. So at this point, we can roughly say that LLL is an
+extension of Euclid's algorithm that applies to a set of <code>n</code>-vectors instead of
+integers.</p>
+<p>Personally, I don't find that explanation to be satisfying but I can see
+why it could be a useful in developing understanding.</p>
+<h2 id="lll-in-relation-to-gram-schmidt">LLL In-Relation to Gram-Schmidt</h2>
+<p>Another algorithm that is similar to LLL is the
+
+
+<a href="https://en.wikipedia.org/wiki/Gram%E2%80%93Schmidt_process"  target="_blank">Gram-Schmidt</a>
+orthogonalization process. At a high-level, Gram-Schmidt (GS) takes in an input
+basis for a vector space and returns an orthogonalized (i.e. all vectors in the
+basis are orthogonal to one another) basis that spans the same space. It does
+this by leveraging vector projections to &ldquo;decompose&rdquo; each vector into related
+components and removing redundant components from all vectors. If GS
+doesn't make too much sense to you, I suggest checking it out before going too
+much further in this post. Not only is the algorithm similar to LLL, but LLL
+uses Gram-Schmidt as a subroutine.</p>
+<p>You may say: &ldquo;Why don't we use GS to reduce our lattice basis?&rdquo; and we cant
+because life sucks sometimes. GS may get us closer to the basis we want, but GS is
+not guaranteed to produce orthogonal vectors that form a basis for our lattice.
+Check it:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">sage: <span style="color:#f92672">from</span> mage <span style="color:#f92672">import</span> matrix_utils <span style="color:#75715e"># https://github.com/kelbyludwig/mage; use the install.sh script to install</span>
+sage: b1 <span style="color:#f92672">=</span> vector(ZZ, [<span style="color:#ae81ff">3</span>,<span style="color:#ae81ff">5</span>])
+sage: b2 <span style="color:#f92672">=</span> vector(ZZ, [<span style="color:#ae81ff">8</span>,<span style="color:#ae81ff">3</span>])
+sage: B  <span style="color:#f92672">=</span> Matrix(ZZ, [b1,b2])
+sage: Br,_ <span style="color:#f92672">=</span> B<span style="color:#f92672">.</span>gram_schmidt()
+sage: pplot <span style="color:#f92672">=</span> matrix_utils<span style="color:#f92672">.</span>plot_2d_lattice(B[<span style="color:#ae81ff">0</span>], B[<span style="color:#ae81ff">1</span>]) 
+sage: pplot <span style="color:#f92672">+</span><span style="color:#f92672">=</span> plot(Br[<span style="color:#ae81ff">0</span>], color<span style="color:#f92672">=</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#39;</span><span style="color:#e6db74">grey</span><span style="color:#e6db74">&#39;</span>, linestyle<span style="color:#f92672">=</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#39;</span><span style="color:#e6db74">-.</span><span style="color:#e6db74">&#39;</span>, legend_label<span style="color:#f92672">=</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#39;</span><span style="color:#e6db74">unmodified</span><span style="color:#e6db74">&#39;</span>, legend_color<span style="color:#f92672">=</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#39;</span><span style="color:#e6db74">blue</span><span style="color:#e6db74">&#39;</span>) 
+sage: pplot <span style="color:#f92672">+</span><span style="color:#f92672">=</span> plot(Br[<span style="color:#ae81ff">1</span>], color<span style="color:#f92672">=</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#39;</span><span style="color:#e6db74">grey</span><span style="color:#e6db74">&#39;</span>, linestyle<span style="color:#f92672">=</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#39;</span><span style="color:#e6db74">-.</span><span style="color:#e6db74">&#39;</span>, legend_label<span style="color:#f92672">=</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#39;</span><span style="color:#e6db74">orthogonalized</span><span style="color:#e6db74">&#39;</span>, legend_color<span style="color:#f92672">=</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#39;</span><span style="color:#e6db74">grey</span><span style="color:#e6db74">&#39;</span>)
+sage: pplot
+</code></pre></div><figure>
+    <img src="/gs_compare.png"/> 
+</figure>
+
+<p>Notice how not all orthogonalized (grey) vectors are touching a lattice
+&ldquo;point&rdquo;? Fortunately for us, GS is still pretty useful to understanding LLL so
+this is not a total loss.</p>
+<h2 id="lll-in-relation-to-gaussian-lattice-reduction">LLL In-Relation to Gaussian Lattice Reduction</h2>
+<p>Unless you are basically a sorceress, I imagine you may find starting with
+2-dimensional lattice basis reduction useful. Thankfully, we have 
+
+<a href="https://www.math.auckland.ac.nz/~sgal018/crypto-book/ch17.pdf"  target="_blank">Gauss&rsquo;
+algorithm for reducing bases in
+dimension 2</a>.
+This is great for a couple reasons:</p>
+<ul>
+<li>
+<p>Gaussian lattice reduction is also pretty similar to LLL</p>
+</li>
+<li>
+<p>Gaussian lattice reduction is analogous to <em>both</em> Euclid's algorithm and LLL
+so it can act as a bridge between these two analogies</p>
+</li>
+<li>
+<p>We can use 2D vectors which are easy to graph and visualize</p>
+</li>
+</ul>
+<p>Gauss&rsquo; algorithm is defined as follows:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">gauss_reduction</span>(v1, v2):
+    <span style="color:#66d9ef">while</span> True:
+        <span style="color:#66d9ef">if</span> v2<span style="color:#f92672">.</span>norm() <span style="color:#f92672">&lt;</span> v1<span style="color:#f92672">.</span>norm():
+            v1, v2 <span style="color:#f92672">=</span> v2, v1 <span style="color:#75715e"># swap step</span>
+        m <span style="color:#f92672">=</span> round( (v1 <span style="color:#f92672">*</span> v2) <span style="color:#f92672">/</span> (v1 <span style="color:#f92672">*</span> v1) )
+        <span style="color:#66d9ef">if</span> m <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>:
+            <span style="color:#66d9ef">return</span> (v1, v2)
+        v2 <span style="color:#f92672">=</span> v2 <span style="color:#f92672">-</span> m<span style="color:#f92672">*</span>v1 <span style="color:#75715e"># reduction step</span>
+</code></pre></div><p>Let's break this down a bit. <code>gauss_reduction</code> takes in two vectors that
+represent our lattice basis. Ignoring the <code>while</code> loop for a second, the
+first step is the swap step. The swap step ensures that the length of <code>v1</code>
+is smaller than <code>v2</code>. Among other things, this will ensure that the result
+of <code>gauss_reduction</code> will be ordered according to length 
+
+<a href="#stumped"  >which helps with
+some of the proofs</a> that ensure this algorithm works well.</p>
+<p>What does <code>m</code> represent? <code>m</code> is the scalar projection of <code>v2</code> onto <code>v1</code> (the
+longer vector onto the shorter vector). This is the same scalar produced during
+the GS process but in Gauss's algorithm we round it to the nearest integer so
+we ensure we are still working with vectors within the lattice. This is a
+important idea, so lets visualize this process.</p>
+<p>We first project <code>v2</code> onto <code>v1</code>. Here is what the projected vector looks
+like before and after rounding.</p>
+<figure>
+    <img src="/gauss_m_before_after.gif"/> 
+</figure>
+
+<p>We then compute our new reduced vector <code>v2 - m*v1</code>. Here is the reduction step
+before and after rounding <code>m</code>.</p>
+<figure>
+    <img src="/gauss_reduction_before_after.gif"/> 
+</figure>
+
+<p>Cool, huh? By rounding <code>m</code> prior to reduction we have sorta &ldquo;knocked over&rdquo; our
+new reduced vector <code>v2</code> so it becomes a vector in the basis. What is
+interesting is that the reduced <code>v2</code> appears to have a shorter length than
+original <code>v2</code>.  That is not a coincidence, that is a guarantee of the reduction
+step! Additionally, the resultant basis vectors will be &ldquo;nearly&rdquo; orthogonal,
+which is exactly what we want. I don't want to bog anyone down with details for
+why this works just yet, but if you are impatient you can jump to 
+
+<a href="#stumped"  >the more
+technical explanations</a>.</p>
+<p>For now, lets just wave our hands and say <code>gauss_reduction</code> will terminate, and
+return a &ldquo;good&rdquo; (i.e. short and nearly orthogonal) basis for dimension 2 bases.</p>
+<h2 id="lll-tldr">LLL tl;dr</h2>
+<p>LLL extends Gauss&rsquo; algorithm for reduction to work with <code>n</code> vectors. At a
+high-level, LLL iterates through the input basis vectors and performs a length
+reduction to each vector (this is close to Gauss&rsquo; algorithm at this point).
+However, we are dealing with <code>n</code> vectors instead of just two so we need a way
+to ensure that the 
+
+<a href="https://crypto.stackexchange.com/questions/39532/why-is-the-lov%C3%A1sz-condition-used-in-the-lll-algorithm/39534#39534"  target="_blank">ordering of the input basis doesn't affect our result</a>.
+To assist with ordering the reduced basis by length, LLL uses a heuristic
+called the Lovász condition to determine if vectors in the input basis need to
+be swapped. LLL returns after all basis vectors have gone through at least one
+reduction, and the new basis is roughly ordered by length.</p>
+<h2 id="a-deeper-dive-into-lll">A Deeper Dive into LLL</h2>
+<p>To help understand the mechanics of LLL, we can dig into an implementation of
+the algorithm. Here is some python pseudocode repurposed from
+
+
+<a href="https://en.wikipedia.org/wiki/Lenstra%E2%80%93Lenstra%E2%80%93Lov%C3%A1sz_lattice_basis_reduction_algorithm"  target="_blank">wikipedia</a>:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">LLL</span>(B, delta):
+    Q <span style="color:#f92672">=</span> gram_schmidt(B)
+
+    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">mu</span>(i,j):
+        v <span style="color:#f92672">=</span> B[i]
+        u <span style="color:#f92672">=</span> Q[j]
+        <span style="color:#66d9ef">return</span> (v<span style="color:#f92672">*</span>u) <span style="color:#f92672">/</span> (u<span style="color:#f92672">*</span>u)   
+
+    n, k <span style="color:#f92672">=</span> B<span style="color:#f92672">.</span>nrows(), <span style="color:#ae81ff">1</span>
+    <span style="color:#66d9ef">while</span> k <span style="color:#f92672">&lt;</span> n:
+
+        <span style="color:#75715e"># length reduction step</span>
+        <span style="color:#66d9ef">for</span> j <span style="color:#f92672">in</span> reversed(range(k)):
+            <span style="color:#66d9ef">if</span> abs(mu(k,j)) <span style="color:#f92672">&gt;</span> <span style="color:#f92672">.</span><span style="color:#ae81ff">5</span>:
+                B[k] <span style="color:#f92672">=</span> B[k] <span style="color:#f92672">-</span> round(mu(k,j))<span style="color:#f92672">*</span>B[j]
+                Q <span style="color:#f92672">=</span> gram_schmidt(B)
+
+        <span style="color:#75715e"># swap step</span>
+        <span style="color:#66d9ef">if</span> Q[k]<span style="color:#f92672">*</span>Q[k] <span style="color:#f92672">&gt;</span><span style="color:#f92672">=</span> (delta <span style="color:#f92672">-</span> mu(k,k<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>)<span style="color:#f92672">*</span><span style="color:#f92672">*</span><span style="color:#ae81ff">2</span>)<span style="color:#f92672">*</span>(Q[k<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>]<span style="color:#f92672">*</span>Q[k<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>]):
+            k <span style="color:#f92672">=</span> k <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>
+        <span style="color:#66d9ef">else</span>:
+            B[k], B[k<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>] <span style="color:#f92672">=</span> B[k<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>], B[k]
+            Q <span style="color:#f92672">=</span> gram_schmidt(B)
+            k <span style="color:#f92672">=</span> max(k<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">1</span>)
+
+   <span style="color:#66d9ef">return</span> B 
+</code></pre></div><p>LLL is pretty concise, but there is definitely some seemingly magical logic at
+first glance. Let's start with the <code>mu</code>.</p>
+<h4 id="mu">mu</h4>
+<p><code>mu</code> is a function that produces a scalar for vector reduction. Its
+similar to the scalar projections from Gram-Schmidt orthogonalization and
+Gaussian reduction. The only major difference is <code>mu</code> is not projecting a
+lattice vector onto a vector that is also in the lattice (like Gauss&rsquo; algorithm
+did). <code>mu</code> is projecting a lattice vector onto a GS orthogonalized vector.</p>
+<p>In other words, suppose <code>B</code> is our input basis and <code>Q</code> is the result of
+Gram-Schmidt applied to <code>B</code> (without normalization). The constant produced by
+<code>mu(i,j)</code> is the scalar projection of the <code>i</code>th lattice basis vector (<code>B[i]</code>)
+onto the <code>j</code>th Gram-Schmidt orthogonalized basis vector (<code>Q[j]</code>). The GIF below
+is a brief demonstration of <code>mu</code>.</p>
+<figure>
+    <img src="/mu.gif"/> 
+</figure>
+
+<p>We already know that just applying GS won't necessarily give us a basis for our
+lattice, but it does give us the &ldquo;ideal&rdquo; orthogonalized matrix.  Since we
+cannot use the &ldquo;ideal&rdquo; matrix directly, I like to think of <code>mu</code> as leveraging
+the GS orthogonalized matrix as a reference to how successful reduction is.</p>
+<h4 id="length-reduction">Length Reduction</h4>
+<p>Isolating the length reduction pseudocode from LLL, we have:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#ae81ff">1.</span>  n, k <span style="color:#f92672">=</span> B<span style="color:#f92672">.</span>nrows(), <span style="color:#ae81ff">1</span>
+<span style="color:#ae81ff">2.</span>  <span style="color:#75715e"># outer loop condition</span>
+<span style="color:#ae81ff">3.</span>  <span style="color:#66d9ef">while</span> k <span style="color:#f92672">&lt;</span> n:
+<span style="color:#ae81ff">4.</span>      <span style="color:#75715e"># length reduction loop</span>
+<span style="color:#ae81ff">5.</span>      <span style="color:#66d9ef">for</span> j <span style="color:#f92672">in</span> reversed(range(k)):
+<span style="color:#ae81ff">6.</span>          <span style="color:#66d9ef">if</span> abs(mu(k,j)) <span style="color:#f92672">&gt;</span> <span style="color:#f92672">.</span><span style="color:#ae81ff">5</span>:
+<span style="color:#ae81ff">7.</span>              <span style="color:#75715e"># reduce B[k]</span>
+<span style="color:#ae81ff">8.</span>              B[k] <span style="color:#f92672">=</span> B[k] <span style="color:#f92672">-</span> round(mu(k,j))<span style="color:#f92672">*</span>B[j]
+<span style="color:#ae81ff">9.</span>              <span style="color:#75715e"># re-calculate GS with new basis B</span>
+<span style="color:#ae81ff">10.</span>              Q <span style="color:#f92672">=</span> gram_schmidt(B)
+</code></pre></div><p>At line 1, we establish two variables:</p>
+<ul>
+<li>
+<p><code>n</code>: which is a constant that holds the number of rows in the basis <code>B</code></p>
+</li>
+<li>
+<p><code>k</code>: which keeps track of the index of the vector we are focusing on</p>
+</li>
+</ul>
+<p>The outer loop condition is less of a concern during the length reduction step,
+we can head straight to the length reduction loop. The length reduction loop
+iterates through the <code>k-1</code>th basis vector towards the <code>0</code>th basis vector and
+checks if the absolute value of <code>mu(k,j)</code> is greater than <code>1/2</code>. <code>1/2</code> is
+significant for since we are rounding the value of <code>mu(k,j)</code>, if its absolute
+value is less than <code>1/2</code> then we would be subtracting a zero vector which
+wouldn't reduce the vector. We could remove that <code>if</code> statement on line 6 but
+we would then have superfluous assignments (i.e. <code>B[k] = B[k]</code>) for some
+iterations.</p>
+<p>The length reduction step is basically Gram-Schmidt's reduction step with
+minor modifications. Here is another way to write the LLL length reduction step
+(omitting the <code>if</code> condition) for each vector in a length reduction loop:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">B[<span style="color:#ae81ff">0</span>] <span style="color:#f92672">=</span> B[<span style="color:#ae81ff">0</span>]
+B[<span style="color:#ae81ff">1</span>] <span style="color:#f92672">=</span> B[<span style="color:#ae81ff">1</span>] <span style="color:#f92672">-</span> round(mu(<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">0</span>))<span style="color:#f92672">*</span>B[<span style="color:#ae81ff">0</span>]
+B[<span style="color:#ae81ff">2</span>] <span style="color:#f92672">=</span> B[<span style="color:#ae81ff">2</span>] <span style="color:#f92672">-</span> round(mu(<span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">1</span>))<span style="color:#f92672">*</span>B[<span style="color:#ae81ff">1</span>] <span style="color:#f92672">-</span> round(mu(<span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">0</span>))<span style="color:#f92672">*</span>B[<span style="color:#ae81ff">0</span>]
+<span style="color:#f92672">.</span><span style="color:#f92672">.</span><span style="color:#f92672">.</span>
+B[k] <span style="color:#f92672">=</span> B[k] <span style="color:#f92672">-</span> round(mu(k, k<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>))<span style="color:#f92672">*</span>B[k<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>] <span style="color:#f92672">-</span> round(mu(k, k<span style="color:#f92672">-</span><span style="color:#ae81ff">2</span>))<span style="color:#f92672">*</span>B[k<span style="color:#f92672">-</span><span style="color:#ae81ff">2</span>] <span style="color:#f92672">-</span> <span style="color:#f92672">.</span><span style="color:#f92672">.</span><span style="color:#f92672">.</span> <span style="color:#f92672">-</span> round(mu(k, <span style="color:#ae81ff">0</span>))<span style="color:#f92672">*</span>B[<span style="color:#ae81ff">0</span>]
+</code></pre></div><p>Just for comparison here is how Gram-Schmidt vectors are calculated:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">Q[<span style="color:#ae81ff">0</span>] <span style="color:#f92672">=</span> B[<span style="color:#ae81ff">0</span>]
+Q[<span style="color:#ae81ff">1</span>] <span style="color:#f92672">=</span> B[<span style="color:#ae81ff">1</span>] <span style="color:#f92672">-</span> mu(<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">0</span>)<span style="color:#f92672">*</span>Q[<span style="color:#ae81ff">0</span>]
+Q[<span style="color:#ae81ff">2</span>] <span style="color:#f92672">=</span> B[<span style="color:#ae81ff">2</span>] <span style="color:#f92672">-</span> mu(<span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">1</span>)<span style="color:#f92672">*</span>Q[<span style="color:#ae81ff">1</span>] <span style="color:#f92672">-</span> mu(<span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">0</span>)<span style="color:#f92672">*</span>Q[<span style="color:#ae81ff">0</span>]
+<span style="color:#f92672">.</span><span style="color:#f92672">.</span><span style="color:#f92672">.</span>
+Q[k] <span style="color:#f92672">=</span> B[k] <span style="color:#f92672">-</span> mu(k, k<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>)<span style="color:#f92672">*</span>Q[k<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>] <span style="color:#f92672">-</span> mu(k, k<span style="color:#f92672">-</span><span style="color:#ae81ff">2</span>)<span style="color:#f92672">*</span>Q[k<span style="color:#f92672">-</span><span style="color:#ae81ff">2</span>] <span style="color:#f92672">-</span> <span style="color:#f92672">.</span><span style="color:#f92672">.</span><span style="color:#f92672">.</span> <span style="color:#f92672">-</span> mu(k, <span style="color:#ae81ff">0</span>)<span style="color:#f92672">*</span>Q[<span style="color:#ae81ff">0</span>]
+</code></pre></div><p>And finally, after we modify our basis <code>B</code>, we need to keep our orthogonalized
+basis up-to-date. In line 10, we update <code>Q</code>. This is definitely not the
+most efficient way to keep <code>Q</code> up-to-date, but I just copied Wikipedia here so ¯\<em>(ツ)</em>/¯.</p>
+<h3 id="the-lovsz-condition-and-the-swap-step">The Lovász Condition and the Swap Step</h3>
+<p>Extracting the &ldquo;swap&rdquo; step from our Wikipedia pseudocode gets us:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#ae81ff">1.</span>      <span style="color:#75715e"># swap step</span>
+<span style="color:#ae81ff">2.</span>      <span style="color:#66d9ef">if</span> Q[k]<span style="color:#f92672">*</span>Q[k] <span style="color:#f92672">&gt;</span><span style="color:#f92672">=</span> (delta <span style="color:#f92672">-</span> mu(k,k<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>)<span style="color:#f92672">*</span><span style="color:#f92672">*</span><span style="color:#ae81ff">2</span>)<span style="color:#f92672">*</span>(Q[k<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>]<span style="color:#f92672">*</span>Q[k<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>]):
+<span style="color:#ae81ff">3.</span>          k <span style="color:#f92672">=</span> k <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>
+<span style="color:#ae81ff">4.</span>      <span style="color:#66d9ef">else</span>:
+<span style="color:#ae81ff">5.</span>          B[k], B[k<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>] <span style="color:#f92672">=</span> B[k<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>], B[k]
+<span style="color:#ae81ff">6.</span>          Q <span style="color:#f92672">=</span> gram_schmidt(B)
+<span style="color:#ae81ff">7.</span>          k <span style="color:#f92672">=</span> max(k<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">1</span>)
+<span style="color:#ae81ff">8.</span> 
+<span style="color:#ae81ff">9.</span> <span style="color:#66d9ef">return</span> B 
+</code></pre></div><p>At this point, the algorithm has finished a round of length-reduction. From
+there LLL must determine what vector to focus on next. The Lovász condition
+will tell us whether to continue on to the next basis vector (Line 3), or
+whether to place the <code>k</code>'th basis vector in position <code>k-1</code> (Lines 5-7).</p>
+<p>Putting the meaning of the Lovász condition aside for now, this swap step is
+reminiscent of a sorting algorithm. Recall that <code>k</code> is the index of the basis
+vector that LLL is &ldquo;focusing on&rdquo;. Suppose LLL is at the <code>k</code>th vector and the
+Lovász condition is true, from there LLL just moves onto the <code>k+1</code>th vector
+(Line 3). At this stage, LLL is basically saying that the <code>0</code>th to <code>k</code>th
+vectors are roughly sorted by length (this may change after the next round of
+reductions though). If the Lovász condition is false, the <code>k</code>th basis vector is
+placed at position <code>k-1</code> (Line 5), and LLL then re-focuses (Line 7) on the same
+vector which is now at position <code>k-1</code>. Another reduction round is done, and
+then back to the swap step. This brings about another way to describe LLL: <em>LLL
+is a vector sorting algorithm that occasionally screws up the ordering by
+making vectors smaller so it has to re-sort.</em></p>
+<p>What about the Lovász condition, itself? As I said earlier, it's basically a
+heuristic that determines if the vectors are in a &ldquo;good&rdquo; order. Aside from
+that, I don't have too much to add here unfortunately as my intuition is still
+shaky. There are multiple equivalent representations for the Lovász and none of
+them have really felt 100% right to me. The best explanations that I have found
+thus far are 
+
+<a href="https://crypto.stackexchange.com/questions/39532/why-is-the-lov%C3%A1sz-condition-used-in-the-lll-algorithm/39534#39534"  target="_blank">this StackOverflow post</a> and 
+
+<a href="https://www.amazon.com/Introduction-Mathematical-Cryptography-Undergraduate-Mathematics/dp/1441926747"  target="_blank">&ldquo;An Introduction to Mathematical Cryptography&rdquo;</a>.</p>
+<p>&ldquo;An Introduction to Mathmetical Cryptography&rdquo; discusses an equivalent
+representation of the Lovász condition that is a comparison of the lengths of
+the projection of basis vectors onto the orthogonal complement of a space
+spanned by a subset of basis vectors.</p>
+<p>If anyone reading this has a link to a decently intuitive explanation or can
+describe the Lovász in a memorable way please let me know!</p>
+<h2 id="stumped">Things that Stumped Me When Learning LLL</h2>
+<h4 id="is-the-gaussian-length-reduction-step-guaranteed-to-provide-short-and-nearly-orthogonal-vectors">Is the Gaussian length-reduction step guaranteed to provide short and nearly orthogonal vectors?</h4>
+<p>If you have not made the connection yet, the <code>m</code> value from Gaussian reduction
+is the nearest integer of the <code>mu</code> value from Gram-Schmidt. It may not seem
+obvious that rounding the result of <code>mu</code> and using as a scalar would produce a
+good basis. In Gram-Schmidt using the exact value of <code>mu</code> allows for the ideal
+decomposition of a vector, which can be used to orthogonalize the vector in
+relation to the other basis vectors. With Gaussian reduction, we are rounding
+that result which could affect the orthogonality. Fortunately, even after
+rounding <code>mu</code> the length reduction step will produce &ldquo;nearly orthogonal&rdquo;
+vectors.</p>
+<p>In fact, a new length-reduced vector <code>B[k]</code> where <code>B[k] = B[k] - round(mu(i,j))*B[j]</code> will always have an angle with <code>B[j]</code> that lies between 60
+and 120 degrees. This is guarantee that stems from another fact that <code>B[k]</code>'s
+projection onto <code>B[j]</code> will always lie between <code>-1/2*B[j]</code> and <code>1/2B[j]</code>.
+Why is the latter fact true? Intuitively, we have removed all possible
+<em>integer</em> components of <code>B[j]</code> from <code>B[k]</code>, therefore, the resultant
+projection of <code>B[k]</code> onto <code>B[j]</code> must lie between <code>-1/2*B[j]</code> and <code>1/2B[j]</code>.</p>
+<p>Suppose we have just reduced <code>B[k]</code>, so we know the projection of <code>B[k]</code> onto
+<code>B[j]</code> will lie between <code>-1/2*B[j]</code> and <code>1/2*B[j]</code>.  Using the definition of
+vector projection (see image below), we can re-write our inequality:</p>
+<figure>
+    <img src="/angle.png"/> 
+</figure>
+
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">|</span>B[k]<span style="color:#f92672">|</span><span style="color:#f92672">*</span>cos(theta) <span style="color:#f92672">=</span> proj B[k] onto B[j]
+<span style="color:#f92672">=</span><span style="color:#f92672">&gt;</span>
+<span style="color:#f92672">|</span>B[k]<span style="color:#f92672">|</span><span style="color:#f92672">*</span>abs(cos(theta)) <span style="color:#f92672">&lt;</span><span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span><span style="color:#f92672">/</span><span style="color:#ae81ff">2</span><span style="color:#f92672">*</span><span style="color:#f92672">|</span>B[j]<span style="color:#f92672">|</span>
+(<span style="color:#f92672">|</span>B[k]<span style="color:#f92672">|</span><span style="color:#f92672">/</span><span style="color:#f92672">|</span>B[j]<span style="color:#f92672">|</span>)<span style="color:#f92672">*</span>abs(cos(theta)) <span style="color:#f92672">&lt;</span><span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span><span style="color:#f92672">/</span><span style="color:#ae81ff">2</span>
+</code></pre></div><p>I alluded to this earlier, but Gaussian two dimensional reduction will make it
+such that the reduced vector <code>B[k]</code> is shorter than <code>B[j]</code> (there is a proof of
+this in &ldquo;Introduction to Mathematical Cryptography&rdquo;). According to 
+
+<a href="https://crypto.stackexchange.com/questions/47909/why-are-vectors-approximately-orthogonal-after-gaussian-lattice-reduction/47924"  target="_blank">this
+StackOverflow
+post</a>,
+these two facts prove the &ldquo;nearly&rdquo; orthogonal property of the output vectors.
+I am actually not 100% sure these proofs are correct (I think they made a
+mistake but I don't have a proof either) so I cannot say much more than that.</p>
+<h4 id="why-doesnt-gaussian-lattice-reduction-easily-generalize-to-work-with-lattices-with-more-than-2-vectors">Why doesn't Gaussian lattice reduction easily generalize to work with lattices with more than 2 vectors?</h4>
+<p>I found the explanation from 
+
+<a href="https://www.math.auckland.ac.nz/~sgal018/crypto-book/ch17.pdf"  target="_blank">&ldquo;Mathematics of Public Key Cryptography&rdquo;</a>
+to explain this well.</p>
+<blockquote>
+<p>Finally, we remark that there is a natural analogue of Gaussian Reduction for
+any dimension. Hence, it is natural to try to generalise the Lagrange-Gauss
+algorithm to higher dimensions. Generalisations to dimension three have been
+given by Vall'ee and Semaev. Generalising to higher dimensions introduces
+problems. For example, choosing the right linear combination to size reduce bn
+using b1,&hellip;,bn−1 is solving the CVP in a sublattice (which is a
+hard problem). Furthermore, there is no guarantee that the resulting basis
+actually has good properties in high dimension. We refer to Nguyen and Stehl'e
+for a full discussion of these issues and an algorithm that works in
+dimensions 3 and 4</p>
+</blockquote>
+<p>How does LLL overcome this? I like to think that LLL breaks an n-dimensional
+problem down into a bunch of 2-dimensional cases and works a little at a time.
+That technique, plus length-sorting approximations, seems to work well in
+practice.</p>
+<h4 id="how-does-lll-use-gs-as-a-guide">How does LLL use GS as a guide?</h4>
+<p>Again, 
+
+<a href="https://www.math.auckland.ac.nz/~sgal018/crypto-book/ch17.pdf"  target="_blank">quoting
+others</a> that are
+smarter than I am:</p>
+<blockquote>
+<p>As we have noted in Example 16.3.3, computational problems in lattices can be easy
+if one has a basis that is orthogonal, or “sufficiently close to orthogonal”. A simple but
+important observation is that one can determine when a basis is close to orthogonal by
+considering the lengths of the Gram-Schmidt vectors. More precisely, a lattice basis is
+“close to orthogonal” if the lengths of the Gram-Schmidt vectors do not decrease too
+rapidly.</p>
+</blockquote>
+<p><em>Thanks to Chris Bellavia for providing valuable feedback on this write-up.</em></p>
+
+  </article>
+
+  
+  
+
+  
+
+  
+    <section class="article-labels">
+      
+          
+            
+            <a class="article-tag li" href=/tags/cryptography/><span class="hashtag">#</span>cryptography</a>
+          
+    </section>
+  
+
+  
+    <section class="article-navigation">
+      
+        
+        <p>
+          <a class="link" href="/post/ssh-agent/"><span class="li"></span>what is the value-add of ssh-agent?</a>
+          
+          
+              
+              <a class="article-tag" href=/tags/software-security/><span class="hashtag">#</span>software-security</a>
+          
+        </p>
+        
+
+        
+          <p>
+            <a class="link" href="/post/pohlig/"><span class="li"></span>a note on subgroup confinement attacks</a class="link">
+            
+            
+                
+                <a class="article-tag" href=/tags/cryptography/><span class="hashtag">#</span>cryptography</a>
+            
+          </p>
+        
+      
+    </section>
+  
+
+  
+
+
+        </div><section id="footer" class="footer max-body-width">
+  
+  
+    
+  
+  <p>kel.bz</p>
+  <p>
+    <span>Powered by</span>
+    <a href="https://gohugo.io">Hugo</a>
+    <span>and the</span>
+    <a href="https://themes.gohugo.io/hugo-notepadium/">Notepadium</a>
+  </p>
+</section>
+
+
+
+
+</div>
+    </body>
+</html>

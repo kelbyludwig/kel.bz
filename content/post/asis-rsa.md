@@ -1,15 +1,19 @@
-+++
-date = "2016-09-18T14:45:13-05:00"
-draft = false
-title = "asis ctf: rsa write-up"
-+++
+---
+date: "2016-09-18T14:45:13-05:00"
+draft: false
+title: "asis ctf: rsa write-up"
+tags: [
+    "cryptography",
+]
+summary: "Breaking RSA with sequential prime key parameter generation."
+---
 
 # The Problem
 
 Given a public key, an encrypted flag and a Python script that encrypted the
 flag decrypt the flag. First, the script used to create the challenge files.
 
-```
+```python
 #!/usr/bin/python
 
 import gmpy
@@ -48,7 +52,7 @@ g.write(ext_rsa_encrypt(p, q, e, flag))
 
 The encrypted flag:
 
-```
+```shell
 mBvIRwW8Q7hkNINbXmTGxscnVjfZ9nVG2AaOYHeTRYsRezHMkpFW15q3NqENPLJGyLlDALb5Cycd
 TV9ok/NXoUnnXx3MQLQnBVax2pmZ3bkUBbaRIWyVB2UHcZKpH8UFPT2uFnDSnhOG8PBJ9RCCs2ew
 UoJ1wBxV8W7qBmMe6TmoEn6g0/sOte5o7lp5oJMCbWObhjNpxHtrREryTdulDgRVlWbvbpV/m4V1
@@ -92,7 +96,7 @@ AknUqW4U
 
 And finally the public key:
 
-```
+```shell
 -----BEGIN PUBLIC KEY-----
 MEIwDQYJKoZIhvcNAQEBBQADMQAwLgIhANjiTBK3uZ7+CpvASmo99YoqlEJptJK3
 N23xKQI/IGG5AgkArCrD4MoPVgc=
@@ -105,7 +109,7 @@ The size of the public key stuck out like a sore thumb. Decoding the
 public key and dropping it into sage returned the factors pretty 
 quickly.
 
-```
+```python
 >>> import gmpy
 >>> from Crypto.PublicKey import RSA
 >>> from Crypto.Util.number import *
@@ -122,7 +126,7 @@ quickly.
 >>>
 ```
 
-```
+```python
 sage: factor(98099407767975360290660227117126057014537157468191654426411230468489043009977)
 311155972145869391293781528370734636009 * 315274063651866931016337573625089033553
 ```
@@ -130,7 +134,7 @@ sage: factor(9809940776797536029066022711712605701453715746819165442641123046848
 Easy right? I went ahead and dropped those factors into a python script and tried
 to decrypt the flag.
 
-```
+```python
 import gmpy
 from Crypto.Util.number import *
 from Crypto.PublicKey import RSA
@@ -149,6 +153,7 @@ key = PKCS1_v1_5.new(privkey)
 pt = key.decrypt(ctb, "")
 print(pt)
 ```
+
 Well that won't work because the numeric representation of the ciphertext was
 _much_ larger than the modulus. If you follow the python script, you may notice
 that the public key written to `pubkey.pem` is not necessarily the public key
@@ -157,7 +162,7 @@ within the `while` loop comes into play. After a multiple unsuccessful attempts
 (most took too long) the following script eventually gave the first parameters
 that were large enough to decrypt the ciphertext.
 
-```
+```python
 import gmpy
 import sys
 from Crypto.Util.number import *
@@ -199,7 +204,7 @@ print("qbl: %d" % long(q).bit_length())
 
 Which gave the parameters:
 
-```
+```shell
 generating new primes
 generating new primes
 generating new primes
@@ -214,6 +219,6 @@ qbl: 10426
 
 If you throw those parameters into the first script, the flag will decrypt and we'll get the flag (30 times):
 
-```
+```shell
 ASIS{F4ct0R__N_by_it3rat!ng!}
 ```

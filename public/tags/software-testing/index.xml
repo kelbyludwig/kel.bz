@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>software-testing on kel.bz</title>
+    <link>https://kel.bz/tags/software-testing/</link>
+    <description>Recent content in software-testing on kel.bz</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 01 Aug 2016 20:53:18 -0500</lastBuildDate>
+    
+	<atom:link href="https://kel.bz/tags/software-testing/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>well-tested authorization design patterns</title>
+      <link>https://kel.bz/post/authz-design-patterns/</link>
+      <pubDate>Mon, 01 Aug 2016 20:53:18 -0500</pubDate>
+      
+      <guid>https://kel.bz/post/authz-design-patterns/</guid>
+      <description>Patterns/anti-patterns for designing authorization APIs.</description>
+    </item>
+    
+    <item>
+      <title>when fuzzing servers</title>
+      <link>https://kel.bz/post/fuzzing-servers/</link>
+      <pubDate>Wed, 11 Nov 2015 18:13:14 -0500</pubDate>
+      
+      <guid>https://kel.bz/post/fuzzing-servers/</guid>
+      <description>One tip for finding fast and useful fuzz targets for networked code.</description>
+    </item>
+    
+  </channel>
+</rss>

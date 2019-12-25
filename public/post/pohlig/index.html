@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8">
+<meta name="generator" content="Hugo 0.62.0" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light only">
+<meta name="supported-color-schemes" content="light only">
+
+
+  
+  
+    <title>a note on subgroup confinement attacks &ndash; kel.bz</title>
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/core.min.871c51706cba837f31c3028126e8801b3ced6615f16b6ef7dbba11efc23280f506ef819d15b556880689cd71206843b7.css" integrity="sha384-hxxRcGy6g38xwwKBJuiAGzztZhXxa27327oR78IygPUG74GdFbVWiAaJzXEgaEO3">
+<body>
+      <div class="base-body max-width"><section id="header" class="header max-body-width">
+  <p>
+    <a class="site-name" href="/">
+      
+        kel.bz
+      
+    </a>
+    
+      <span class="site-slogan">where i take notes</span>
+    
+  </p>
+</section><div id="content" class="flex-body max-body-width">
+  
+  
+
+  <section class="article-header" >
+      <h1>a note on subgroup confinement attacks</h1>
+      <p class="article-date">2017-01-14</p>
+  </section>
+
+  <article class="markdown-body" >
+    <p>The Pohlig-Hellman algorithm is a efficient method of solving the discrete log
+problem for groups whose order is a <em>smooth integer</em>. A smooth integer is just
+an integer whose prime factorization consists of small prime numbers.</p>
+<p>Pohlig-Hellman could be used to efficiently recover private keys from broken
+(EC)DH implementations. There are some cryptopals exercise that use it (its in
+set 8). This attack is often referred to as a <em>subgroup confinement</em> attack.
+It's really cool. (I do not plan on covering the algorithm here
+
+
+<a href="https://en.wikipedia.org/wiki/Pohlig%E2%80%93Hellman_algorithm"  target="_blank">Wikipedia</a> has
+a pretty good walkthrough of the algorithm).</p>
+<p>Something that initially tripped me up was that subgroup confinement works in
+multiple contexts. When looking up the algorithm in most textbooks (or, you
+know, Wikipedia) Pohlig-Hellman takes advantage of a single element whose order
+is a smooth integer. In other words, we want to solve <code>h = g^x (mod m)</code> with
+knowledge of <code>h</code>, <code>g</code>, and <code>m</code>. If the order of <code>g</code> is smooth, we can recover
+bits of <code>x</code> with only a single element <code>h</code>. This is the &ldquo;offline&rdquo; case. You
+could think of this applying to some packet capture of an awful TLS
+implementation for a server that has since been shutdown. If all goes well, just
+having access to the pcap could lead to private key recovery.</p>
+<p>Another context for subgroup confinement leverages an &ldquo;online&rdquo; oracle. In
+this context, the target implementation could accept malicious group elements
+<code>g</code> and respond with <code>h = g^x (mod m)</code>. Dependent on the properties of <code>m</code> the
+attacker could generate different values for <code>g</code> that make solving for <code>h</code>
+easy(ish). This would apply to (for example) a live TLS server that an attacker
+is sending evil values to.</p>
+<p>When I was initially working on this attack, I was applying an offline
+algorithm to an online context. Once I figured out why my code was borked, it
+was enlightening to think about subgroup confinement from an offline/online perspective.</p>
+
+  </article>
+
+  
+  
+
+  
+
+  
+    <section class="article-labels">
+      
+          
+            
+            <a class="article-tag li" href=/tags/cryptography/><span class="hashtag">#</span>cryptography</a>
+          
+    </section>
+  
+
+  
+    <section class="article-navigation">
+      
+        
+        <p>
+          <a class="link" href="/post/lll/"><span class="li"></span>building lattice reduction (LLL) intuition</a>
+          
+          
+              
+              <a class="article-tag" href=/tags/cryptography/><span class="hashtag">#</span>cryptography</a>
+          
+        </p>
+        
+
+        
+          <p>
+            <a class="link" href="/post/javaexec/"><span class="li"></span>user-influenced os commands are still considered harmful</a class="link">
+            
+            
+                
+                <a class="article-tag" href=/tags/software-security/><span class="hashtag">#</span>software-security</a>
+            
+                
+                <a class="article-tag" href=/tags/java/><span class="hashtag">#</span>java</a>
+            
+          </p>
+        
+      
+    </section>
+  
+
+  
+
+
+        </div><section id="footer" class="footer max-body-width">
+  
+  
+    
+  
+  <p>kel.bz</p>
+  <p>
+    <span>Powered by</span>
+    <a href="https://gohugo.io">Hugo</a>
+    <span>and the</span>
+    <a href="https://themes.gohugo.io/hugo-notepadium/">Notepadium</a>
+  </p>
+</section>
+
+
+
+
+</div>
+    </body>
+</html>

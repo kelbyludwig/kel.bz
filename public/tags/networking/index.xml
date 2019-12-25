@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>networking on kel.bz</title>
+    <link>https://kel.bz/tags/networking/</link>
+    <description>Recent content in networking on kel.bz</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 20 Aug 2016 13:52:18 -0500</lastBuildDate>
+    
+	<atom:link href="https://kel.bz/tags/networking/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>modifying ip headers with netfilter</title>
+      <link>https://kel.bz/post/netfilter/</link>
+      <pubDate>Sat, 20 Aug 2016 13:52:18 -0500</pubDate>
+      
+      <guid>https://kel.bz/post/netfilter/</guid>
+      <description>Using netfilter to programmtically rewrite the source IP address of ICMP packets.</description>
+    </item>
+    
+  </channel>
+</rss>

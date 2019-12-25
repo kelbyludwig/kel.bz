@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>software-security on kel.bz</title>
+    <link>https://kel.bz/tags/software-security/</link>
+    <description>Recent content in software-security on kel.bz</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 12 May 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://kel.bz/tags/software-security/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>questions for system design reviews</title>
+      <link>https://kel.bz/post/designreview/</link>
+      <pubDate>Sun, 12 May 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://kel.bz/post/designreview/</guid>
+      <description>Moving towards operationalizing system design reviews. What questions should a review team ask, or expect to be answered?</description>
+    </item>
+    
+    <item>
+      <title>what is the value-add of ssh-agent?</title>
+      <link>https://kel.bz/post/ssh-agent/</link>
+      <pubDate>Mon, 14 Jan 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://kel.bz/post/ssh-agent/</guid>
+      <description>The purpose of ssh-agent and observations how ssh-agent improves UX and security.</description>
+    </item>
+    
+    <item>
+      <title>user-influenced os commands are still considered harmful</title>
+      <link>https://kel.bz/post/javaexec/</link>
+      <pubDate>Tue, 06 Dec 2016 19:21:35 -0600</pubDate>
+      
+      <guid>https://kel.bz/post/javaexec/</guid>
+      <description>Non-obvious ways of getting code execution when testing code that uses user input to build shell commands.</description>
+    </item>
+    
+    <item>
+      <title>well-tested authorization design patterns</title>
+      <link>https://kel.bz/post/authz-design-patterns/</link>
+      <pubDate>Mon, 01 Aug 2016 20:53:18 -0500</pubDate>
+      
+      <guid>https://kel.bz/post/authz-design-patterns/</guid>
+      <description>Patterns/anti-patterns for designing authorization APIs.</description>
+    </item>
+    
+    <item>
+      <title>when fuzzing servers</title>
+      <link>https://kel.bz/post/fuzzing-servers/</link>
+      <pubDate>Wed, 11 Nov 2015 18:13:14 -0500</pubDate>
+      
+      <guid>https://kel.bz/post/fuzzing-servers/</guid>
+      <description>One tip for finding fast and useful fuzz targets for networked code.</description>
+    </item>
+    
+  </channel>
+</rss>

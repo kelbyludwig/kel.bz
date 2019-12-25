@@ -1,15 +1,19 @@
-+++
-date = "2017-01-14"
-title = "a note on subgroup confinement attacks"
-+++
+---
+date: "2017-01-14"
+title: "a note on subgroup confinement attacks"
+tags: [
+    "cryptography"
+]
+summary: "Subgroup confinement attacks can apply in offline and online contexts."
+---
 
 The Pohlig-Hellman algorithm is a efficient method of solving the discrete log
-problem for groups whose order is a `smooth integer`. A smooth integer is just
+problem for groups whose order is a *smooth integer*. A smooth integer is just
 an integer whose prime factorization consists of small prime numbers.
 
 Pohlig-Hellman could be used to efficiently recover private keys from broken
 (EC)DH implementations. There are some cryptopals exercise that use it (its in
-set 8). This attack is often referred to as a "subgroup confinement" attack.
+set 8). This attack is often referred to as a *subgroup confinement* attack.
 It's really cool. (I do not plan on covering the algorithm here
 [Wikipedia](https://en.wikipedia.org/wiki/Pohlig%E2%80%93Hellman_algorithm) has
 a pretty good walkthrough of the algorithm).
@@ -33,5 +37,4 @@ is sending evil values to.
 
 When I was initially working on this attack, I was applying an offline
 algorithm to an online context. Once I figured out why my code was borked, it
-was enlightening to think about subgroup confinement from this "multiple
-context" perspective.
+was enlightening to think about subgroup confinement from an offline/online perspective.

@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8">
+<meta name="generator" content="Hugo 0.62.0" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light only">
+<meta name="supported-color-schemes" content="light only">
+
+
+  
+  
+    <title>modifying ip headers with netfilter &ndash; kel.bz</title>
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/core.min.871c51706cba837f31c3028126e8801b3ced6615f16b6ef7dbba11efc23280f506ef819d15b556880689cd71206843b7.css" integrity="sha384-hxxRcGy6g38xwwKBJuiAGzztZhXxa27327oR78IygPUG74GdFbVWiAaJzXEgaEO3">
+<body>
+      <div class="base-body max-width"><section id="header" class="header max-body-width">
+  <p>
+    <a class="site-name" href="/">
+      
+        kel.bz
+      
+    </a>
+    
+      <span class="site-slogan">where i take notes</span>
+    
+  </p>
+</section><div id="content" class="flex-body max-body-width">
+  
+  
+
+  <section class="article-header" >
+      <h1>modifying ip headers with netfilter</h1>
+      <p class="article-date">2016-08-20</p>
+  </section>
+
+  <article class="markdown-body" >
+    <h1 id="motivation">Motivation</h1>
+<p>I recently read the 
+
+<a href="http://www.cs.ucr.edu/~zhiyunq/pub/sec16_TCP_pure_offpath.pdf"  target="_blank">&ldquo;Off-Path TCP
+Exploits&rdquo;</a>
+whitepaper and it made me a bit curious. How would I approach
+recreating a PoC for this attack? While the authors mention hurdles
+that they had to overcome for their experiments, the first snag I ran into is
+one of the core assumptions in the paper: An attacker can send packets with a
+spoofed source IP address across the Internet. I'm skeptical that my ISP would
+be cool with this, so I wanted to recreate this scenario on my local network.
+Even with a isolated network setup, I still need to be able to create packets
+that have a spoofed source IP. I know there are 
+
+<a href="https://nmap.org/"  target="_blank">existing
+tools</a> with this functionality but that seemed too easy. I
+came up with two approaches.</p>
+<ol>
+<li>
+<p>I could build IP packets from scratch.</p>
+</li>
+<li>
+<p>I could route traffic through a router that rewrites the source IP.</p>
+</li>
+</ol>
+<p>Option 1 seemed interesting, but I was concerned it wasn't flexible enough. I
+was assuming after I constructed the IP-layer headers I would have to
+manually build the TCP layer as well. Option 2 seemed more re-usable. I could
+just configure my host OS to send TCP traffic through the router and it would
+re-write the source IP. In this configuration, I only have to send TCP traffic
+on my host OS.</p>
+<p>Option 2 also appealed to me because I could dig into kernel modules and
+Netfilter. I had written kernel modules a year or two ago and I recently have
+been in the mood to revisit kernel programming. So I read some content online,
+and I thought I would share my results here. I didn't find much content on
+using Netfilter to <em>modify</em> packets, so hopefully this is useful for others as
+well.</p>
+<p><em>Note:</em> I recognize <code>iptables</code> has support for packet mangling. I have used
+it 
+
+<a href="https://github.com/praetorian-inc/mitm-vm"  target="_blank">in other projects</a>. That's
+too easy though!</p>
+<h1 id="the-setup">The Setup</h1>
+<p>My router will be a Vagrant VM running Debian. To prepare the VM for kernel
+module writing the following command should be ran:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">sudo apt-get update
+sudo apt-get install build-essential linux-headers-<span style="color:#66d9ef">$(</span>uname -r<span style="color:#66d9ef">)</span> make vim
+</code></pre></div><p>Once that Vagrant VM is setup, we can install a kernel module that uses
+Netfilter to modify packets on the fly. We can then use that Vagrant VM as our
+router, and let the kernel hooks work their magic.</p>
+<h1 id="writing-and-building-a-kernel-module">Writing and Building A Kernel Module</h1>
+<p>To begin, we start with a basic &ldquo;Hello, world!&rdquo; kernel module.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-makefile" data-lang="makefile"><span style="color:#75715e">#Filename: Makefile
+</span><span style="color:#75715e"></span>obj-m <span style="color:#f92672">:=</span> hello.o
+KDIR <span style="color:#f92672">:=</span> /lib/modules/<span style="color:#66d9ef">$(</span>shell uname -r<span style="color:#66d9ef">)</span>/build
+PWD <span style="color:#f92672">:=</span> <span style="color:#66d9ef">$(</span>shell pwd<span style="color:#66d9ef">)</span>
+
+<span style="color:#a6e22e">all</span><span style="color:#f92672">:</span>
+        <span style="color:#66d9ef">$(</span>MAKE<span style="color:#66d9ef">)</span> -C <span style="color:#66d9ef">$(</span>KDIR<span style="color:#66d9ef">)</span> SUBDIRS<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>PWD<span style="color:#66d9ef">)</span> modules
+<span style="color:#a6e22e">clean</span><span style="color:#f92672">:</span>
+        rm *o
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">//Filename: hello.c
+</span><span style="color:#75715e"></span><span style="color:#75715e">#</span><span style="color:#75715e">include</span> <span style="color:#75715e">&lt;linux/module.h&gt; </span><span style="color:#75715e">
+</span><span style="color:#75715e"></span><span style="color:#75715e">#</span><span style="color:#75715e">include</span> <span style="color:#75715e">&lt;linux/init.h&gt;   </span><span style="color:#75715e">
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">//setup will be the function that is called when our module is loaded.
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">static</span> <span style="color:#66d9ef">int</span> __init <span style="color:#a6e22e">setup</span>(<span style="color:#66d9ef">void</span>) {
+        printk(KERN_INFO <span style="color:#e6db74"></span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">Hello, world!</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>); <span style="color:#75715e">//printk is the kernel&#39;s version of printf. KERN_INFO is a log-level macro.
+</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>; <span style="color:#75715e">//a return value of zero tells insmod that the module loaded successfully
+</span><span style="color:#75715e"></span>}
+
+<span style="color:#75715e">//teardown will be the function that is called when our module is unloaded.
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> __exit <span style="color:#a6e22e">teardown</span>(<span style="color:#66d9ef">void</span>) {
+        printk(KERN_INFO <span style="color:#e6db74"></span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">Goodbye, cruel world!</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>);
+}
+
+module_init(setup); <span style="color:#75715e">//module_init defines the setup function for inserting the module
+</span><span style="color:#75715e"></span>module_exit(teardown); <span style="color:#75715e">//module_exit defines the teardown function for removing the module
+</span></code></pre></div><p>Once those files are created, the module can be compiled by running <code>make</code> and then loaded
+as a module by running <code>insmod hello.ko</code>. To see our module it action, run <code>dmesg | tail</code>.
+You should see something like the following:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="color:#f92672">[</span>14843.182893<span style="color:#f92672">]</span> hello: module license <span style="color:#e6db74">&#39;unspecified&#39;</span> taints kernel.
+<span style="color:#f92672">[</span>14843.182896<span style="color:#f92672">]</span> Disabling lock debugging due to kernel taint
+<span style="color:#f92672">[</span>14843.183267<span style="color:#f92672">]</span> Hello, world!
+</code></pre></div><p>To remove our module, we can run <code>rmmod hello</code>. Running <code>dmesg | tail</code> again will show us
+the results of our super fantastic teardown function:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="color:#f92672">[</span>14843.182893<span style="color:#f92672">]</span> hello: module license <span style="color:#e6db74">&#39;unspecified&#39;</span> taints kernel.
+<span style="color:#f92672">[</span>14843.182896<span style="color:#f92672">]</span> Disabling lock debugging due to kernel taint
+<span style="color:#f92672">[</span>14843.183267<span style="color:#f92672">]</span> Hello, world!
+<span style="color:#f92672">[</span>15006.239774<span style="color:#f92672">]</span> Goodbye, cruel world!
+</code></pre></div><p>You are officially a kernel hacker! I tried to add some comments in the code to explain a little
+bit about what is going on. For a more thorough analysis, the following resources maybe useful:</p>
+<ul>
+<li>
+
+<a href="https://www.kernel.org/doc/Documentation/kbuild/modules.txt"  target="_blank">kbuild: The build system used by the Linux kernel</a></li>
+<li>
+
+<a href="http://www.makelinux.net/books/lkd2/ch16lev2sec1"  target="_blank">A &ldquo;Hello, World!&rdquo; Kernel Module</a></li>
+<li>
+
+<a href="http://www.tldp.org/LDP/lkmpg/2.4/html/x281.htm"  target="_blank">The init and exit Macros</a></li>
+</ul>
+<h1 id="introducing-netfilter">Introducing Netfilter</h1>
+<p>The next step is introducing Netfilter into our module. Netfilter is &ldquo;a set of
+hooks inside the Linux kernel that allows kernel modules to register callback
+functions with the network stack.&rdquo; Netfilter sits at key points in the kernel's
+network stack and allows developer to extend or add functionality.</p>
+<p>Lets add a function that just logs when the kernel has recieved a packet at
+Netfilter's pre-routing hook. (A lot of Netfilter tutorials like to just drop
+packets at this stage. Considering we are SSH'd into our Vagrant VM that is not
+a great idea.) We can use roughly the same Makefile as our previous example.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">//Filename: hello-netfilter.c
+</span><span style="color:#75715e"></span><span style="color:#75715e">#</span><span style="color:#75715e">include</span> <span style="color:#75715e">&lt;linux/module.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span><span style="color:#75715e">#</span><span style="color:#75715e">include</span> <span style="color:#75715e">&lt;linux/init.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span><span style="color:#75715e">#</span><span style="color:#75715e">include</span> <span style="color:#75715e">&lt;linux/netfilter.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span><span style="color:#75715e">#</span><span style="color:#75715e">include</span> <span style="color:#75715e">&lt;linux/netfilter_ipv4.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">//nfho is a nf_hook_ops struct. This struct stores all the
+</span><span style="color:#75715e"></span><span style="color:#75715e">//required information to register a Netfilter hook.
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">static</span> <span style="color:#66d9ef">struct</span> nf_hook_ops nfho;
+
+<span style="color:#75715e">//hook_func is our Netfilter function that will be called at the pre-routing
+</span><span style="color:#75715e"></span><span style="color:#75715e">//hook. This hook merely logs that Netfilter received a packet and tells
+</span><span style="color:#75715e"></span><span style="color:#75715e">//Netfilter to continue processing that packet.
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">hook_func</span>(<span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">int</span> hooknum,
+                       <span style="color:#66d9ef">struct</span> sk_buff <span style="color:#f92672">*</span><span style="color:#f92672">*</span>skb,
+                       <span style="color:#66d9ef">const</span> <span style="color:#66d9ef">struct</span> net_device <span style="color:#f92672">*</span>in,
+                       <span style="color:#66d9ef">const</span> <span style="color:#66d9ef">struct</span> net_device <span style="color:#f92672">*</span>out,
+                       <span style="color:#66d9ef">int</span> (<span style="color:#f92672">*</span>okfn)(<span style="color:#66d9ef">struct</span> sk_buff <span style="color:#f92672">*</span>)) {
+
+        printk(KERN_INFO <span style="color:#e6db74"></span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">Packet!</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>); <span style="color:#75715e">//Lets log that we recieved a packet.
+</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">return</span> NF_ACCEPT; <span style="color:#75715e">//NF_ACCEPT tells the hook to continue processing the packet.
+</span><span style="color:#75715e"></span>
+}
+
+<span style="color:#75715e">//initialize will setup our Netfilter hook when our kernel
+</span><span style="color:#75715e"></span><span style="color:#75715e">//module is loaded.
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">static</span> <span style="color:#66d9ef">int</span> __init <span style="color:#a6e22e">initialize</span>(<span style="color:#66d9ef">void</span>) {
+        nfho.hook     <span style="color:#f92672">=</span> hook_func; <span style="color:#75715e">//Points to our hook function.
+</span><span style="color:#75715e"></span>        nfho.hooknum  <span style="color:#f92672">=</span> NF_INET_PRE_ROUTING; <span style="color:#75715e">//Our function will run at Netfilter&#39;s pre-routing hook.
+</span><span style="color:#75715e"></span>        nfho.pf       <span style="color:#f92672">=</span> PF_INET; <span style="color:#75715e">//pf = protocol family. We are only interested in IPv4 traffic.
+</span><span style="color:#75715e"></span>        nfho.priority <span style="color:#f92672">=</span> NF_IP_PRI_FIRST; <span style="color:#75715e">//Tells Netfilter this hook should be ran &#34;first&#34; (there is of-course, more to this when other hooks have this priority)
+</span><span style="color:#75715e"></span>        nf_register_hook(<span style="color:#f92672">&amp;</span>nfho); <span style="color:#75715e">//We now register our hook function.
+</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>;
+}
+
+<span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> __exit <span style="color:#a6e22e">cleanup</span>(<span style="color:#66d9ef">void</span>) {
+        nf_unregister_hook(<span style="color:#f92672">&amp;</span>nfho); <span style="color:#75715e">//unregister our hook
+</span><span style="color:#75715e"></span>}
+
+module_init(initialize);
+module_exit(cleanup);
+</code></pre></div><p>We can see this module in action by using <code>insmod</code> to load the module and
+viewing <code>dmesg</code>. Because we are using SSH, there are a good number of &ldquo;Packet!&rdquo;
+logs. Neat! For greater understanding of this code beyond my comments, I
+recommend reading bioforge's Phrack article 
+
+<a href="http://phrack.org/issues/61/13.html"  target="_blank">&ldquo;Hacking the Linux Kernel Network
+Stack&rdquo;</a>.</p>
+<h1 id="modifying-packets-using-netfilter">Modifying Packets Using Netfilter</h1>
+<p>Making minor modifications to packets appeared to be simple (at least
+what I tried). If you google something similar to &ldquo;modify packets netfilter&rdquo;
+you may not see a ton of results. However, after a bit of research I learned
+that the data structure that represents a packet in Netfilter hooks is not
+specific to Netfilter but, the <code>sk_buff</code> type is a key Linux kernel data
+structure. Socket buffers are pretty large so I won't cover them in their
+entirety here. I do recommend reviewing the &ldquo;SKB: Linux Networking Data
+Structure&rdquo; below. I also included some (hopefully) useful commented code to
+highlight some socket buffer components. The following kernel module will
+modify the source IP address of incoming ICMP packets.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">#</span><span style="color:#75715e">include</span> <span style="color:#75715e">&lt;linux/module.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span><span style="color:#75715e">#</span><span style="color:#75715e">include</span> <span style="color:#75715e">&lt;linux/kernel.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span><span style="color:#75715e">#</span><span style="color:#75715e">include</span> <span style="color:#75715e">&lt;linux/init.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span><span style="color:#75715e">#</span><span style="color:#75715e">include</span> <span style="color:#75715e">&lt;linux/netdevice.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span><span style="color:#75715e">#</span><span style="color:#75715e">include</span> <span style="color:#75715e">&lt;linux/netfilter.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span><span style="color:#75715e">#</span><span style="color:#75715e">include</span> <span style="color:#75715e">&lt;linux/netfilter_ipv4.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span><span style="color:#75715e">#</span><span style="color:#75715e">include</span> <span style="color:#75715e">&lt;linux/ip.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span><span style="color:#75715e">#</span><span style="color:#75715e">include</span> <span style="color:#75715e">&lt;linux/tcp.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">#</span><span style="color:#75715e">define NIPQUAD(addr) \</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span><span style="color:#75715e">    ((unsigned char *)&amp;addr)[0], \</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span><span style="color:#75715e">    ((unsigned char *)&amp;addr)[1], \</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span><span style="color:#75715e">    ((unsigned char *)&amp;addr)[2], \</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span><span style="color:#75715e">    ((unsigned char *)&amp;addr)[3]</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span>
+<span style="color:#66d9ef">static</span> <span style="color:#66d9ef">struct</span> nf_hook_ops nfho;
+<span style="color:#66d9ef">struct</span> iphdr <span style="color:#f92672">*</span>iph;
+<span style="color:#66d9ef">struct</span> tcphdr <span style="color:#f92672">*</span>tcp_header;
+<span style="color:#66d9ef">struct</span> sk_buff <span style="color:#f92672">*</span>sock_buff;
+<span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">int</span> sport, dport;
+
+<span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">hook_func</span>(<span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">int</span> hooknum,
+                       <span style="color:#66d9ef">struct</span> sk_buff <span style="color:#f92672">*</span><span style="color:#f92672">*</span>skb,
+                       <span style="color:#66d9ef">const</span> <span style="color:#66d9ef">struct</span> net_device <span style="color:#f92672">*</span>in,
+                       <span style="color:#66d9ef">const</span> <span style="color:#66d9ef">struct</span> net_device <span style="color:#f92672">*</span>out,
+                       <span style="color:#66d9ef">int</span> (<span style="color:#f92672">*</span>okfn)(<span style="color:#66d9ef">struct</span> sk_buff <span style="color:#f92672">*</span>)) 
+{
+    <span style="color:#75715e">//NOTE: Feel free to uncomment printks! If you are using Vagrant and SSH
+</span><span style="color:#75715e"></span>     <span style="color:#75715e">//      too many printk&#39;s will flood your logs.
+</span><span style="color:#75715e"></span>    <span style="color:#75715e">//printk(KERN_INFO &#34;=== BEGIN HOOK ===\n&#34;);
+</span><span style="color:#75715e"></span>
+    sock_buff <span style="color:#f92672">=</span> skb;
+
+    <span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span>sock_buff) {
+        <span style="color:#66d9ef">return</span> NF_ACCEPT;
+    }
+
+    iph <span style="color:#f92672">=</span> (<span style="color:#66d9ef">struct</span> iphdr <span style="color:#f92672">*</span>)skb_network_header(sock_buff);
+
+    <span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span>iph) {
+        <span style="color:#75715e">//printk(KERN_INFO &#34;no ip header\n&#34;);
+</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">return</span> NF_ACCEPT;
+    }
+
+    <span style="color:#66d9ef">if</span>(iph<span style="color:#f92672">-</span><span style="color:#f92672">&gt;</span>protocol<span style="color:#f92672">=</span><span style="color:#f92672">=</span>IPPROTO_TCP) {
+        <span style="color:#66d9ef">return</span> NF_ACCEPT;
+
+        <span style="color:#75715e">//tcp_header = tcp_hdr(sock_buff);
+</span><span style="color:#75715e"></span>        <span style="color:#75715e">//sport = htons((unsigned short int) tcp_header-&gt;source);
+</span><span style="color:#75715e"></span>        <span style="color:#75715e">//dport = htons((unsigned short int) tcp_header-&gt;dest);
+</span><span style="color:#75715e"></span>        <span style="color:#75715e">//printk(KERN_INFO &#34;TCP ports: source: %d, dest: %d \n&#34;, sport, dport);
+</span><span style="color:#75715e"></span>        <span style="color:#75715e">//printk(KERN_INFO &#34;SKBuffer: len %d, data_len %d\n&#34;, sock_buff-&gt;len, sock_buff-&gt;data_len);
+</span><span style="color:#75715e"></span>    }
+
+    <span style="color:#66d9ef">if</span>(iph<span style="color:#f92672">-</span><span style="color:#f92672">&gt;</span>protocol<span style="color:#f92672">=</span><span style="color:#f92672">=</span>IPPROTO_ICMP) {
+        printk(KERN_INFO <span style="color:#e6db74"></span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">=== BEGIN ICMP ===</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>);
+        printk(KERN_INFO <span style="color:#e6db74"></span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">IP header: original source: %d.%d.%d.%d</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>, NIPQUAD(iph<span style="color:#f92672">-</span><span style="color:#f92672">&gt;</span>saddr));
+        iph<span style="color:#f92672">-</span><span style="color:#f92672">&gt;</span>saddr <span style="color:#f92672">=</span> iph<span style="color:#f92672">-</span><span style="color:#f92672">&gt;</span>saddr <span style="color:#f92672">^</span> <span style="color:#ae81ff">0x10000000</span>;
+        printk(KERN_INFO <span style="color:#e6db74"></span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">IP header: modified source: %d.%d.%d.%d</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>, NIPQUAD(iph<span style="color:#f92672">-</span><span style="color:#f92672">&gt;</span>saddr));
+        printk(KERN_INFO <span style="color:#e6db74"></span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">IP header: original destin: %d.%d.%d.%d</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>, NIPQUAD(iph<span style="color:#f92672">-</span><span style="color:#f92672">&gt;</span>daddr));
+        printk(KERN_INFO <span style="color:#e6db74"></span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">=== END ICMP ===</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>);
+
+    }
+
+    <span style="color:#75715e">//if(in) { printk(KERN_INFO &#34;in-&gt;name:  %s\n&#34;, in-&gt;name); }
+</span><span style="color:#75715e"></span>    <span style="color:#75715e">//if(out) { printk(KERN_INFO &#34;out-&gt;name: %s\n&#34;, out-&gt;name); }
+</span><span style="color:#75715e"></span>    <span style="color:#75715e">//printk(KERN_INFO &#34;=== END HOOK ===\n&#34;);
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">return</span> NF_ACCEPT;        
+
+}
+
+<span style="color:#66d9ef">static</span> <span style="color:#66d9ef">int</span> __init <span style="color:#a6e22e">initialize</span>(<span style="color:#66d9ef">void</span>) {
+    nfho.hook <span style="color:#f92672">=</span> hook_func;
+    <span style="color:#75715e">//nfho.hooknum = NF_INET_PRE_ROUTING;
+</span><span style="color:#75715e"></span>    <span style="color:#75715e">//Interesting note: A pre-routing hook may not work here if our Vagrant
+</span><span style="color:#75715e"></span>    <span style="color:#75715e">//                  box does not know how to route to the modified source.
+</span><span style="color:#75715e"></span>    <span style="color:#75715e">//                  For the record, mine did not.
+</span><span style="color:#75715e"></span>    nfho.hooknum <span style="color:#f92672">=</span> NF_INET_POST_ROUTING;
+    nfho.pf <span style="color:#f92672">=</span> PF_INET;
+    nfho.priority <span style="color:#f92672">=</span> NF_IP_PRI_FIRST;
+    nf_register_hook(<span style="color:#f92672">&amp;</span>nfho);
+    <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>;    
+}
+
+<span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> __exit <span style="color:#a6e22e">teardown</span>(<span style="color:#66d9ef">void</span>) {
+    nf_unregister_hook(<span style="color:#f92672">&amp;</span>nfho);
+}
+
+module_init(initialize);
+module_exit(teardown);
+</code></pre></div><p>Try pinging the Vagrant machine before and after the module is loaded. Once the
+module is loaded you should see that ping replies don't reach your machine.
+Perfect! If we monitor the Vagrant machine's network traffic, it may look like
+this Wireshark capture:</p>
+<figure>
+    <img src="/ip_spoof_wireshark.png"/> 
+</figure>
+
+<p>Voila!</p>
+<h1 id="collection-of-useful-resources">Collection of Useful Resources</h1>
+<ul>
+<li>
+
+<a href="https://sandilands.info/sgordon/address-spoofing-with-iptables-in-linux"  target="_blank">IP Spoofing with iptables</a></li>
+<li>
+
+<a href="http://vger.kernel.org/~davem/skb.html"  target="_blank">SKBs: Linux Networking Data Structure</a></li>
+</ul>
+
+  </article>
+
+  
+  
+
+  
+
+  
+    <section class="article-labels">
+      
+          
+            
+            <a class="article-tag li" href=/tags/networking/><span class="hashtag">#</span>networking</a>
+          
+            
+            <a class="article-tag li" href=/tags/c/><span class="hashtag">#</span>c</a>
+          
+    </section>
+  
+
+  
+    <section class="article-navigation">
+      
+        
+        <p>
+          <a class="link" href="/post/twinprimes/"><span class="li"></span>tokyo westerns / mma ctf: twin primes write-up</a>
+          
+          
+              
+              <a class="article-tag" href=/tags/cryptography/><span class="hashtag">#</span>cryptography</a>
+          
+        </p>
+        
+
+        
+          <p>
+            <a class="link" href="/post/iceland/"><span class="li"></span>iceland</a class="link">
+            
+            
+                
+                <a class="article-tag" href=/tags/travel/><span class="hashtag">#</span>travel</a>
+            
+                
+                <a class="article-tag" href=/tags/food/><span class="hashtag">#</span>food</a>
+            
+          </p>
+        
+      
+    </section>
+  
+
+  
+
+
+        </div><section id="footer" class="footer max-body-width">
+  
+  
+    
+  
+  <p>kel.bz</p>
+  <p>
+    <span>Powered by</span>
+    <a href="https://gohugo.io">Hugo</a>
+    <span>and the</span>
+    <a href="https://themes.gohugo.io/hugo-notepadium/">Notepadium</a>
+  </p>
+</section>
+
+
+
+
+</div>
+    </body>
+</html>
