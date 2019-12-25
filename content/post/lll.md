@@ -1,8 +1,10 @@
-+++
-date = "2017-07-25"
-description = ""
-title = "building lattice reduction (LLL) intuition"
-+++
+---
+date: "2017-07-25"
+title: "building lattice reduction (LLL) intuition"
+tags: [
+    "cryptography",
+]
+---
 
 ## LLL Motivation
 
@@ -344,24 +346,21 @@ vectors are roughly sorted by length (this may change after the next round of
 reductions though). If the Lovász condition is false, the `k`th basis vector is
 placed at position `k-1` (Line 5), and LLL then re-focuses (Line 7) on the same
 vector which is now at position `k-1`. Another reduction round is done, and
-then back to the swap step. This brings about another way to describe LLL: LLL
+then back to the swap step. This brings about another way to describe LLL: *LLL
 is a vector sorting algorithm that occasionally screws up the ordering by
-making vectors smaller so it has to re-sort.
+making vectors smaller so it has to re-sort.*
 
 What about the Lovász condition, itself? As I said earlier, it's basically a
 heuristic that determines if the vectors are in a "good" order. Aside from
 that, I don't have too much to add here unfortunately as my intuition is still
 shaky. There are multiple equivalent representations for the Lovász and none of
 them have really felt 100% right to me. The best explanations that I have found
-thus far are:
+thus far are [this StackOverflow post](https://crypto.stackexchange.com/questions/39532/why-is-the-lov%C3%A1sz-condition-used-in-the-lll-algorithm/39534#39534) and ["An Introduction to Mathematical Cryptography"](https://www.amazon.com/Introduction-Mathematical-Cryptography-Undergraduate-Mathematics/dp/1441926747).
 
-* [This StackOverflow post](https://crypto.stackexchange.com/questions/39532/why-is-the-lov%C3%A1sz-condition-used-in-the-lll-algorithm/39534#39534).
-
-* ["An Introduction to Mathematical
-  Cryptography"](https://www.amazon.com/Introduction-Mathematical-Cryptography-Undergraduate-Mathematics/dp/1441926747)
-discusses an equivalent representation of the Lovász condition that is a
-comparison of the lengths of the projection of basis vectors onto the
-orthogonal complement of a space spanned by a subset of basis vectors.
+"An Introduction to Mathmetical Cryptography" discusses an equivalent
+representation of the Lovász condition that is a comparison of the lengths of
+the projection of basis vectors onto the orthogonal complement of a space
+spanned by a subset of basis vectors.
 
 If anyone reading this has a link to a decently intuitive explanation or can
 describe the Lovász in a memorable way please let me know!
@@ -394,7 +393,7 @@ vector projection (see image below), we can re-write our inequality:
 
 {{< figure src="/angle.png" >}}
 
-```
+```python
 |B[k]|*cos(theta) = proj B[k] onto B[j]
 =>
 |B[k]|*abs(cos(theta)) <= 1/2*|B[j]|
@@ -415,18 +414,16 @@ mistake but I don't have a proof either) so I cannot say much more than that.
 I found the explanation from ["Mathematics of Public Key Cryptography"](https://www.math.auckland.ac.nz/~sgal018/crypto-book/ch17.pdf)
 to explain this well.
 
-<blockquote>
-Finally, we remark that there is a natural analogue of [Gaussian Reduction] for
-any dimension. Hence, it is natural to try to generalise the Lagrange-Gauss
-algorithm to higher dimensions. Generalisations to dimension three have been
-given by Vall´ee and Semaev. Generalising to higher dimensions introduces
-problems. For example, choosing the right linear combination to size reduce bn 
-using b1,...,bn−1 is solving the CVP in a sublattice (which is a
-hard problem). Furthermore, there is no guarantee that the resulting basis
-actually has good properties in high dimension. We refer to Nguyen and Stehl´e
- for a full discussion of these issues and an algorithm that works in
-dimensions 3 and 4
-</blockquote>
+> Finally, we remark that there is a natural analogue of Gaussian Reduction for
+> any dimension. Hence, it is natural to try to generalise the Lagrange-Gauss
+> algorithm to higher dimensions. Generalisations to dimension three have been
+> given by Vall'ee and Semaev. Generalising to higher dimensions introduces
+> problems. For example, choosing the right linear combination to size reduce bn 
+> using b1,...,bn−1 is solving the CVP in a sublattice (which is a
+> hard problem). Furthermore, there is no guarantee that the resulting basis
+> actually has good properties in high dimension. We refer to Nguyen and Stehl'e
+> for a full discussion of these issues and an algorithm that works in
+> dimensions 3 and 4
 
 How does LLL overcome this? I like to think that LLL breaks an n-dimensional
 problem down into a bunch of 2-dimensional cases and works a little at a time.
@@ -439,15 +436,11 @@ Again, [quoting
 others](https://www.math.auckland.ac.nz/~sgal018/crypto-book/ch17.pdf) that are
 smarter than I am:
 
-<blockquote>
-As we have noted in Example 16.3.3, computational problems in lattices can be easy
-if one has a basis that is orthogonal, or “sufficiently close to orthogonal”. A simple but
-important observation is that one can determine when a basis is close to orthogonal by
-considering the lengths of the Gram-Schmidt vectors. More precisely, a lattice basis is
-“close to orthogonal” if the lengths of the Gram-Schmidt vectors do not decrease too
-rapidly.
-</blockquote>
+> As we have noted in Example 16.3.3, computational problems in lattices can be easy
+> if one has a basis that is orthogonal, or “sufficiently close to orthogonal”. A simple but
+> important observation is that one can determine when a basis is close to orthogonal by
+> considering the lengths of the Gram-Schmidt vectors. More precisely, a lattice basis is
+> “close to orthogonal” if the lengths of the Gram-Schmidt vectors do not decrease too
+> rapidly.
 
-<div class="meta">
-Thanks to Chris Bellavia for providing valuable feedback on this write-up.
-</div>
+*Thanks to Chris Bellavia for providing valuable feedback on this write-up.*
