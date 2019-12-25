@@ -4,7 +4,7 @@ title = "kel.bz"
 theme = "hugo-notepadium"
 
 [params]
-slogan = "where i take notes"
+slogan = "Where I take notes."
 
 [params.nav]
 # Add a top-level /tags/ page
