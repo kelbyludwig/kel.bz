@@ -1,6 +1,9 @@
 ---
 title: "measures of entropy"
 date: 2019-06-02
+tags: [
+    "cryptography",
+]
 ---
 
 ## What is entropy?
