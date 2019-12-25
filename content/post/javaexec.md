@@ -1,10 +1,11 @@
-+++
-draft = false
-description = ""
-date = "2016-12-06T19:21:35-06:00"
-title = "user-influenced os commands are still considered harmful"
-
-+++
+---
+date: "2016-12-06T19:21:35-06:00"
+title: "user-influenced os commands are still considered harmful"
+tags: [
+    "software-security",
+    "java",
+]
+---
 
 # more of the same (sorta)
 
@@ -23,7 +24,7 @@ less obvious examples.
 Consider the following code snippet that I'm borrowing from an [OWASP page on
 command injection](https://www.owasp.org/index.php/Command_injection_in_Java):
 
-```
+```java
 Runtime rntime = Runtime.getRuntime();
 Process proc = rntime.exec("find" + " " + args[0]);
 ```
@@ -36,12 +37,12 @@ is now a program that *prints the contents* of the user-supplied file.
 
 What about `tar`? Consider the following two code snippets:
 
-```
+```java
 String cmd = "tar tf " + userControlledFilename;
 Process proc = Runtime.getRuntime().exec(cmd);
 ```
 
-```
+```java
 String[] cmdArray = new String[3];
 cmdArray[0] = "tar";
 cmdArray[1] = "tf";	
@@ -53,7 +54,7 @@ Are they safe? In short the answer is "no" because user-controlled
 `tar` flags can lead to command injection. The following example
 will execute `echo hello` (the `tar` version may affect results):
 
-```
+```java
 tar tf file.tar --checkpoint=1 --checkpoint-action=exec="echo hello"
 ```
 
@@ -61,7 +62,7 @@ The other interesting property of `Runtime.exec` is its behavior depends
 on how its called and how its arguments are passed. The following Java
 program demonstrates this (I use `gtar` as a GNU tar alias on OS X):
 
-```
+```java
 // Full file here: https://gist.github.com/kelbyludwig/afb1755af190bb9fe66145b6a1706d76
 
 //Executes a local script.
