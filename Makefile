@@ -1,7 +1,11 @@
-.PHONY: test demo build
+.PHONY: demo build nbconvert
 
-test:
-	echo "no tests configured"
+nbconvert:
+	docker run \
+		-v $(PWD):/home/kelby \
+		--rm \
+		--cap-drop=all \
+		-it hugo:latest jupyter nbconvert --to markdown /home/kelby/notebooks/*
 
 demo:
 	docker run \
