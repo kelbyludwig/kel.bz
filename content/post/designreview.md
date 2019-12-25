@@ -1,8 +1,10 @@
-+++
-draft = false
-date = "2019-05-12"
-title = "questions for system design reviews"
-+++
+---
+date: "2019-05-12"
+title: "questions for system design reviews"
+tags: [
+    "software-security",
+]
+---
 
 Often I am responsible for providing feedback on system designs prior to implementation. These reviews are usually focused on identifying or validating security properties of the proposed design.
 
