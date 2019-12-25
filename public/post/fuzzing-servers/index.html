@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8">
+<meta name="generator" content="Hugo 0.62.0" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light only">
+<meta name="supported-color-schemes" content="light only">
+
+
+  
+  
+    <title>when fuzzing servers &ndash; kel.bz</title>
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/core.min.871c51706cba837f31c3028126e8801b3ced6615f16b6ef7dbba11efc23280f506ef819d15b556880689cd71206843b7.css" integrity="sha384-hxxRcGy6g38xwwKBJuiAGzztZhXxa27327oR78IygPUG74GdFbVWiAaJzXEgaEO3">
+<body>
+      <div class="base-body max-width"><section id="header" class="header max-body-width">
+  <p>
+    <a class="site-name" href="/">
+      
+        kel.bz
+      
+    </a>
+    
+      <span class="site-slogan">where i take notes</span>
+    
+  </p>
+</section><div id="content" class="flex-body max-body-width">
+  
+  
+
+  <section class="article-header" >
+      <h1>when fuzzing servers</h1>
+      <p class="article-date">2015-11-11</p>
+  </section>
+
+  <article class="markdown-body" >
+    <p>If you want to use a fuzzer that writes data to STDIN (e.g. 
+
+<a href="http://lcamtuf.coredump.cx/afl/"  target="_blank">afl-fuzz</a>) to fuzz
+a networked server, consider looking at the server's tests. Often, network
+connections are mocked in tests. This code can be repurposed to &ldquo;send&rdquo; bytes
+from STDIN to the mocked connection.</p>
+<p>
+
+<a href="https://github.com/zardus/preeny"  target="_blank">Preeny</a> is another solution, but results can vary.</p>
+
+  </article>
+
+  
+  
+
+  
+
+  
+    <section class="article-labels">
+      
+          
+            
+            <a class="article-tag li" href=/tags/software-testing/><span class="hashtag">#</span>software-testing</a>
+          
+            
+            <a class="article-tag li" href=/tags/software-security/><span class="hashtag">#</span>software-security</a>
+          
+    </section>
+  
+
+  
+    <section class="article-navigation">
+      
+        
+        <p>
+          <a class="link" href="/post/password-hash-migrations/"><span class="li"></span>secure password hash migrations</a>
+          
+          
+              
+              <a class="article-tag" href=/tags/cryptography/><span class="hashtag">#</span>cryptography</a>
+          
+        </p>
+        
+
+        
+      
+    </section>
+  
+
+  
+
+
+        </div><section id="footer" class="footer max-body-width">
+  
+  
+    
+  
+  <p>kel.bz</p>
+  <p>
+    <span>Powered by</span>
+    <a href="https://gohugo.io">Hugo</a>
+    <span>and the</span>
+    <a href="https://themes.gohugo.io/hugo-notepadium/">Notepadium</a>
+  </p>
+</section>
+
+
+
+
+</div>
+    </body>
+</html>

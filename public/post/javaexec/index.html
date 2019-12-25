@@ -1,74 +1,58 @@
-
 <!DOCTYPE html>
-<html lang="en-us">
-<head>
-
-  
-  <meta charset="UTF-8">
-  <title>
-    user-influenced os commands are still considered harmful | kel.bz
-  </title>
+<html>
+<meta charset="utf-8">
+<meta name="generator" content="Hugo 0.62.0" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light only">
+<meta name="supported-color-schemes" content="light only">
 
 
   
-  <meta name="viewport" content="width=device-width,user-scalable=no,maximum-scale=1,initial-scale=1">
-
   
-  <link rel="canonical" href="https://kel.bz/post/javaexec/"/>
-
-  
-  <link rel="stylesheet" href="/css/sanitize.css">
-  <link rel="stylesheet" href="/css/responsive.css">
-  <link rel="stylesheet" href="/css/highlight_monokai.css">
-  <link rel="stylesheet" href="/css/theme.css">
-  <link rel="stylesheet" href="/css/custom.css">
-  
-  
-  <link href="https://kel.bz//index.xml" rel="alternate" type="application/rss+xml" title="kel.bz" />
-  <link href="https://kel.bz//index.xml" rel="feed" type="application/rss+xml" title="kel.bz" />
-
-  
-  
-
-
-</head>
+    <title>user-influenced os commands are still considered harmful &ndash; kel.bz</title>
+    
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/core.min.871c51706cba837f31c3028126e8801b3ced6615f16b6ef7dbba11efc23280f506ef819d15b556880689cd71206843b7.css" integrity="sha384-hxxRcGy6g38xwwKBJuiAGzztZhXxa27327oR78IygPUG74GdFbVWiAaJzXEgaEO3">
 <body>
-<div class="container">
-
+      <div class="base-body max-width"><section id="header" class="header max-body-width">
+  <p>
+    <a class="site-name" href="/">
+      
+        kel.bz
+      
+    </a>
+    
+      <span class="site-slogan">where i take notes</span>
+    
+  </p>
+</section><div id="content" class="flex-body max-body-width">
   
-  <header role="banner">
-    <div class="row gutters">
-      <div id="site-title" class="col span_6">
-        <h1><a href="https://kel.bz/">kel.bz</a></h1>
-        
-      </div>
-      <div id="social" class="col span_6">
-        <ul>
-          <li><a href="/about/me">about kel.bz</a></li>
-          <li><a href="https://twitter.com/kelbyludwig" target="_blank">twitter</a></li>
-          
-          <li><a href="https://github.com/kelbyludwig" target="_blank">github</a></li>
-          <li><a href="https://kel.bz//index.xml" type="application/rss+xml" target="_blank">rss</a></li>
-        </ul>
-      </div>
-    </div>
-  </header>
-
-
   
-  <main id="single" role="main">
-    <div class="article-header">
+
+  <section class="article-header" >
       <h1>user-influenced os commands are still considered harmful</h1>
-      <div class="meta">
-        Dec 6, 2016 &nbsp;
-        
-      </div>
-    </div>
-    <article>
-      <h1 id="more-of-the-same-sorta">more of the same (sorta)</h1>
+      <p class="article-date">2016-12-06</p>
+  </section>
+
+  <article class="markdown-body" >
+    <h1 id="more-of-the-same-sorta">more of the same (sorta)</h1>
 <p>Its pretty standard advice to avoid using user-input within code that executes
 operating system commands. However, most of that advice tends to revolve around
 how dangerous it is for a user to provide the <em>command</em> to execute and I have
@@ -76,68 +60,72 @@ not seen (good) advice on whether other parts of a command (e.g. flags, flag
 parameters) are safe to be user-controlled.</p>
 <p>Command injection vulnerabilities do not necessarily require special shell directives or
 user-controlled commands. This form of command injection is
-straightforward and has had <a href="https://www.owasp.org/index.php/Command_injection">plenty written about
+straightforward and has had 
+
+<a href="https://www.owasp.org/index.php/Command_injection"  target="_blank">plenty written about
 it</a> so I will focus on
 less obvious examples.</p>
-<p>Consider the following code snippet that I'm borrowing from an <a href="https://www.owasp.org/index.php/Command_injection_in_Java">OWASP page on
+<p>Consider the following code snippet that I'm borrowing from an 
+
+<a href="https://www.owasp.org/index.php/Command_injection_in_Java"  target="_blank">OWASP page on
 command injection</a>:</p>
-<pre><code>Runtime rntime = Runtime.getRuntime();
-Process proc = rntime.exec(&quot;find&quot; + &quot; &quot; + args[0]);
-</code></pre><p>The page claims &ldquo;it is not possible to inject additional commands&rdquo; so it must
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">Runtime rntime <span style="color:#f92672">=</span> Runtime<span style="color:#f92672">.</span><span style="color:#a6e22e">getRuntime</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+Process proc <span style="color:#f92672">=</span> rntime<span style="color:#f92672">.</span><span style="color:#a6e22e">exec</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;find&#34;</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34; &#34;</span> <span style="color:#f92672">+</span> args<span style="color:#f92672">[</span>0<span style="color:#f92672">]</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+</code></pre></div><p>The page claims &ldquo;it is not possible to inject additional commands&rdquo; so it must
 be secure! However, compiling the full Java file and running <code>java Example1 &quot;bad -exec cat {} +&quot;</code> on a Linux machine modifies the command being executed. A
 program that originally listed file names matching the user-supplied argument
 is now a program that <em>prints the contents</em> of the user-supplied file.</p>
 <p>What about <code>tar</code>? Consider the following two code snippets:</p>
-<pre><code>String cmd = &quot;tar tf &quot; + userControlledFilename;
-Process proc = Runtime.getRuntime().exec(cmd);
-</code></pre><pre><code>String[] cmdArray = new String[3];
-cmdArray[0] = &quot;tar&quot;;
-cmdArray[1] = &quot;tf&quot;;	
-cmdArray[2] = userControlledFilename;
-Process proc = Runtime.getRuntime().exec(cmdArray);
-</code></pre><p>Are they safe? In short the answer is &ldquo;no&rdquo; because user-controlled
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">String cmd <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;tar tf &#34;</span> <span style="color:#f92672">+</span> userControlledFilename<span style="color:#f92672">;</span>
+Process proc <span style="color:#f92672">=</span> Runtime<span style="color:#f92672">.</span><span style="color:#a6e22e">getRuntime</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">.</span><span style="color:#a6e22e">exec</span><span style="color:#f92672">(</span>cmd<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">String<span style="color:#f92672">[</span><span style="color:#f92672">]</span> cmdArray <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> String<span style="color:#f92672">[</span>3<span style="color:#f92672">]</span><span style="color:#f92672">;</span>
+cmdArray<span style="color:#f92672">[</span>0<span style="color:#f92672">]</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;tar&#34;</span><span style="color:#f92672">;</span>
+cmdArray<span style="color:#f92672">[</span>1<span style="color:#f92672">]</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;tf&#34;</span><span style="color:#f92672">;</span>	
+cmdArray<span style="color:#f92672">[</span>2<span style="color:#f92672">]</span> <span style="color:#f92672">=</span> userControlledFilename<span style="color:#f92672">;</span>
+Process proc <span style="color:#f92672">=</span> Runtime<span style="color:#f92672">.</span><span style="color:#a6e22e">getRuntime</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">.</span><span style="color:#a6e22e">exec</span><span style="color:#f92672">(</span>cmdArray<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+</code></pre></div><p>Are they safe? In short the answer is &ldquo;no&rdquo; because user-controlled
 <code>tar</code> flags can lead to command injection. The following example
 will execute <code>echo hello</code> (the <code>tar</code> version may affect results):</p>
-<pre><code>tar tf file.tar --checkpoint=1 --checkpoint-action=exec=&quot;echo hello&quot;
-</code></pre><p>The other interesting property of <code>Runtime.exec</code> is its behavior depends
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">tar tf file<span style="color:#f92672">.</span><span style="color:#a6e22e">tar</span> <span style="color:#f92672">-</span><span style="color:#f92672">-</span>checkpoint<span style="color:#f92672">=</span>1 <span style="color:#f92672">-</span><span style="color:#f92672">-</span>checkpoint<span style="color:#f92672">-</span>action<span style="color:#f92672">=</span>exec<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;echo hello&#34;</span>
+</code></pre></div><p>The other interesting property of <code>Runtime.exec</code> is its behavior depends
 on how its called and how its arguments are passed. The following Java
 program demonstrates this (I use <code>gtar</code> as a GNU tar alias on OS X):</p>
-<pre><code>// Full file here: https://gist.github.com/kelbyludwig/afb1755af190bb9fe66145b6a1706d76
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">// Full file here: https://gist.github.com/kelbyludwig/afb1755af190bb9fe66145b6a1706d76
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">//Executes a local script.
+</span><span style="color:#75715e"></span><span style="color:#75715e">//String cmd = &#34;gtar tf file.tar --checkpoint=1 --checkpoint-action=exec=evil.sh&#34;;
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">//In some versions, GNU tar runs the checkpoint action with bash.
+</span><span style="color:#75715e"></span><span style="color:#75715e">//String cmd = &#34;gtar tf file.tar --checkpoint=1 --checkpoint-action=exec={echo,test0}&#34;;
+</span><span style="color:#75715e"></span>        
+<span style="color:#75715e">//GNU tar seperates on spaces, tabs, and newlines and `exec` seperates on spaces.
+</span><span style="color:#75715e"></span><span style="color:#75715e">//String cmd = &#34;gtar tf file.tar --checkpoint=1 --checkpoint-action=exec=echo\ttest0&#34;;
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">//Test 1: Does not execute echo command
+</span><span style="color:#75715e"></span>String cmd <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;gtar tf file.tar --checkpoint=1 --checkpoint-action=exec=\&#34;echo test1\&#34;&#34;</span><span style="color:#f92672">;</span>
+System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;TEST1:&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+Process proc1 <span style="color:#f92672">=</span> Runtime<span style="color:#f92672">.</span><span style="color:#a6e22e">getRuntime</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">.</span><span style="color:#a6e22e">exec</span><span style="color:#f92672">(</span>cmd<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+readOutput<span style="color:#f92672">(</span>proc1<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
 
-//Executes a local script.
-//String cmd = &quot;gtar tf file.tar --checkpoint=1 --checkpoint-action=exec=evil.sh&quot;;
+<span style="color:#75715e">//Test 2: Executes echo command
+</span><span style="color:#75715e"></span>String<span style="color:#f92672">[</span><span style="color:#f92672">]</span> cmdArray <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> String<span style="color:#f92672">[</span>5<span style="color:#f92672">]</span><span style="color:#f92672">;</span>
+cmdArray<span style="color:#f92672">[</span>0<span style="color:#f92672">]</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;gtar&#34;</span><span style="color:#f92672">;</span>
+cmdArray<span style="color:#f92672">[</span>1<span style="color:#f92672">]</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;tf&#34;</span><span style="color:#f92672">;</span>    
+cmdArray<span style="color:#f92672">[</span>2<span style="color:#f92672">]</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;file.tar&#34;</span><span style="color:#f92672">;</span>
+cmdArray<span style="color:#f92672">[</span>3<span style="color:#f92672">]</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;--checkpoint=1&#34;</span><span style="color:#f92672">;</span>
+cmdArray<span style="color:#f92672">[</span>4<span style="color:#f92672">]</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;--checkpoint-action=exec=\&#34;echo test2\&#34;&#34;</span><span style="color:#f92672">;</span>
+System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;TEST2:&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+Process proc2 <span style="color:#f92672">=</span> Runtime<span style="color:#f92672">.</span><span style="color:#a6e22e">getRuntime</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">.</span><span style="color:#a6e22e">exec</span><span style="color:#f92672">(</span>cmdArray<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+readOutput<span style="color:#f92672">(</span>proc2<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
 
-//In some versions, GNU tar runs the checkpoint action with bash.
-//String cmd = &quot;gtar tf file.tar --checkpoint=1 --checkpoint-action=exec={echo,test0}&quot;;
-        
-//GNU tar seperates on spaces, tabs, and newlines and `exec` seperates on spaces.
-//String cmd = &quot;gtar tf file.tar --checkpoint=1 --checkpoint-action=exec=echo\ttest0&quot;;
-
-//Test 1: Does not execute echo command
-String cmd = &quot;gtar tf file.tar --checkpoint=1 --checkpoint-action=exec=\&quot;echo test1\&quot;&quot;;
-System.out.println(&quot;TEST1:&quot;);
-Process proc1 = Runtime.getRuntime().exec(cmd);
-readOutput(proc1);
-
-//Test 2: Executes echo command
-String[] cmdArray = new String[5];
-cmdArray[0] = &quot;gtar&quot;;
-cmdArray[1] = &quot;tf&quot;;    
-cmdArray[2] = &quot;file.tar&quot;;
-cmdArray[3] = &quot;--checkpoint=1&quot;;
-cmdArray[4] = &quot;--checkpoint-action=exec=\&quot;echo test2\&quot;&quot;;
-System.out.println(&quot;TEST2:&quot;);
-Process proc2 = Runtime.getRuntime().exec(cmdArray);
-readOutput(proc2);
-
-//Test 3: Does not execute echo command
-cmdArray = new String[2];
-cmdArray[0] = &quot;gtar&quot;;
-cmdArray[1] = &quot;tf file.tar --checkpoint=1 --checkpoint-action=exec=\&quot;echo test3\&quot;&quot;;
-System.out.println(&quot;TEST3:&quot;);
-Process proc3 = Runtime.getRuntime().exec(cmdArray);
-readOutput(proc3);
-</code></pre><p>This produces interesting results I would like to point out. Suppose
+<span style="color:#75715e">//Test 3: Does not execute echo command
+</span><span style="color:#75715e"></span>cmdArray <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> String<span style="color:#f92672">[</span>2<span style="color:#f92672">]</span><span style="color:#f92672">;</span>
+cmdArray<span style="color:#f92672">[</span>0<span style="color:#f92672">]</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;gtar&#34;</span><span style="color:#f92672">;</span>
+cmdArray<span style="color:#f92672">[</span>1<span style="color:#f92672">]</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;tf file.tar --checkpoint=1 --checkpoint-action=exec=\&#34;echo test3\&#34;&#34;</span><span style="color:#f92672">;</span>
+System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;TEST3:&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+Process proc3 <span style="color:#f92672">=</span> Runtime<span style="color:#f92672">.</span><span style="color:#a6e22e">getRuntime</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">.</span><span style="color:#a6e22e">exec</span><span style="color:#f92672">(</span>cmdArray<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+readOutput<span style="color:#f92672">(</span>proc3<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+</code></pre></div><p>This produces interesting results I would like to point out. Suppose
 everything after <code>/usr/local/bin/gtar tf</code> was user-controlled. First, I find it
 interesting that Test 2 does executes <code>echo</code> and Test 3 does not. I have some
 suspicions on why this is but I need to poke through OpenJDK and figure that
@@ -152,44 +140,79 @@ using user-input is scary and error-prone. It should be avoided!</p>
 <p>If there are not high-level and secure libraries to perform a task without
 resorting to OS-level commands I recommend coming up with a solution that
 avoids using user-controlled input in that command all together. Shell escaping
-is <a href="https://lf.lc/CVE-2016-4991.txt">too fragile</a> and should be avoided as
+is 
+
+<a href="https://lf.lc/CVE-2016-4991.txt"  target="_blank">too fragile</a> and should be avoided as
 well.</p>
 
-      
-      
-      
-    </article>
-    
-
-
-  </main>
-  
-  <nav class="pagination-single">
-    
-      <span class="previous">&larr; <a href="https://kel.bz/post/signal/" rel="prev">why signal is well-designed</a></span>
-    
-    
-      <span class="next"><a href="https://kel.bz/post/lattices/" rel="next">the ggh cryptosystem</a> &rarr;</span>
-    
-  </nav>
-
+  </article>
 
   
-  <footer role="contentinfo">
-    <div style="text-align:center;">
-      <img src="https://kel.bz/profile.jpg" width="64" height="64"><br>
-      written by kelby ludwig
-    </div>
-  </footer>
+  
+
+  
+
+  
+    <section class="article-labels">
+      
+          
+            
+            <a class="article-tag li" href=/tags/software-security/><span class="hashtag">#</span>software-security</a>
+          
+            
+            <a class="article-tag li" href=/tags/java/><span class="hashtag">#</span>java</a>
+          
+    </section>
+  
+
+  
+    <section class="article-navigation">
+      
+        
+        <p>
+          <a class="link" href="/post/pohlig/"><span class="li"></span>a note on subgroup confinement attacks</a>
+          
+          
+              
+              <a class="article-tag" href=/tags/cryptography/><span class="hashtag">#</span>cryptography</a>
+          
+        </p>
+        
+
+        
+          <p>
+            <a class="link" href="/post/lattices/"><span class="li"></span>the ggh cryptosystem</a class="link">
+            
+            
+                
+                <a class="article-tag" href=/tags/cryptography/><span class="hashtag">#</span>cryptography</a>
+            
+          </p>
+        
+      
+    </section>
+  
+
+  
+
+
+        </div><section id="footer" class="footer max-body-width">
+  
+  
+    
+  
+  <p>kel.bz</p>
+  <p>
+    <span>Powered by</span>
+    <a href="https://gohugo.io">Hugo</a>
+    <span>and the</span>
+    <a href="https://themes.gohugo.io/hugo-notepadium/">Notepadium</a>
+  </p>
+</section>
+
+
 
 
 </div>
-
-<script src="/js/highlight.pack.js"></script>
-<script>hljs.initHighlightingOnLoad();</script>
-
-
-
-</body>
+    </body>
 </html>
-

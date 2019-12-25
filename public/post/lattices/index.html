@@ -1,74 +1,58 @@
-
 <!DOCTYPE html>
-<html lang="en-us">
-<head>
-
-  
-  <meta charset="UTF-8">
-  <title>
-    the ggh cryptosystem | kel.bz
-  </title>
+<html>
+<meta charset="utf-8">
+<meta name="generator" content="Hugo 0.62.0" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light only">
+<meta name="supported-color-schemes" content="light only">
 
 
   
-  <meta name="viewport" content="width=device-width,user-scalable=no,maximum-scale=1,initial-scale=1">
-
   
-  <link rel="canonical" href="https://kel.bz/post/lattices/"/>
-
-  
-  <link rel="stylesheet" href="/css/sanitize.css">
-  <link rel="stylesheet" href="/css/responsive.css">
-  <link rel="stylesheet" href="/css/highlight_monokai.css">
-  <link rel="stylesheet" href="/css/theme.css">
-  <link rel="stylesheet" href="/css/custom.css">
-  
-  
-  <link href="https://kel.bz//index.xml" rel="alternate" type="application/rss+xml" title="kel.bz" />
-  <link href="https://kel.bz//index.xml" rel="feed" type="application/rss+xml" title="kel.bz" />
-
-  
-  
-
-
-</head>
+    <title>the ggh cryptosystem &ndash; kel.bz</title>
+    
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/core.min.871c51706cba837f31c3028126e8801b3ced6615f16b6ef7dbba11efc23280f506ef819d15b556880689cd71206843b7.css" integrity="sha384-hxxRcGy6g38xwwKBJuiAGzztZhXxa27327oR78IygPUG74GdFbVWiAaJzXEgaEO3">
 <body>
-<div class="container">
-
+      <div class="base-body max-width"><section id="header" class="header max-body-width">
+  <p>
+    <a class="site-name" href="/">
+      
+        kel.bz
+      
+    </a>
+    
+      <span class="site-slogan">where i take notes</span>
+    
+  </p>
+</section><div id="content" class="flex-body max-body-width">
   
-  <header role="banner">
-    <div class="row gutters">
-      <div id="site-title" class="col span_6">
-        <h1><a href="https://kel.bz/">kel.bz</a></h1>
-        
-      </div>
-      <div id="social" class="col span_6">
-        <ul>
-          <li><a href="/about/me">about kel.bz</a></li>
-          <li><a href="https://twitter.com/kelbyludwig" target="_blank">twitter</a></li>
-          
-          <li><a href="https://github.com/kelbyludwig" target="_blank">github</a></li>
-          <li><a href="https://kel.bz//index.xml" type="application/rss+xml" target="_blank">rss</a></li>
-        </ul>
-      </div>
-    </div>
-  </header>
-
-
   
-  <main id="single" role="main">
-    <div class="article-header">
+
+  <section class="article-header" >
       <h1>the ggh cryptosystem</h1>
-      <div class="meta">
-        Nov 23, 2016 &nbsp;
-        
-      </div>
-    </div>
-    <article>
-      <h1 id="the-goldreichgoldwasserhalevi-ggh-cryptosystem">The Goldreich–Goldwasser–Halevi (GGH) Cryptosystem</h1>
+      <p class="article-date">2016-11-23</p>
+  </section>
+
+  <article class="markdown-body" >
+    <h1 id="the-goldreichgoldwasserhalevi-ggh-cryptosystem">The Goldreich–Goldwasser–Halevi (GGH) Cryptosystem</h1>
 <p>GGH is an asymmetric cryptosystem based on lattices that can be used for
 encryption. Lattices are pretty cool because lattice-based cryptography has
 some interesting properties (some lattice-based cryptosystems are believed
@@ -83,7 +67,9 @@ implemented as the author originally described it.</p>
 <h2 id="lattices">Lattices</h2>
 <p>If the words &ldquo;linear algebra&rdquo; make you nervous don't fret. I believe this
 walkthrough can be understood using knowledge at about the level of the
-<a href="https://www.youtube.com/playlist?list=PLZHQObOWTQDPD3MizzM2xVFitgF8hE_ab">&ldquo;Essence of Linear
+
+
+<a href="https://www.youtube.com/playlist?list=PLZHQObOWTQDPD3MizzM2xVFitgF8hE_ab"  target="_blank">&ldquo;Essence of Linear
 Algebra&rdquo;</a>
 from 3Blue1Brown. At first, I plan on taking a similar approach to 3Blue1Brown
 by focusing less on the math and more on the intuition behind GGH. Nguyen's
@@ -92,7 +78,9 @@ involved there is not terrible.</p>
 <h3 id="what-is-a-lattice">What is a lattice?</h3>
 <p>A <em>lattice</em> can be defined as all linear combinations of a set of vectors where
 the coefficients are integers. If you are familiar with the concept of
-vector spaces, a lattice is similar (If you aren't watch <a href="https://www.youtube.com/watch?v=k7RM-ot2NWY">this</a>).
+vector spaces, a lattice is similar (If you aren't watch 
+
+<a href="https://www.youtube.com/watch?v=k7RM-ot2NWY"  target="_blank">this</a>).
 To be concrete, consider the set of vectors constructed using <code>sage</code>:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">sage: vector_a <span style="color:#f92672">=</span> vector(RR, [<span style="color:#ae81ff">1</span>,<span style="color:#ae81ff">0</span>])
 sage: vector_b <span style="color:#f92672">=</span> vector(RR, [<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">1</span>])
@@ -112,7 +100,9 @@ sage: vector_b <span style="color:#f92672">=</span> vector(ZZ, [<span style="col
 sage: <span style="color:#ae81ff">3</span><span style="color:#f92672">*</span>vector_a <span style="color:#f92672">+</span> <span style="color:#ae81ff">4</span><span style="color:#f92672">*</span>vector_b
 </code></pre></div><p>So with lattices, our span would not cover (for example) all possible
 2-dimensional points so we get this weird collection of dots.</p>
-<p>To assist with visualizing some of the concepts discussed here, I wrote <a href="https://gist.github.com/kelbyludwig/201d08e3e8e9a4f3764f366398f12a47">some
+<p>To assist with visualizing some of the concepts discussed here, I wrote 
+
+<a href="https://gist.github.com/kelbyludwig/201d08e3e8e9a4f3764f366398f12a47"  target="_blank">some
 code</a> for
 sage to plot a lattice from given basis vectors.</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">sage: load(<span style="color:#e6db74"></span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">ggh.sage</span><span style="color:#e6db74">&#34;</span>)
@@ -150,11 +140,9 @@ sage: show(plot_2d_lattice(va, vb, xmin<span style="color:#f92672">=</span><span
 </code></pre></div><p>In this example, the lattice point <code>[2, 2]</code> would be the solution to CVP as its
 closest to the off-lattice point <code>[1.7, 2]</code>.</p>
 <p>CVP appears to be straightforward in the two-dimensional example but it
-is believed that CVP is difficult for higher dimension lattices (say, 200</p>
-<ul>
-<li>400). Initially working with and visualizing higher-dimension vectors makes
-the brain sizzle so I plan on sticking with the two dimensional case.</li>
-</ul>
+is believed that CVP is difficult for higher dimension lattices (say, 200-400).
+Initially working with and visualizing higher-dimension vectors makes
+the brain sizzle so I plan on sticking with the two dimensional case.</p>
 <h2 id="solving-cvp-in-some-cases">Solving CVP (in some cases)</h2>
 <p>In a GGH keypair, a public key is a &ldquo;bad&rdquo; basis and a private key is a &ldquo;good&rdquo;
 basis. A &ldquo;good&rdquo; basis is a close to orthogonal with short basis vectors.
@@ -190,7 +178,7 @@ vector. Resources I found suggesting picking a parameter <code>d</code> and gene
 n-dimensional vector with elements from <code>-d -&gt; d</code>. This threw me for a loop
 initially because my perturbation vector would be large enough (because
 my basis was small) where my ciphertext vector would be closer to a
-<em>different</em> lattice point other than my original <code>ic</code> point. :shrug:</p>
+<em>different</em> lattice point other than my original <code>ic</code> point.</p>
 <h3 id="how-do-you-generate-a-public-key-from-the-private-key-why-do-you-use-unimodular-matrices-to-generate-the-public-key">How do you generate a public key from the private key? Why do you use unimodular matrices to generate the public key?</h3>
 <p>My code uses a loop that generates random small bases until a basis exceeds
 some orthogonality threshold (I determined the threshold experimentally). Once
@@ -198,65 +186,65 @@ a &ldquo;good&rdquo; private basis was generated, a public basis is generated by
 multiplying the private basis by randomly generated unimodular matrices.  When
 a basis is multiplied by a unimodular matrix, the lattice spanned by the
 resultant matrix is equal to the original basis. This is covered a bit more in
-<a href="https://cseweb.ucsd.edu/classes/wi10/cse206a/lec1.pdf">these</a> lecture notes.</p>
+
+
+<a href="https://cseweb.ucsd.edu/classes/wi10/cse206a/lec1.pdf"  target="_blank">these</a> lecture notes.</p>
 <h3 id="how-do-you-measure-orthogonality-of-a-basis">How do you measure &ldquo;orthogonality&rdquo; of a basis?</h3>
 <p>Orthogonality can be measured with something called the Hadamard ratio. The
 provided sage code uses this to generate GGH keypairs.</p>
 <h2 id="nyguens-attack">Nyguen's Attack</h2>
 <p>GGH (as the author's originally described it) is basically toast. A couple
-years after GGH was published, <a href="https://www.di.ens.fr/~pnguyen/pub_Ng08.htm">Phong Q.
+years after GGH was published, 
+
+<a href="https://www.di.ens.fr/~pnguyen/pub_Ng08.htm"  target="_blank">Phong Q.
 Nguyen</a> demonstrated an attack
 against GGH that allows an attacker to decrypt a ciphertext encrypted via a
 given a public key. Ouch. Nguyen's attack is also decently simple to follow!</p>
-<p>In the <a href="https://groups.csail.mit.edu/cis/pubs/shafi/1997-lncs-ggh.pdf">original GGH
+<p>In the 
+
+<a href="https://groups.csail.mit.edu/cis/pubs/shafi/1997-lncs-ggh.pdf"  target="_blank">original GGH
 paper</a>, the
 error vector used during message encryption is an n-vector <code>e</code> with its entries
 set to <code>sigma</code> or <code>-sigma</code>(<code>sigma</code> is commonly 3). Recall that in GGH a
 message <code>m</code> is encrypted with a public key <code>B</code> using the following formula:</p>
-<!-- raw HTML omitted -->
-<!-- raw HTML omitted -->
-<p><!-- raw HTML omitted -->c = m*B + e<!-- raw HTML omitted --></p>
-<p>Nyguen attack works as follows. First, taking the ciphertext modulo <code>sigma</code>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">c <span style="color:#f92672">=</span> m<span style="color:#f92672">*</span>B <span style="color:#f92672">+</span> e
+</code></pre></div><p>Nyguen attack works as follows. First, taking the ciphertext modulo <code>sigma</code>
 causes <code>e</code> to disappear from the equation. Why? Because <code>e</code> is a vector
 consisting only of <code>sigma</code> and <code>-sigma</code> (which are both 0 modulo <code>sigma</code>).</p>
-<p><!-- raw HTML omitted -->c = m<em>B + e
-c = m</em>B (mod sigma)
-<!-- raw HTML omitted --></p>
-<p>While this leaks some information about <code>m</code> (specifically <code>m (mod sigma)</code>),
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">c <span style="color:#f92672">=</span> m<span style="color:#f92672">*</span>B <span style="color:#f92672">+</span> e 
+c <span style="color:#f92672">=</span> m<span style="color:#f92672">*</span>B (mod sigma)
+</code></pre></div><p>While this leaks some information about <code>m</code> (specifically <code>m (mod sigma)</code>),
 more information could be leaked with a little algebra and a slightly larger
 modulus. This is accomplished by increasing the modulus to <code>2*sigma</code> and adding
 an all-<code>sigma</code> vector <code>s</code> to the equation.</p>
-<p><!-- raw HTML omitted -->c = m<em>B + e
-s + e = 0 (mod 2</em>sigma)
-c + s = m<em>B + e + s (mod 2</em>sigma)
-c + s = m<em>B + 0 (mod 2</em>sigma)
-c + s = m<em>B (mod 2</em>sigma) # nice!
-<!-- raw HTML omitted --></p>
-<p>We know <code>c</code>, <code>s</code>, and <code>B</code> in this equation. If we solve for <code>m</code>, we reveal
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">c <span style="color:#f92672">=</span> m<span style="color:#f92672">*</span>B <span style="color:#f92672">+</span> e 
+s <span style="color:#f92672">+</span> e <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span> (mod <span style="color:#ae81ff">2</span><span style="color:#f92672">*</span>sigma)
+c <span style="color:#f92672">+</span> s <span style="color:#f92672">=</span> m<span style="color:#f92672">*</span>B <span style="color:#f92672">+</span> e <span style="color:#f92672">+</span> s (mod <span style="color:#ae81ff">2</span><span style="color:#f92672">*</span>sigma)
+c <span style="color:#f92672">+</span> s <span style="color:#f92672">=</span> m<span style="color:#f92672">*</span>B <span style="color:#f92672">+</span> <span style="color:#ae81ff">0</span> (mod <span style="color:#ae81ff">2</span><span style="color:#f92672">*</span>sigma)
+c <span style="color:#f92672">+</span> s <span style="color:#f92672">=</span> m<span style="color:#f92672">*</span>B (mod <span style="color:#ae81ff">2</span><span style="color:#f92672">*</span>sigma) <span style="color:#75715e"># nice!</span>
+</code></pre></div><p>We know <code>c</code>, <code>s</code>, and <code>B</code> in this equation. If we solve for <code>m</code>, we reveal
 information about <code>m</code>. Specifically, we learn <code>m (mod 2*sigma)</code>. A solution to
 <code>m</code> is not guaranteed but Nyguen also demonstrated that in most cases it could
 be easily solved. This is already not looking great for GGH but it
 definitely gets worse.</p>
 <p>Working under the assumption that we solved the previous equation, denote <code>m (mod 2*sigma)</code> by <code>m2s</code>. Using some more algebra magic we can create the
 following equation (I'll explain it in just a second):</p>
-<p><!-- raw HTML omitted -->c - m2s*B = (m - m2s)*B + e<!-- raw HTML omitted --></p>
-<p>Note, that <code>(m - m2s)</code> will give a vector of the form <code>2*sigma*m_p</code> (I had to puzzle
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">c <span style="color:#f92672">-</span> m2s<span style="color:#f92672">*</span>B <span style="color:#f92672">=</span> (m <span style="color:#f92672">-</span> m2s)<span style="color:#f92672">*</span>B <span style="color:#f92672">+</span> e
+</code></pre></div><p>Note, that <code>(m - m2s)</code> will give a vector of the form <code>2*sigma*m_p</code> (I had to puzzle
 this out in sage but some small examples make it obvious). We don't know what <code>m_p</code>
 is just yet but that is fine. Now lets incorporate that into our previous equation:</p>
-<p><!-- raw HTML omitted -->c - m2s<em>B = (m - m2s)<em>B + e
-c - m2s</em>B = 2</em>sigma<em>m_p</em>B + e
-c - m2s<em>B = 2</em>sigma (m_p<em>B + (e/2</em>sigma)
-(c - m2s<em>B) / (2</em>sigma) = m_p<em>B + (e/2</em>sigma)
-<!-- raw HTML omitted --></p>
-<p>Yeah that looks awful. Okay. Hear me out. We know everything on the left-hand
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">c <span style="color:#f92672">-</span> m2s<span style="color:#f92672">*</span>B <span style="color:#f92672">=</span> (m <span style="color:#f92672">-</span> m2s)<span style="color:#f92672">*</span>B <span style="color:#f92672">+</span> e
+c <span style="color:#f92672">-</span> m2s<span style="color:#f92672">*</span>B <span style="color:#f92672">=</span> <span style="color:#ae81ff">2</span><span style="color:#f92672">*</span>sigma<span style="color:#f92672">*</span>m_p<span style="color:#f92672">*</span>B <span style="color:#f92672">+</span> e
+c <span style="color:#f92672">-</span> m2s<span style="color:#f92672">*</span>B <span style="color:#f92672">=</span> <span style="color:#ae81ff">2</span><span style="color:#f92672">*</span>sigma (m_p<span style="color:#f92672">*</span>B <span style="color:#f92672">+</span> (e<span style="color:#f92672">/</span><span style="color:#ae81ff">2</span><span style="color:#f92672">*</span>sigma)
+(c <span style="color:#f92672">-</span> m2s<span style="color:#f92672">*</span>B) <span style="color:#f92672">/</span> (<span style="color:#ae81ff">2</span><span style="color:#f92672">*</span>sigma) <span style="color:#f92672">=</span> m_p<span style="color:#f92672">*</span>B <span style="color:#f92672">+</span> (e<span style="color:#f92672">/</span><span style="color:#ae81ff">2</span><span style="color:#f92672">*</span>sigma)
+</code></pre></div><p>Yeah that looks awful. Okay. Hear me out. We know everything on the left-hand
 side there. Lets just call it <code>c_p</code>.</p>
-<p><!-- raw HTML omitted -->c_p = m_p<em>B + (e/2</em>sigma)<!-- raw HTML omitted --></p>
-<p><code>c_p</code> is just a point in space. It is similar to a GGH ciphertext. Recall the equation
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">c_p <span style="color:#f92672">=</span> m_p<span style="color:#f92672">*</span>B <span style="color:#f92672">+</span> (e<span style="color:#f92672">/</span><span style="color:#ae81ff">2</span><span style="color:#f92672">*</span>sigma)
+</code></pre></div><p><code>c_p</code> is just a point in space. It is similar to a GGH ciphertext. Recall the equation
 for a ciphertext in GGH:</p>
-<p><!-- raw HTML omitted -->c = m<em>B + e
-c_p = m_p</em>B + (e/2*sigma)
-<!-- raw HTML omitted --></p>
-<p>We have reduced the original CVP problem to another CVP problem with an
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">c <span style="color:#f92672">=</span> m<span style="color:#f92672">*</span>B <span style="color:#f92672">+</span> e
+c_p <span style="color:#f92672">=</span> m_p<span style="color:#f92672">*</span>B <span style="color:#f92672">+</span> (e<span style="color:#f92672">/</span><span style="color:#ae81ff">2</span><span style="color:#f92672">*</span>sigma)
+</code></pre></div><p>We have reduced the original CVP problem to another CVP problem with an
 effectively random message using an error vector that is a <em>much shorter version
 of the original</em>. Considering this is a &ldquo;special&rdquo; case of the CVP problem, it
 could be solved using specialized algorithms that solve CVP for points that are
@@ -269,8 +257,12 @@ smaller.</p>
 analysis of their cryptosystems. If the system holds up, the challenge should
 increase confidence in the scheme. These challenges, however, are not always
 well-received because they are believed to be
-<a href="https://moxie.org/blog/telegram-crypto-challenge/">unrealistic</a> and/or
-<a href="https://www.schneier.com/crypto-gram/archives/1998/1215.html#1">unfair</a>.</p>
+
+
+<a href="https://moxie.org/blog/telegram-crypto-challenge/"  target="_blank">unrealistic</a> and/or
+
+
+<a href="https://www.schneier.com/crypto-gram/archives/1998/1215.html#1"  target="_blank">unfair</a>.</p>
 <p>GGH's authors hosted a challenge to demonstrate GGH's security. They presented
 5 public keys of differing security levels and 5 messages encrypted using GGH. This
 &ldquo;Ciphertext Only&rdquo; attack model is a pretty low bar. There are probably a good
@@ -278,45 +270,82 @@ number of questionable cryptosystems that could stand-up to such an attack but
 would crumble instantly under increased pressure.</p>
 <p>Nguyen used this technique to break <em>all five</em> of the GGH challenges in
 &ldquo;reasonable time&rdquo;. A choice quote from Nguyen's paper:</p>
-<p><code>This proves that GGH is insecure for the parameters suggested by Goldreich, Goldwasser and Halevi. Learning the result of our experiments, one of the authors of GGH declared the scheme as “dead”</code></p>
+<blockquote>
+<p>This proves that GGH is insecure for the parameters suggested by Goldreich,
+Goldwasser and Halevi. Learning the result of our experiments, one of the
+authors of GGH declared the scheme as “dead”</p>
+</blockquote>
 <p>RIP</p>
-<!-- raw HTML omitted -->
+<p><em>Thanks to David Wong and Sean Devlin providing valuable feedback on this write-up</em></p>
 
-      
-      
-      
-    </article>
-    
-
-
-  </main>
-  
-  <nav class="pagination-single">
-    
-      <span class="previous">&larr; <a href="https://kel.bz/post/javaexec/" rel="prev">user-influenced os commands are still considered harmful</a></span>
-    
-    
-      <span class="next"><a href="https://kel.bz/post/asis-rsa/" rel="next">asis ctf: rsa write-up</a> &rarr;</span>
-    
-  </nav>
-
+  </article>
 
   
-  <footer role="contentinfo">
-    <div style="text-align:center;">
-      <img src="https://kel.bz/profile.jpg" width="64" height="64"><br>
-      written by kelby ludwig
-    </div>
-  </footer>
+  
+
+  
+
+  
+    <section class="article-labels">
+      
+          
+            
+            <a class="article-tag li" href=/tags/cryptography/><span class="hashtag">#</span>cryptography</a>
+          
+    </section>
+  
+
+  
+    <section class="article-navigation">
+      
+        
+        <p>
+          <a class="link" href="/post/javaexec/"><span class="li"></span>user-influenced os commands are still considered harmful</a>
+          
+          
+              
+              <a class="article-tag" href=/tags/software-security/><span class="hashtag">#</span>software-security</a>
+          
+              
+              <a class="article-tag" href=/tags/java/><span class="hashtag">#</span>java</a>
+          
+        </p>
+        
+
+        
+          <p>
+            <a class="link" href="/post/asis-rsa/"><span class="li"></span>asis ctf: rsa write-up</a class="link">
+            
+            
+                
+                <a class="article-tag" href=/tags/cryptography/><span class="hashtag">#</span>cryptography</a>
+            
+          </p>
+        
+      
+    </section>
+  
+
+  
+
+
+        </div><section id="footer" class="footer max-body-width">
+  
+  
+    
+  
+  <p>kel.bz</p>
+  <p>
+    <span>Powered by</span>
+    <a href="https://gohugo.io">Hugo</a>
+    <span>and the</span>
+    <a href="https://themes.gohugo.io/hugo-notepadium/">Notepadium</a>
+  </p>
+</section>
+
+
 
 
 </div>
-
-<script src="/js/highlight.pack.js"></script>
-<script>hljs.initHighlightingOnLoad();</script>
-
-
-
-</body>
+    </body>
 </html>
-

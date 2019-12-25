@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>java on kel.bz</title>
+    <link>https://kel.bz/tags/java/</link>
+    <description>Recent content in java on kel.bz</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 06 Dec 2016 19:21:35 -0600</lastBuildDate>
+    
+	<atom:link href="https://kel.bz/tags/java/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>user-influenced os commands are still considered harmful</title>
+      <link>https://kel.bz/post/javaexec/</link>
+      <pubDate>Tue, 06 Dec 2016 19:21:35 -0600</pubDate>
+      
+      <guid>https://kel.bz/post/javaexec/</guid>
+      <description>Non-obvious ways of getting code execution when testing code that uses user input to build shell commands.</description>
+    </item>
+    
+  </channel>
+</rss>

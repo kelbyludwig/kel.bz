@@ -17,7 +17,7 @@
       <pubDate>Sat, 10 Aug 2019 00:00:00 +0000</pubDate>
       
       <guid>https://kel.bz/post/hnp/</guid>
-      <description>I created a Sage notebook to work through understanding the Hidden Number Problem. You can find it on Github!</description>
+      <description>Notes on the Boneh and Venkatesan&#39;s paper describing the Hidden Number Problem and code demonstrating some of the results.</description>
     </item>
     
     <item>
@@ -26,7 +26,7 @@
       <pubDate>Sun, 28 Jul 2019 00:00:00 +0000</pubDate>
       
       <guid>https://kel.bz/post/ecdsa-is-weird/</guid>
-      <description>I created a Sage notebook to show off some odd properties of ECDSA. It is titled &amp;ldquo;ECDSA is Weird&amp;rdquo; and you can find it on Github!</description>
+      <description>Unexpected properties of ECDSA signatures.</description>
     </item>
     
     <item>
@@ -35,8 +35,7 @@
       <pubDate>Sun, 02 Jun 2019 00:00:00 +0000</pubDate>
       
       <guid>https://kel.bz/post/entropy/</guid>
-      <description>What is entropy? Entropy is a measure of information for a random variable. Entropy is often presented in units of bits. Random events that are likely to happen carry fewer bits of information than random events that occur infrequently.
-One view of entropy is the optimal bit encoding of the outcome of a random variable. Suppose I needed to transmit to you the winner of a checkers tournament. If there were 32 players in this tournament, each with equal chances of winning, I could encode the outcome as:</description>
+      <description>Different ways to describe the entropy of a random variable.</description>
     </item>
     
     <item>
@@ -45,9 +44,7 @@ One view of entropy is the optimal bit encoding of the outcome of a random varia
       <pubDate>Mon, 27 May 2019 00:00:00 +0000</pubDate>
       
       <guid>https://kel.bz/post/kem/</guid>
-      <description>A key encapsulation mechanism (KEM) can be used to construct a &amp;ldquo;hybrid&amp;rdquo; cryptosystems. In these cryptosystems symmetric keys (e.g. for AES) are encrypted using asymmetric keys. The symmetric key is used for encrypting data.
-A naive KEM built using RSA primitives could use &amp;ldquo;textbook&amp;rdquo; RSA to encrypt a randomly generated symmetric key but this has some significant flaws:
-  If e is small (e.g. e=3), the symmetric key may not be reduced by the modulus after exponentiation.</description>
+      <description>How to use RSA to encrypt symmetric keys and how RSA-KEM relates to RSA-OAEP.</description>
     </item>
     
     <item>
@@ -56,9 +53,7 @@ A naive KEM built using RSA primitives could use &amp;ldquo;textbook&amp;rdquo; 
       <pubDate>Sun, 12 May 2019 00:00:00 +0000</pubDate>
       
       <guid>https://kel.bz/post/designreview/</guid>
-      <description>Often I am responsible for providing feedback on system designs prior to implementation. These reviews are usually focused on identifying or validating security properties of the proposed design.
-When doing these reviews I find it easy to miss out on feedback opportunities when I get stuck down some rabbit hole. This is a short checklist to remind myself what questions I might want to answer during a review.
-  Is the problem clear?</description>
+      <description>Moving towards operationalizing system design reviews. What questions should a review team ask, or expect to be answered?</description>
     </item>
     
     <item>
@@ -67,8 +62,7 @@ When doing these reviews I find it easy to miss out on feedback opportunities wh
       <pubDate>Mon, 14 Jan 2019 00:00:00 +0000</pubDate>
       
       <guid>https://kel.bz/post/ssh-agent/</guid>
-      <description>ssh-agent overview ssh-agent is an authentication agent. It is a long-running process that (among other things) does private key operations on behalf of your SSH client.
-One reason why ssh-agent exists is to protect private keys on-disk. It&#39;s likely that your SSH private keys are encrypted with a key derived from a password you have set. That is why you may occasionally have to enter a password prior to establishing a SSH connection with some server.</description>
+      <description>The purpose of ssh-agent and observations how ssh-agent improves UX and security.</description>
     </item>
     
     <item>
@@ -77,7 +71,7 @@ One reason why ssh-agent exists is to protect private keys on-disk. It&#39;s lik
       <pubDate>Tue, 25 Jul 2017 00:00:00 +0000</pubDate>
       
       <guid>https://kel.bz/post/lll/</guid>
-      <description>LLL Motivation The Lenstra–Lenstra–Lovász (LLL) algorithm is an algorithm that efficiently transforms a &amp;ldquo;bad&amp;rdquo; basis for a lattice L into a &amp;ldquo;pretty good&amp;rdquo; basis for the same lattice. This transformation of a bad basis into a better basis is known as lattice reduction, and it has useful applications. For example, there is attack against ECDSA implementations that leverage biased RNGs that can lead to private key recovery. However, my experience learning why LLL works has been pretty rough.</description>
+      <description>My attempt to grok the Lenstra–Lenstra–Lovász (LLL) algorithm used for basis reduction.</description>
     </item>
     
     <item>
@@ -86,19 +80,7 @@ One reason why ssh-agent exists is to protect private keys on-disk. It&#39;s lik
       <pubDate>Sat, 14 Jan 2017 00:00:00 +0000</pubDate>
       
       <guid>https://kel.bz/post/pohlig/</guid>
-      <description>The Pohlig-Hellman algorithm is a efficient method of solving the discrete log problem for groups whose order is a smooth integer. A smooth integer is just an integer whose prime factorization consists of small prime numbers.
-Pohlig-Hellman could be used to efficiently recover private keys from broken (EC)DH implementations. There are some cryptopals exercise that use it (its in set 8). This attack is often referred to as a &amp;ldquo;subgroup confinement&amp;rdquo; attack.</description>
-    </item>
-    
-    <item>
-      <title>why signal is well-designed</title>
-      <link>https://kel.bz/post/signal/</link>
-      <pubDate>Fri, 16 Dec 2016 14:24:08 -0600</pubDate>
-      
-      <guid>https://kel.bz/post/signal/</guid>
-      <description>I wrote these sometime ago but never linked them here. Enjoy!
-An Opinionated Series on Why Signal Protocol is Well-Designed Part 1
-An Opinionated Series on Why Signal Protocol is Well-Designed Part 2: Deniability</description>
+      <description>Subgroup confinement attacks can apply in offline and online contexts.</description>
     </item>
     
     <item>
@@ -107,8 +89,7 @@ An Opinionated Series on Why Signal Protocol is Well-Designed Part 2: Deniabilit
       <pubDate>Tue, 06 Dec 2016 19:21:35 -0600</pubDate>
       
       <guid>https://kel.bz/post/javaexec/</guid>
-      <description>more of the same (sorta) Its pretty standard advice to avoid using user-input within code that executes operating system commands. However, most of that advice tends to revolve around how dangerous it is for a user to provide the command to execute and I have not seen (good) advice on whether other parts of a command (e.g. flags, flag parameters) are safe to be user-controlled.
-Command injection vulnerabilities do not necessarily require special shell directives or user-controlled commands.</description>
+      <description>Non-obvious ways of getting code execution when testing code that uses user input to build shell commands.</description>
     </item>
     
     <item>
@@ -117,8 +98,7 @@ Command injection vulnerabilities do not necessarily require special shell direc
       <pubDate>Wed, 23 Nov 2016 00:00:00 +0000</pubDate>
       
       <guid>https://kel.bz/post/lattices/</guid>
-      <description>The Goldreich–Goldwasser–Halevi (GGH) Cryptosystem GGH is an asymmetric cryptosystem based on lattices that can be used for encryption. Lattices are pretty cool because lattice-based cryptography has some interesting properties (some lattice-based cryptosystems are believed to be quantum resistant!).
-GGH is pretty cool because it is straightforward to learn. GGH also has interesting properties that could allow an adversary to recover plaintext from a given ciphertext (I said cool not secure).</description>
+      <description>An introduction to lattice-based cryptography using the broken Goldreich–Goldwasser–Halevi (GGH) cryptosystem.</description>
     </item>
     
     <item>
@@ -127,8 +107,7 @@ GGH is pretty cool because it is straightforward to learn. GGH also has interest
       <pubDate>Sun, 18 Sep 2016 14:45:13 -0500</pubDate>
       
       <guid>https://kel.bz/post/asis-rsa/</guid>
-      <description>The Problem Given a public key, an encrypted flag and a Python script that encrypted the flag decrypt the flag. First, the script used to create the challenge files.
-#!/usr/bin/python import gmpy from Crypto.Util.number import * from Crypto.PublicKey import RSA from Crypto.Cipher import PKCS1_v1_5 flag = open(&#39;flag&#39;, &#39;r&#39;).read() * 30 def ext_rsa_encrypt(p, q, e, msg): m = bytes_to_long(msg) # unused lol while True: n = p * q try: phi = (p - 1)*(q - 1) d = gmpy.</description>
+      <description>Breaking RSA with sequential prime key parameter generation.</description>
     </item>
     
     <item>
@@ -137,8 +116,7 @@ GGH is pretty cool because it is straightforward to learn. GGH also has interest
       <pubDate>Thu, 01 Sep 2016 13:52:18 -0500</pubDate>
       
       <guid>https://kel.bz/post/twinprimes/</guid>
-      <description>The Problem The premise for the challenge was straightforward. Given two RSA public keys, a ciphertext, and the code that generated the keys and ciphertext, decrypt the ciphertext. The provided code was as follows:
-from Crypto.Util.number import * import Crypto.PublicKey.RSA as RSA import os N = 1024 def getTwinPrime(N): while True: p = getPrime(N) if isPrime(p+2): return p def genkey(N = 1024): p = getTwinPrime(N) q = getTwinPrime(N) n1 = p*q n2 = (p+2)*(q+2) e = long(65537) d1 = inverse(e, (p-1)*(q-1)) d2 = inverse(e, (p+1)*(q+1)) key1 = RSA.</description>
+      <description>Decrypting RSA ciphertexts using correlated parameters.</description>
     </item>
     
     <item>
@@ -147,7 +125,7 @@ from Crypto.Util.number import * import Crypto.PublicKey.RSA as RSA import os N 
       <pubDate>Sat, 20 Aug 2016 13:52:18 -0500</pubDate>
       
       <guid>https://kel.bz/post/netfilter/</guid>
-      <description>Motivation I recently read the &amp;ldquo;Off-Path TCP Exploits&amp;rdquo; whitepaper and it made me a bit curious. How would I approach recreating a PoC for this attack? While the authors mention hurdles that they had to overcome for their experiments, the first snag I ran into is one of the core assumptions in the paper: An attacker can send packets with a spoofed source IP address across the Internet. I&#39;m skeptical that my ISP would be cool with this, so I wanted to recreate this scenario on my local network.</description>
+      <description>Using netfilter to programmtically rewrite the source IP address of ICMP packets.</description>
     </item>
     
     <item>
@@ -156,55 +134,34 @@ from Crypto.Util.number import * import Crypto.PublicKey.RSA as RSA import os N 
       <pubDate>Mon, 01 Aug 2016 21:00:29 -0500</pubDate>
       
       <guid>https://kel.bz/post/iceland/</guid>
-      <description>I recently spent a couple of weeks in Iceland. I&#39;m using this blog post as a dump of information about things I learned or wish to remember about the trip and Iceland in general.
-summer &amp;ldquo;nights&amp;rdquo; During the summer, Iceland gets around 20-22 hours of daylight. I was aware of this, but greatly underestimated (overestimated?) what &amp;ldquo;nighttime&amp;rdquo; looked like. At the peak of darkness, it was still reasonably bright (I would say it was dim).</description>
+      <description>Takeaways from my first trip to Iceland and places I hope to revisit.</description>
     </item>
     
     <item>
       <title>well-tested authorization design patterns</title>
-      <link>https://kel.bz/post/authz/</link>
+      <link>https://kel.bz/post/authz-design-patterns/</link>
       <pubDate>Mon, 01 Aug 2016 20:53:18 -0500</pubDate>
       
-      <guid>https://kel.bz/post/authz/</guid>
-      <description>Authorization is a strange beast. In theory, it appears to be rather straight-forward: a user should not be able to create, read, update, or delete data that it does not have access to. However, from our experience, theory tends to deviate from practice. Missing or incorrect access controls are a dime a dozen for applications we test and this rarely stems from a complete lack of access controls. More often then not, authorization issues spring up during assessments where the application manages a complex authorization model and an incorrect assumption was made or an edge case was missed.</description>
-    </item>
-    
-    <item>
-      <title>secure password storage</title>
-      <link>https://kel.bz/post/pwhash/</link>
-      <pubDate>Thu, 03 Mar 2016 00:00:00 +0000</pubDate>
-      
-      <guid>https://kel.bz/post/pwhash/</guid>
-      <description>Secure Password Storage in Go, Python, Ruby, Java, Haskell, and NodeJS I wrote a blog post on implementing password storage. It can be found on Praetorian&#39;s blog.</description>
+      <guid>https://kel.bz/post/authz-design-patterns/</guid>
+      <description>Patterns/anti-patterns for designing authorization APIs.</description>
     </item>
     
     <item>
       <title>secure password hash migrations</title>
-      <link>https://kel.bz/post/hash/</link>
+      <link>https://kel.bz/post/password-hash-migrations/</link>
       <pubDate>Fri, 27 Nov 2015 20:42:26 -0500</pubDate>
       
-      <guid>https://kel.bz/post/hash/</guid>
-      <description>Suppose you are in a situation where you need to migrate from one password hashing mechanism to another. Common suggestions on StackOverflow suggest that you should update the database schema to have two new fields: one for the current password hash and one for the new password hash. To be concise, lets call these fields old_password_hash and new_password_hash. After the database migration is complete d something similar to the following authentication mechanism is commonly suggested:</description>
+      <guid>https://kel.bz/post/password-hash-migrations/</guid>
+      <description>How to securely migrate from an insecure password hash algorithm to a secure one.</description>
     </item>
     
     <item>
       <title>when fuzzing servers</title>
-      <link>https://kel.bz/post/fuzz/</link>
+      <link>https://kel.bz/post/fuzzing-servers/</link>
       <pubDate>Wed, 11 Nov 2015 18:13:14 -0500</pubDate>
       
-      <guid>https://kel.bz/post/fuzz/</guid>
-      <description>If you want to use a fuzzer that writes data to STDIN (e.g. afl-fuzz) to fuzz a networked server, consider looking at the server&#39;s tests. Often, network connections are mocked in tests. This code can be repurposed to &amp;ldquo;send&amp;rdquo; bytes from STDIN to the mocked connection.
-Preeny is another solution, but results can vary.
--back-</description>
-    </item>
-    
-    <item>
-      <title>using joern for source code auditing</title>
-      <link>https://kel.bz/post/joern/</link>
-      <pubDate>Tue, 09 Sep 2014 00:00:00 +0000</pubDate>
-      
-      <guid>https://kel.bz/post/joern/</guid>
-      <description>Why You Should Add Joern to Your Source Code Audit Toolkit I wrote this for Praetorian&#39;s blog. It can be found here.</description>
+      <guid>https://kel.bz/post/fuzzing-servers/</guid>
+      <description>One tip for finding fast and useful fuzz targets for networked code.</description>
     </item>
     
   </channel>

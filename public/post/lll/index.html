@@ -1,79 +1,65 @@
-
 <!DOCTYPE html>
-<html lang="en-us">
-<head>
-
-  
-  <meta charset="UTF-8">
-  <title>
-    building lattice reduction (LLL) intuition | kel.bz
-  </title>
+<html>
+<meta charset="utf-8">
+<meta name="generator" content="Hugo 0.62.0" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light only">
+<meta name="supported-color-schemes" content="light only">
 
 
   
-  <meta name="viewport" content="width=device-width,user-scalable=no,maximum-scale=1,initial-scale=1">
-
   
-  <link rel="canonical" href="https://kel.bz/post/lll/"/>
-
-  
-  <link rel="stylesheet" href="/css/sanitize.css">
-  <link rel="stylesheet" href="/css/responsive.css">
-  <link rel="stylesheet" href="/css/highlight_monokai.css">
-  <link rel="stylesheet" href="/css/theme.css">
-  <link rel="stylesheet" href="/css/custom.css">
-  
-  
-  <link href="https://kel.bz//index.xml" rel="alternate" type="application/rss+xml" title="kel.bz" />
-  <link href="https://kel.bz//index.xml" rel="feed" type="application/rss+xml" title="kel.bz" />
-
-  
-  
-
-
-</head>
+    <title>building lattice reduction (LLL) intuition &ndash; kel.bz</title>
+    
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/core.min.871c51706cba837f31c3028126e8801b3ced6615f16b6ef7dbba11efc23280f506ef819d15b556880689cd71206843b7.css" integrity="sha384-hxxRcGy6g38xwwKBJuiAGzztZhXxa27327oR78IygPUG74GdFbVWiAaJzXEgaEO3">
 <body>
-<div class="container">
-
+      <div class="base-body max-width"><section id="header" class="header max-body-width">
+  <p>
+    <a class="site-name" href="/">
+      
+        kel.bz
+      
+    </a>
+    
+      <span class="site-slogan">where i take notes</span>
+    
+  </p>
+</section><div id="content" class="flex-body max-body-width">
   
-  <header role="banner">
-    <div class="row gutters">
-      <div id="site-title" class="col span_6">
-        <h1><a href="https://kel.bz/">kel.bz</a></h1>
-        
-      </div>
-      <div id="social" class="col span_6">
-        <ul>
-          <li><a href="/about/me">about kel.bz</a></li>
-          <li><a href="https://twitter.com/kelbyludwig" target="_blank">twitter</a></li>
-          
-          <li><a href="https://github.com/kelbyludwig" target="_blank">github</a></li>
-          <li><a href="https://kel.bz//index.xml" type="application/rss+xml" target="_blank">rss</a></li>
-        </ul>
-      </div>
-    </div>
-  </header>
-
-
   
-  <main id="single" role="main">
-    <div class="article-header">
+
+  <section class="article-header" >
       <h1>building lattice reduction (LLL) intuition</h1>
-      <div class="meta">
-        Jul 25, 2017 &nbsp;
-        
-      </div>
-    </div>
-    <article>
-      <h2 id="lll-motivation">LLL Motivation</h2>
+      <p class="article-date">2017-07-25</p>
+  </section>
+
+  <article class="markdown-body" >
+    <h2 id="lll-motivation">LLL Motivation</h2>
 <p>The Lenstra–Lenstra–Lovász (LLL) algorithm is an algorithm that efficiently
 transforms a &ldquo;bad&rdquo; basis for a lattice <code>L</code> into a &ldquo;pretty good&rdquo; basis for the
 same lattice.  This transformation of a bad basis into a better basis is known
 as lattice reduction, and it has useful applications. For example, there
-is attack against <a href="https://pdfs.semanticscholar.org/0eb1/8a42b623dd8e7cdd4221085a6fd5503708ea.pdf">ECDSA implementations that leverage biased
+is attack against 
+
+<a href="https://pdfs.semanticscholar.org/0eb1/8a42b623dd8e7cdd4221085a6fd5503708ea.pdf"  target="_blank">ECDSA implementations that leverage biased
 RNGs</a>
 that can lead to private key recovery. However, my experience learning why LLL
 works has been pretty rough. Most material covering LLL seems targeted towards
@@ -84,7 +70,9 @@ way that slowly ratchets down the hand-waving, so feel free to read until you
 are happy with your level of understanding.</p>
 <p>As an aside: if I'm wrong anywhere, please correct me! Hitting a nice balance
 of mathematical accuracy and intuition is tough, but I don't aim to be
-blatantly wrong. Please feel free to <a href="https://twitter.com/kelbyludwig">tweet</a>
+blatantly wrong. Please feel free to 
+
+<a href="https://twitter.com/kelbyludwig"  target="_blank">tweet</a>
 at me if I screwed up. Its super possible I did.</p>
 <h2 id="suggested-background">Suggested Background</h2>
 <p>I don't think LLL will make much sense if you don't have a decent grasp on (at least):</p>
@@ -103,11 +91,15 @@ at me if I screwed up. Its super possible I did.</p>
 </li>
 </ul>
 <p>I wrote another blog post on lattices and how they can be used to form an
-asymmetric cryptosystem. <a href="https://kel.bz/post/lattices/">I think it would be a good thing to read
+asymmetric cryptosystem. 
+
+<a href="https://kel.bz/post/lattices/"  target="_blank">I think it would be a good thing to read
 first</a> as it covers some of the suggested
 background.</p>
 <h2 id="lll-in-relation-to-euclids-algorithm">LLL In-Relation to Euclid's Algorithm</h2>
-<p>LLL often gets compared to <a href="https://holdenlee.wordpress.com/2015/10/09/the-lll-lattice-basis-reduction-algorithm/">Euclid's Algorithm for finding
+<p>LLL often gets compared to 
+
+<a href="https://holdenlee.wordpress.com/2015/10/09/the-lll-lattice-basis-reduction-algorithm/"  target="_blank">Euclid's Algorithm for finding
 GCDs</a>.
 This is an imperfect analogy, but at a high-level they have a core similarity.
 Namely, both LLL and Euclid's algorithm could be broken down into two steps:
@@ -141,7 +133,9 @@ integers.</p>
 why it could be a useful in developing understanding.</p>
 <h2 id="lll-in-relation-to-gram-schmidt">LLL In-Relation to Gram-Schmidt</h2>
 <p>Another algorithm that is similar to LLL is the
-<a href="https://en.wikipedia.org/wiki/Gram%E2%80%93Schmidt_process">Gram-Schmidt</a>
+
+
+<a href="https://en.wikipedia.org/wiki/Gram%E2%80%93Schmidt_process"  target="_blank">Gram-Schmidt</a>
 orthogonalization process. At a high-level, Gram-Schmidt (GS) takes in an input
 basis for a vector space and returns an orthogonalized (i.e. all vectors in the
 basis are orthogonal to one another) basis that spans the same space. It does
@@ -172,7 +166,9 @@ sage: pplot
 this is not a total loss.</p>
 <h2 id="lll-in-relation-to-gaussian-lattice-reduction">LLL In-Relation to Gaussian Lattice Reduction</h2>
 <p>Unless you are basically a sorceress, I imagine you may find starting with
-2-dimensional lattice basis reduction useful. Thankfully, we have <a href="https://www.math.auckland.ac.nz/~sgal018/crypto-book/ch17.pdf">Gauss&rsquo;
+2-dimensional lattice basis reduction useful. Thankfully, we have 
+
+<a href="https://www.math.auckland.ac.nz/~sgal018/crypto-book/ch17.pdf"  target="_blank">Gauss&rsquo;
 algorithm for reducing bases in
 dimension 2</a>.
 This is great for a couple reasons:</p>
@@ -201,7 +197,9 @@ so it can act as a bridge between these two analogies</p>
 represent our lattice basis. Ignoring the <code>while</code> loop for a second, the
 first step is the swap step. The swap step ensures that the length of <code>v1</code>
 is smaller than <code>v2</code>. Among other things, this will ensure that the result
-of <code>gauss_reduction</code> will be ordered according to length <a href="#stumped">which helps with
+of <code>gauss_reduction</code> will be ordered according to length 
+
+<a href="#stumped"  >which helps with
 some of the proofs</a> that ensure this algorithm works well.</p>
 <p>What does <code>m</code> represent? <code>m</code> is the scalar projection of <code>v2</code> onto <code>v1</code> (the
 longer vector onto the shorter vector). This is the same scalar produced during
@@ -226,7 +224,9 @@ interesting is that the reduced <code>v2</code> appears to have a shorter length
 original <code>v2</code>.  That is not a coincidence, that is a guarantee of the reduction
 step! Additionally, the resultant basis vectors will be &ldquo;nearly&rdquo; orthogonal,
 which is exactly what we want. I don't want to bog anyone down with details for
-why this works just yet, but if you are impatient you can jump to <a href="#stumped">the more
+why this works just yet, but if you are impatient you can jump to 
+
+<a href="#stumped"  >the more
 technical explanations</a>.</p>
 <p>For now, lets just wave our hands and say <code>gauss_reduction</code> will terminate, and
 return a &ldquo;good&rdquo; (i.e. short and nearly orthogonal) basis for dimension 2 bases.</p>
@@ -235,7 +235,9 @@ return a &ldquo;good&rdquo; (i.e. short and nearly orthogonal) basis for dimensi
 high-level, LLL iterates through the input basis vectors and performs a length
 reduction to each vector (this is close to Gauss&rsquo; algorithm at this point).
 However, we are dealing with <code>n</code> vectors instead of just two so we need a way
-to ensure that the <a href="https://crypto.stackexchange.com/questions/39532/why-is-the-lov%C3%A1sz-condition-used-in-the-lll-algorithm/39534#39534">ordering of the input basis doesn't affect our result</a>.
+to ensure that the 
+
+<a href="https://crypto.stackexchange.com/questions/39532/why-is-the-lov%C3%A1sz-condition-used-in-the-lll-algorithm/39534#39534"  target="_blank">ordering of the input basis doesn't affect our result</a>.
 To assist with ordering the reduced basis by length, LLL uses a heuristic
 called the Lovász condition to determine if vectors in the input basis need to
 be swapped. LLL returns after all basis vectors have gone through at least one
@@ -243,7 +245,9 @@ reduction, and the new basis is roughly ordered by length.</p>
 <h2 id="a-deeper-dive-into-lll">A Deeper Dive into LLL</h2>
 <p>To help understand the mechanics of LLL, we can dig into an implementation of
 the algorithm. Here is some python pseudocode repurposed from
-<a href="https://en.wikipedia.org/wiki/Lenstra%E2%80%93Lenstra%E2%80%93Lov%C3%A1sz_lattice_basis_reduction_algorithm">wikipedia</a>:</p>
+
+
+<a href="https://en.wikipedia.org/wiki/Lenstra%E2%80%93Lenstra%E2%80%93Lov%C3%A1sz_lattice_basis_reduction_algorithm"  target="_blank">wikipedia</a>:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">LLL</span>(B, delta):
     Q <span style="color:#f92672">=</span> gram_schmidt(B)
 
@@ -362,27 +366,23 @@ vectors are roughly sorted by length (this may change after the next round of
 reductions though). If the Lovász condition is false, the <code>k</code>th basis vector is
 placed at position <code>k-1</code> (Line 5), and LLL then re-focuses (Line 7) on the same
 vector which is now at position <code>k-1</code>. Another reduction round is done, and
-then back to the swap step. This brings about another way to describe LLL: LLL
+then back to the swap step. This brings about another way to describe LLL: <em>LLL
 is a vector sorting algorithm that occasionally screws up the ordering by
-making vectors smaller so it has to re-sort.</p>
+making vectors smaller so it has to re-sort.</em></p>
 <p>What about the Lovász condition, itself? As I said earlier, it's basically a
 heuristic that determines if the vectors are in a &ldquo;good&rdquo; order. Aside from
 that, I don't have too much to add here unfortunately as my intuition is still
 shaky. There are multiple equivalent representations for the Lovász and none of
 them have really felt 100% right to me. The best explanations that I have found
-thus far are:</p>
-<ul>
-<li>
-<p><a href="https://crypto.stackexchange.com/questions/39532/why-is-the-lov%C3%A1sz-condition-used-in-the-lll-algorithm/39534#39534">This StackOverflow post</a>.</p>
-</li>
-<li>
-<p><a href="https://www.amazon.com/Introduction-Mathematical-Cryptography-Undergraduate-Mathematics/dp/1441926747">&ldquo;An Introduction to Mathematical
-Cryptography&rdquo;</a>
-discusses an equivalent representation of the Lovász condition that is a
-comparison of the lengths of the projection of basis vectors onto the
-orthogonal complement of a space spanned by a subset of basis vectors.</p>
-</li>
-</ul>
+thus far are 
+
+<a href="https://crypto.stackexchange.com/questions/39532/why-is-the-lov%C3%A1sz-condition-used-in-the-lll-algorithm/39534#39534"  target="_blank">this StackOverflow post</a> and 
+
+<a href="https://www.amazon.com/Introduction-Mathematical-Cryptography-Undergraduate-Mathematics/dp/1441926747"  target="_blank">&ldquo;An Introduction to Mathematical Cryptography&rdquo;</a>.</p>
+<p>&ldquo;An Introduction to Mathmetical Cryptography&rdquo; discusses an equivalent
+representation of the Lovász condition that is a comparison of the lengths of
+the projection of basis vectors onto the orthogonal complement of a space
+spanned by a subset of basis vectors.</p>
 <p>If anyone reading this has a link to a decently intuitive explanation or can
 describe the Lovász in a memorable way please let me know!</p>
 <h2 id="stumped">Things that Stumped Me When Learning LLL</h2>
@@ -409,68 +409,122 @@ vector projection (see image below), we can re-write our inequality:</p>
     <img src="/angle.png"/> 
 </figure>
 
-<pre><code>|B[k]|*cos(theta) = proj B[k] onto B[j]
-=&gt;
-|B[k]|*abs(cos(theta)) &lt;= 1/2*|B[j]|
-(|B[k]|/|B[j]|)*abs(cos(theta)) &lt;= 1/2
-</code></pre><p>I alluded to this earlier, but Gaussian two dimensional reduction will make it
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">|</span>B[k]<span style="color:#f92672">|</span><span style="color:#f92672">*</span>cos(theta) <span style="color:#f92672">=</span> proj B[k] onto B[j]
+<span style="color:#f92672">=</span><span style="color:#f92672">&gt;</span>
+<span style="color:#f92672">|</span>B[k]<span style="color:#f92672">|</span><span style="color:#f92672">*</span>abs(cos(theta)) <span style="color:#f92672">&lt;</span><span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span><span style="color:#f92672">/</span><span style="color:#ae81ff">2</span><span style="color:#f92672">*</span><span style="color:#f92672">|</span>B[j]<span style="color:#f92672">|</span>
+(<span style="color:#f92672">|</span>B[k]<span style="color:#f92672">|</span><span style="color:#f92672">/</span><span style="color:#f92672">|</span>B[j]<span style="color:#f92672">|</span>)<span style="color:#f92672">*</span>abs(cos(theta)) <span style="color:#f92672">&lt;</span><span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span><span style="color:#f92672">/</span><span style="color:#ae81ff">2</span>
+</code></pre></div><p>I alluded to this earlier, but Gaussian two dimensional reduction will make it
 such that the reduced vector <code>B[k]</code> is shorter than <code>B[j]</code> (there is a proof of
-this in &ldquo;Introduction to Mathematical Cryptography&rdquo;). According to <a href="https://crypto.stackexchange.com/questions/47909/why-are-vectors-approximately-orthogonal-after-gaussian-lattice-reduction/47924">this
+this in &ldquo;Introduction to Mathematical Cryptography&rdquo;). According to 
+
+<a href="https://crypto.stackexchange.com/questions/47909/why-are-vectors-approximately-orthogonal-after-gaussian-lattice-reduction/47924"  target="_blank">this
 StackOverflow
 post</a>,
 these two facts prove the &ldquo;nearly&rdquo; orthogonal property of the output vectors.
 I am actually not 100% sure these proofs are correct (I think they made a
 mistake but I don't have a proof either) so I cannot say much more than that.</p>
 <h4 id="why-doesnt-gaussian-lattice-reduction-easily-generalize-to-work-with-lattices-with-more-than-2-vectors">Why doesn't Gaussian lattice reduction easily generalize to work with lattices with more than 2 vectors?</h4>
-<p>I found the explanation from <a href="https://www.math.auckland.ac.nz/~sgal018/crypto-book/ch17.pdf">&ldquo;Mathematics of Public Key Cryptography&rdquo;</a>
+<p>I found the explanation from 
+
+<a href="https://www.math.auckland.ac.nz/~sgal018/crypto-book/ch17.pdf"  target="_blank">&ldquo;Mathematics of Public Key Cryptography&rdquo;</a>
 to explain this well.</p>
-<!-- raw HTML omitted -->
+<blockquote>
+<p>Finally, we remark that there is a natural analogue of Gaussian Reduction for
+any dimension. Hence, it is natural to try to generalise the Lagrange-Gauss
+algorithm to higher dimensions. Generalisations to dimension three have been
+given by Vall'ee and Semaev. Generalising to higher dimensions introduces
+problems. For example, choosing the right linear combination to size reduce bn
+using b1,&hellip;,bn−1 is solving the CVP in a sublattice (which is a
+hard problem). Furthermore, there is no guarantee that the resulting basis
+actually has good properties in high dimension. We refer to Nguyen and Stehl'e
+for a full discussion of these issues and an algorithm that works in
+dimensions 3 and 4</p>
+</blockquote>
 <p>How does LLL overcome this? I like to think that LLL breaks an n-dimensional
 problem down into a bunch of 2-dimensional cases and works a little at a time.
 That technique, plus length-sorting approximations, seems to work well in
 practice.</p>
 <h4 id="how-does-lll-use-gs-as-a-guide">How does LLL use GS as a guide?</h4>
-<p>Again, <a href="https://www.math.auckland.ac.nz/~sgal018/crypto-book/ch17.pdf">quoting
+<p>Again, 
+
+<a href="https://www.math.auckland.ac.nz/~sgal018/crypto-book/ch17.pdf"  target="_blank">quoting
 others</a> that are
 smarter than I am:</p>
-<!-- raw HTML omitted -->
-<!-- raw HTML omitted -->
+<blockquote>
+<p>As we have noted in Example 16.3.3, computational problems in lattices can be easy
+if one has a basis that is orthogonal, or “sufficiently close to orthogonal”. A simple but
+important observation is that one can determine when a basis is close to orthogonal by
+considering the lengths of the Gram-Schmidt vectors. More precisely, a lattice basis is
+“close to orthogonal” if the lengths of the Gram-Schmidt vectors do not decrease too
+rapidly.</p>
+</blockquote>
+<p><em>Thanks to Chris Bellavia for providing valuable feedback on this write-up.</em></p>
 
-      
-      
-      
-    </article>
-    
-
-
-  </main>
-  
-  <nav class="pagination-single">
-    
-      <span class="previous">&larr; <a href="https://kel.bz/post/ssh-agent/" rel="prev">what is the value-add of ssh-agent?</a></span>
-    
-    
-      <span class="next"><a href="https://kel.bz/post/pohlig/" rel="next">a note on subgroup confinement attacks</a> &rarr;</span>
-    
-  </nav>
-
+  </article>
 
   
-  <footer role="contentinfo">
-    <div style="text-align:center;">
-      <img src="https://kel.bz/profile.jpg" width="64" height="64"><br>
-      written by kelby ludwig
-    </div>
-  </footer>
+  
+
+  
+
+  
+    <section class="article-labels">
+      
+          
+            
+            <a class="article-tag li" href=/tags/cryptography/><span class="hashtag">#</span>cryptography</a>
+          
+    </section>
+  
+
+  
+    <section class="article-navigation">
+      
+        
+        <p>
+          <a class="link" href="/post/ssh-agent/"><span class="li"></span>what is the value-add of ssh-agent?</a>
+          
+          
+              
+              <a class="article-tag" href=/tags/software-security/><span class="hashtag">#</span>software-security</a>
+          
+        </p>
+        
+
+        
+          <p>
+            <a class="link" href="/post/pohlig/"><span class="li"></span>a note on subgroup confinement attacks</a class="link">
+            
+            
+                
+                <a class="article-tag" href=/tags/cryptography/><span class="hashtag">#</span>cryptography</a>
+            
+          </p>
+        
+      
+    </section>
+  
+
+  
+
+
+        </div><section id="footer" class="footer max-body-width">
+  
+  
+    
+  
+  <p>kel.bz</p>
+  <p>
+    <span>Powered by</span>
+    <a href="https://gohugo.io">Hugo</a>
+    <span>and the</span>
+    <a href="https://themes.gohugo.io/hugo-notepadium/">Notepadium</a>
+  </p>
+</section>
+
+
 
 
 </div>
-
-<script src="/js/highlight.pack.js"></script>
-<script>hljs.initHighlightingOnLoad();</script>
-
-
-
-</body>
+    </body>
 </html>
-

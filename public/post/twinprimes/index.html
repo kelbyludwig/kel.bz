@@ -1,131 +1,115 @@
-
 <!DOCTYPE html>
-<html lang="en-us">
-<head>
-
-  
-  <meta charset="UTF-8">
-  <title>
-    tokyo westerns / mma ctf: twin primes write-up | kel.bz
-  </title>
+<html>
+<meta charset="utf-8">
+<meta name="generator" content="Hugo 0.62.0" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light only">
+<meta name="supported-color-schemes" content="light only">
 
 
   
-  <meta name="viewport" content="width=device-width,user-scalable=no,maximum-scale=1,initial-scale=1">
-
   
-  <link rel="canonical" href="https://kel.bz/post/twinprimes/"/>
-
-  
-  <link rel="stylesheet" href="/css/sanitize.css">
-  <link rel="stylesheet" href="/css/responsive.css">
-  <link rel="stylesheet" href="/css/highlight_monokai.css">
-  <link rel="stylesheet" href="/css/theme.css">
-  <link rel="stylesheet" href="/css/custom.css">
-  
-  
-  <link href="https://kel.bz//index.xml" rel="alternate" type="application/rss+xml" title="kel.bz" />
-  <link href="https://kel.bz//index.xml" rel="feed" type="application/rss+xml" title="kel.bz" />
-
-  
-  
-
-
-</head>
+    <title>tokyo westerns / mma ctf: twin primes write-up &ndash; kel.bz</title>
+    
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/core.min.871c51706cba837f31c3028126e8801b3ced6615f16b6ef7dbba11efc23280f506ef819d15b556880689cd71206843b7.css" integrity="sha384-hxxRcGy6g38xwwKBJuiAGzztZhXxa27327oR78IygPUG74GdFbVWiAaJzXEgaEO3">
 <body>
-<div class="container">
-
+      <div class="base-body max-width"><section id="header" class="header max-body-width">
+  <p>
+    <a class="site-name" href="/">
+      
+        kel.bz
+      
+    </a>
+    
+      <span class="site-slogan">where i take notes</span>
+    
+  </p>
+</section><div id="content" class="flex-body max-body-width">
   
-  <header role="banner">
-    <div class="row gutters">
-      <div id="site-title" class="col span_6">
-        <h1><a href="https://kel.bz/">kel.bz</a></h1>
-        
-      </div>
-      <div id="social" class="col span_6">
-        <ul>
-          <li><a href="/about/me">about kel.bz</a></li>
-          <li><a href="https://twitter.com/kelbyludwig" target="_blank">twitter</a></li>
-          
-          <li><a href="https://github.com/kelbyludwig" target="_blank">github</a></li>
-          <li><a href="https://kel.bz//index.xml" type="application/rss+xml" target="_blank">rss</a></li>
-        </ul>
-      </div>
-    </div>
-  </header>
-
-
   
-  <main id="single" role="main">
-    <div class="article-header">
+
+  <section class="article-header" >
       <h1>tokyo westerns / mma ctf: twin primes write-up</h1>
-      <div class="meta">
-        Sep 1, 2016 &nbsp;
-        
-      </div>
-    </div>
-    <article>
-      <h1 id="the-problem">The Problem</h1>
+      <p class="article-date">2016-09-01</p>
+  </section>
+
+  <article class="markdown-body" >
+    <h1 id="the-problem">The Problem</h1>
 <p>The premise for the challenge was straightforward. Given two RSA public
 keys, a ciphertext, and the code that generated the keys and ciphertext,
 decrypt the ciphertext. The provided code was as follows:</p>
-<pre><code>from Crypto.Util.number import *
-import Crypto.PublicKey.RSA as RSA
-import os
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">from</span> Crypto.Util.number <span style="color:#f92672">import</span> <span style="color:#f92672">*</span>
+<span style="color:#f92672">import</span> Crypto.PublicKey.RSA <span style="color:#f92672">as</span> RSA
+<span style="color:#f92672">import</span> os
 
-N = 1024
+N <span style="color:#f92672">=</span> <span style="color:#ae81ff">1024</span>
 
-def getTwinPrime(N):
-    while True:
-        p = getPrime(N)
-        if isPrime(p+2):
-            return p
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">getTwinPrime</span>(N):
+    <span style="color:#66d9ef">while</span> True:
+        p <span style="color:#f92672">=</span> getPrime(N)
+        <span style="color:#66d9ef">if</span> isPrime(p<span style="color:#f92672">+</span><span style="color:#ae81ff">2</span>):
+            <span style="color:#66d9ef">return</span> p
 
-def genkey(N = 1024):
-    p = getTwinPrime(N)
-    q = getTwinPrime(N)
-    n1 = p*q
-    n2 = (p+2)*(q+2)
-    e = long(65537)
-    d1 = inverse(e, (p-1)*(q-1))
-    d2 = inverse(e, (p+1)*(q+1))
-    key1 = RSA.construct((n1, e, d1))
-    key2 = RSA.construct((n2, e, d2))
-    if n1 &lt; n2:
-        return (key1, key2)
-    else:
-        return (key2, key1)
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">genkey</span>(N <span style="color:#f92672">=</span> <span style="color:#ae81ff">1024</span>):
+    p <span style="color:#f92672">=</span> getTwinPrime(N)
+    q <span style="color:#f92672">=</span> getTwinPrime(N)
+    n1 <span style="color:#f92672">=</span> p<span style="color:#f92672">*</span>q
+    n2 <span style="color:#f92672">=</span> (p<span style="color:#f92672">+</span><span style="color:#ae81ff">2</span>)<span style="color:#f92672">*</span>(q<span style="color:#f92672">+</span><span style="color:#ae81ff">2</span>)
+    e <span style="color:#f92672">=</span> long(<span style="color:#ae81ff">65537</span>)
+    d1 <span style="color:#f92672">=</span> inverse(e, (p<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>)<span style="color:#f92672">*</span>(q<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>))
+    d2 <span style="color:#f92672">=</span> inverse(e, (p<span style="color:#f92672">+</span><span style="color:#ae81ff">1</span>)<span style="color:#f92672">*</span>(q<span style="color:#f92672">+</span><span style="color:#ae81ff">1</span>))
+    key1 <span style="color:#f92672">=</span> RSA<span style="color:#f92672">.</span>construct((n1, e, d1))
+    key2 <span style="color:#f92672">=</span> RSA<span style="color:#f92672">.</span>construct((n2, e, d2))
+    <span style="color:#66d9ef">if</span> n1 <span style="color:#f92672">&lt;</span> n2:
+        <span style="color:#66d9ef">return</span> (key1, key2)
+    <span style="color:#66d9ef">else</span>:
+        <span style="color:#66d9ef">return</span> (key2, key1)
 
-rsa1, rsa2 = genkey(N)
+rsa1, rsa2 <span style="color:#f92672">=</span> genkey(N)
 
-with open(&quot;flag&quot;, &quot;r&quot;) as f:
-    flag = f.read()
-padded_flag = flag + &quot;\0&quot; + os.urandom(N/8 - 1 - len(flag))
+<span style="color:#66d9ef">with</span> open(<span style="color:#e6db74"></span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">flag</span><span style="color:#e6db74">&#34;</span>, <span style="color:#e6db74"></span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">r</span><span style="color:#e6db74">&#34;</span>) <span style="color:#66d9ef">as</span> f:
+    flag <span style="color:#f92672">=</span> f<span style="color:#f92672">.</span>read()
+padded_flag <span style="color:#f92672">=</span> flag <span style="color:#f92672">+</span> <span style="color:#e6db74"></span><span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\0</span><span style="color:#e6db74">&#34;</span> <span style="color:#f92672">+</span> os<span style="color:#f92672">.</span>urandom(N<span style="color:#f92672">/</span><span style="color:#ae81ff">8</span> <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span> <span style="color:#f92672">-</span> len(flag))
 
-c = bytes_to_long(padded_flag)
-c = rsa1.encrypt(c, 0)[0]
-c = rsa2.encrypt(c, 0)[0]
+c <span style="color:#f92672">=</span> bytes_to_long(padded_flag)
+c <span style="color:#f92672">=</span> rsa1<span style="color:#f92672">.</span>encrypt(c, <span style="color:#ae81ff">0</span>)[<span style="color:#ae81ff">0</span>]
+c <span style="color:#f92672">=</span> rsa2<span style="color:#f92672">.</span>encrypt(c, <span style="color:#ae81ff">0</span>)[<span style="color:#ae81ff">0</span>]
 
-with open(&quot;key1&quot;, &quot;w&quot;) as f:
-    f.write(&quot;%d\n&quot; % rsa1.n)
-    f.write(&quot;%d\n&quot; % rsa1.e)
-with open(&quot;key2&quot;, &quot;w&quot;) as f:
-    f.write(&quot;%d\n&quot; % rsa2.n)
-    f.write(&quot;%d\n&quot; % rsa2.e)
+<span style="color:#66d9ef">with</span> open(<span style="color:#e6db74"></span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">key1</span><span style="color:#e6db74">&#34;</span>, <span style="color:#e6db74"></span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">w</span><span style="color:#e6db74">&#34;</span>) <span style="color:#66d9ef">as</span> f:
+    f<span style="color:#f92672">.</span>write(<span style="color:#e6db74"></span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">%d</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span> <span style="color:#f92672">%</span> rsa1<span style="color:#f92672">.</span>n)
+    f<span style="color:#f92672">.</span>write(<span style="color:#e6db74"></span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">%d</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span> <span style="color:#f92672">%</span> rsa1<span style="color:#f92672">.</span>e)
+<span style="color:#66d9ef">with</span> open(<span style="color:#e6db74"></span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">key2</span><span style="color:#e6db74">&#34;</span>, <span style="color:#e6db74"></span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">w</span><span style="color:#e6db74">&#34;</span>) <span style="color:#66d9ef">as</span> f:
+    f<span style="color:#f92672">.</span>write(<span style="color:#e6db74"></span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">%d</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span> <span style="color:#f92672">%</span> rsa2<span style="color:#f92672">.</span>n)
+    f<span style="color:#f92672">.</span>write(<span style="color:#e6db74"></span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">%d</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span> <span style="color:#f92672">%</span> rsa2<span style="color:#f92672">.</span>e)
 
-with open(&quot;encrypted&quot;, &quot;w&quot;) as f:
-    f.write(&quot;%d\n&quot; % c)
-</code></pre><p>The keyfiles were as follows:</p>
-<pre><code>19402643768027967294480695361037227649637514561280461352708420192197328993512710852087871986349184383442031544945263966477446685587168025154775060178782897097993949800845903218890975275725416699258462920097986424936088541112790958875211336188249107280753661467619511079649070248659536282267267928669265252935184448638997877593781930103866416949585686541509642494048554242004100863315220430074997145531929128200885758274037875349539018669336263469803277281048657198114844413236754680549874472753528866434686048799833381542018876362229842605213500869709361657000044182573308825550237999139442040422107931857506897810951
-65537
-</code></pre><pre><code>19402643768027967294480695361037227649637514561280461352708420192197328993512710852087871986349184383442031544945263966477446685587168025154775060178782897097993949800845903218890975275725416699258462920097986424936088541112790958875211336188249107280753661467619511079649070248659536282267267928669265252935757418867172314593546678104100129027339256068940987412816779744339994971665109555680401467324487397541852486805770300895063315083965445098467966738905392320963293379345531703349669197397492241574949069875012089172754014231783160960425531160246267389657034543342990940680603153790486530477470655757947009682859
-65537
-</code></pre><p>And finally, the ciphertext:</p>
-<pre><code>7991219189591014572196623817385737879027208108469800802629706564258508626010674513875496029177290575819650366802730803283761137036255380767766538866086463895539973594615882321974738140931689333873106124459849322556754579010062541988138211176574621668101228531769828358289973150393343109948611583609219420213530834364837438730411379305046156670015024547263019932288989808228091601206948741304222197779808592738075111024678982273856922586615415238555211148847427589678238745186253649783665607928382002868111278077054871294837923189536714235044041993541158402943372188779797996711792610439969105993917373651847337638929
-</code></pre><h1 id="the-solution">The Solution</h1>
+<span style="color:#66d9ef">with</span> open(<span style="color:#e6db74"></span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">encrypted</span><span style="color:#e6db74">&#34;</span>, <span style="color:#e6db74"></span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">w</span><span style="color:#e6db74">&#34;</span>) <span style="color:#66d9ef">as</span> f:
+    f<span style="color:#f92672">.</span>write(<span style="color:#e6db74"></span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">%d</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span> <span style="color:#f92672">%</span> c)
+</code></pre></div><p>The keyfiles were as follows:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="color:#ae81ff">19402643768027967294480695361037227649637514561280461352708420192197328993512710852087871986349184383442031544945263966477446685587168025154775060178782897097993949800845903218890975275725416699258462920097986424936088541112790958875211336188249107280753661467619511079649070248659536282267267928669265252935184448638997877593781930103866416949585686541509642494048554242004100863315220430074997145531929128200885758274037875349539018669336263469803277281048657198114844413236754680549874472753528866434686048799833381542018876362229842605213500869709361657000044182573308825550237999139442040422107931857506897810951</span>
+<span style="color:#ae81ff">65537</span>
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="color:#ae81ff">19402643768027967294480695361037227649637514561280461352708420192197328993512710852087871986349184383442031544945263966477446685587168025154775060178782897097993949800845903218890975275725416699258462920097986424936088541112790958875211336188249107280753661467619511079649070248659536282267267928669265252935757418867172314593546678104100129027339256068940987412816779744339994971665109555680401467324487397541852486805770300895063315083965445098467966738905392320963293379345531703349669197397492241574949069875012089172754014231783160960425531160246267389657034543342990940680603153790486530477470655757947009682859</span>
+<span style="color:#ae81ff">65537</span>
+</code></pre></div><p>And finally, the ciphertext:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="color:#ae81ff">7991219189591014572196623817385737879027208108469800802629706564258508626010674513875496029177290575819650366802730803283761137036255380767766538866086463895539973594615882321974738140931689333873106124459849322556754579010062541988138211176574621668101228531769828358289973150393343109948611583609219420213530834364837438730411379305046156670015024547263019932288989808228091601206948741304222197779808592738075111024678982273856922586615415238555211148847427589678238745186253649783665607928382002868111278077054871294837923189536714235044041993541158402943372188779797996711792610439969105993917373651847337638929</span>
+</code></pre></div><h1 id="the-solution">The Solution</h1>
 <p>It seemed pretty obvious that the twin prime key generation (which is
 atypical for RSA key generation) was contributing to some sort of flaw. Because
 each modulus was derived from the same <code>p</code> and <code>q</code>, I suspected I could come
@@ -133,79 +117,112 @@ up with an expression would help discover some component of the private key.
 My first attempt was focused on factoring a modulus to reveal either <code>p</code> or
 <code>q</code>. During this attempt, I had two particularly interesting equations that
 I consistently came back to:</p>
-<pre><code>n1 = p*q
-n2 = (p+2)*(q+2)
-=&gt;
-((n2-n1)/2)-2 = p+q
-</code></pre><p>Focusing on factorization of <code>n1</code> or <code>n2</code> was leading me nowhere so I had to
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">n1 <span style="color:#f92672">=</span> p<span style="color:#f92672">*</span>q
+n2 <span style="color:#f92672">=</span> (p<span style="color:#f92672">+</span><span style="color:#ae81ff">2</span>)<span style="color:#f92672">*</span>(q<span style="color:#f92672">+</span><span style="color:#ae81ff">2</span>)
+<span style="color:#f92672">=</span><span style="color:#f92672">&gt;</span>
+((n2<span style="color:#f92672">-</span>n1)<span style="color:#f92672">/</span><span style="color:#ae81ff">2</span>)<span style="color:#f92672">-</span><span style="color:#ae81ff">2</span> <span style="color:#f92672">=</span> p<span style="color:#f92672">+</span>q
+</code></pre></div><p>Focusing on factorization of <code>n1</code> or <code>n2</code> was leading me nowhere so I had to
 come up with an alternative plan. After some thinking it occurred to me that I
 did not need to know <code>q</code> or <code>p</code> to recover the private key but I could solve
 for the moduli used in the private exponent generation. Sure enough, some
 algebraic magic led me to the following equations:</p>
-<pre><code>(p-1)*(q-1) = pq - p - q + 1
-            = n1 - (((n2-n1)/2)-2) + 1
-            = d1n
-</code></pre><pre><code>(p+1)*(q+1) = pq+p+q+1
-            = n1 + (((n2-n1)/2)-2) + 1
-            = d2n
-</code></pre><p>The left-hand side of both equations are used to derive the private
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">(p<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>)<span style="color:#f92672">*</span>(q<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>) <span style="color:#f92672">=</span> pq <span style="color:#f92672">-</span> p <span style="color:#f92672">-</span> q <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>
+            <span style="color:#f92672">=</span> n1 <span style="color:#f92672">-</span> (((n2<span style="color:#f92672">-</span>n1)<span style="color:#f92672">/</span><span style="color:#ae81ff">2</span>)<span style="color:#f92672">-</span><span style="color:#ae81ff">2</span>) <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>
+            <span style="color:#f92672">=</span> d1n
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">(p<span style="color:#f92672">+</span><span style="color:#ae81ff">1</span>)<span style="color:#f92672">*</span>(q<span style="color:#f92672">+</span><span style="color:#ae81ff">1</span>) <span style="color:#f92672">=</span> pq<span style="color:#f92672">+</span>p<span style="color:#f92672">+</span>q<span style="color:#f92672">+</span><span style="color:#ae81ff">1</span>
+            <span style="color:#f92672">=</span> n1 <span style="color:#f92672">+</span> (((n2<span style="color:#f92672">-</span>n1)<span style="color:#f92672">/</span><span style="color:#ae81ff">2</span>)<span style="color:#f92672">-</span><span style="color:#ae81ff">2</span>) <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>
+            <span style="color:#f92672">=</span> d2n
+</code></pre></div><p>The left-hand side of both equations are used to derive the private
 decryption exponent. Using the equations from earlier, I could solve
 for these values using the known moduli <code>n1</code> and <code>n2</code>. I have called these
 secret moduli <code>d1n</code> and <code>d2n</code>. Using these values in sage allowed me
 to decrypt the ciphertext and reveal the plaintext (and the random padding).</p>
-<pre><code>sage: n1 = 19402643768027967294480695361037227649637514561280461352708420192197328993512710852087871986349184383442031544945263966477446685587168025154775060178782897097993949800845903218890975275725416699258462920097986424936088541112790958875211336188249107280753661467619511079649070248659536282267267928669265252935184448638997877593781930103866416949585686541509642494048554242004100863315220430074997145531929128200885758274037875349539018669336263469803277281048657198114844413236754680549874472753528866434686048799833381542018876362229842605213500869709361657000044182573308825550237999139442040422107931857506897810951
-sage: n2 = 19402643768027967294480695361037227649637514561280461352708420192197328993512710852087871986349184383442031544945263966477446685587168025154775060178782897097993949800845903218890975275725416699258462920097986424936088541112790958875211336188249107280753661467619511079649070248659536282267267928669265252935757418867172314593546678104100129027339256068940987412816779744339994971665109555680401467324487397541852486805770300895063315083965445098467966738905392320963293379345531703349669197397492241574949069875012089172754014231783160960425531160246267389657034543342990940680603153790486530477470655757947009682859
-sage: e = 65537
-sage: d1n = 7661345734913525758679393847031774068347950040691758531598768599931069162368157398573782005016161763198084934008171581312897528565920535803519676019752869540898842378294555495345540048907065220309298616755354878991960255533771830168801119335329819769158540236188072504373996977200840439942511244916661522734475021744932450921341115901747579798393654885114551422204959288643941411308605198487456697932486237279395656684673791662142482167572468147432393801726793341444983178254410054248182059962274408267954626259217708309966622421039008205130331195768525225216264782926181682101976962718778956394356939989025571723473
-sage: d2n = 14682025569434715566289067921091264378913035722157264436936630821847962821708078742950421098723297556245437361748714933938836627121150444839946973227126683139046888910440667598932530416005841966364430674786751648464691745592040057258334690087243079913135108099275017066114663346987560054781243436815328782574360659576773365968491083954479736241265710621003918689757432008260802299833258500187540839592714103061124823000731244002031821226892734877380010783508256585975273581410048875828510381083429503855942633972587519902398776190078069432741587778121973508718875201608565680508108964829798569419197562575534356015937
-sage: pt1 = Mod(ct1,n2)^d2n
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">sage: n1 <span style="color:#f92672">=</span> <span style="color:#ae81ff">19402643768027967294480695361037227649637514561280461352708420192197328993512710852087871986349184383442031544945263966477446685587168025154775060178782897097993949800845903218890975275725416699258462920097986424936088541112790958875211336188249107280753661467619511079649070248659536282267267928669265252935184448638997877593781930103866416949585686541509642494048554242004100863315220430074997145531929128200885758274037875349539018669336263469803277281048657198114844413236754680549874472753528866434686048799833381542018876362229842605213500869709361657000044182573308825550237999139442040422107931857506897810951</span>
+sage: n2 <span style="color:#f92672">=</span> <span style="color:#ae81ff">19402643768027967294480695361037227649637514561280461352708420192197328993512710852087871986349184383442031544945263966477446685587168025154775060178782897097993949800845903218890975275725416699258462920097986424936088541112790958875211336188249107280753661467619511079649070248659536282267267928669265252935757418867172314593546678104100129027339256068940987412816779744339994971665109555680401467324487397541852486805770300895063315083965445098467966738905392320963293379345531703349669197397492241574949069875012089172754014231783160960425531160246267389657034543342990940680603153790486530477470655757947009682859</span>
+sage: e <span style="color:#f92672">=</span> <span style="color:#ae81ff">65537</span>
+sage: d1n <span style="color:#f92672">=</span> <span style="color:#ae81ff">7661345734913525758679393847031774068347950040691758531598768599931069162368157398573782005016161763198084934008171581312897528565920535803519676019752869540898842378294555495345540048907065220309298616755354878991960255533771830168801119335329819769158540236188072504373996977200840439942511244916661522734475021744932450921341115901747579798393654885114551422204959288643941411308605198487456697932486237279395656684673791662142482167572468147432393801726793341444983178254410054248182059962274408267954626259217708309966622421039008205130331195768525225216264782926181682101976962718778956394356939989025571723473</span>
+sage: d2n <span style="color:#f92672">=</span> <span style="color:#ae81ff">14682025569434715566289067921091264378913035722157264436936630821847962821708078742950421098723297556245437361748714933938836627121150444839946973227126683139046888910440667598932530416005841966364430674786751648464691745592040057258334690087243079913135108099275017066114663346987560054781243436815328782574360659576773365968491083954479736241265710621003918689757432008260802299833258500187540839592714103061124823000731244002031821226892734877380010783508256585975273581410048875828510381083429503855942633972587519902398776190078069432741587778121973508718875201608565680508108964829798569419197562575534356015937</span>
+sage: pt1 <span style="color:#f92672">=</span> Mod(ct1,n2)<span style="color:#f92672">^</span>d2n
 sage: pt1
-373239553115651827369899427657360875834152089860180257161642938987416643279267796017763035136285792087924995986378489367185662378937141758836872403737173549717715557150143694357419301981698777842368254230548612496956689640236300513429314367185641895908387283782093980735699566557226166228162186948786794187770887804007641846622887840125971336743542918133130483166950694027240609779212376907420023775526598867122524264065496089993260728922693481442936815735645015670821959440660673801457483695677241321385338513678687427587288462960873117726647186048326364254058577838850975109848822071400003734396085552080839412313
-sage: pt2 = Mod(pt1,n1)^d1n
+<span style="color:#ae81ff">373239553115651827369899427657360875834152089860180257161642938987416643279267796017763035136285792087924995986378489367185662378937141758836872403737173549717715557150143694357419301981698777842368254230548612496956689640236300513429314367185641895908387283782093980735699566557226166228162186948786794187770887804007641846622887840125971336743542918133130483166950694027240609779212376907420023775526598867122524264065496089993260728922693481442936815735645015670821959440660673801457483695677241321385338513678687427587288462960873117726647186048326364254058577838850975109848822071400003734396085552080839412313</span>
+sage: pt2 <span style="color:#f92672">=</span> Mod(pt1,n1)<span style="color:#f92672">^</span>d1n
 sage: pt2
-59226173822840328968888158305624130428096624421825871746890760843535360515281731870020108027391321911226022532779216854436448650823645149055438077156974443110847829297739484809471304661775014651007761960402982748370662627695542285368162140203799886082916142874916556159547556173134812082052469735677421164129
+<span style="color:#ae81ff">59226173822840328968888158305624130428096624421825871746890760843535360515281731870020108027391321911226022532779216854436448650823645149055438077156974443110847829297739484809471304661775014651007761960402982748370662627695542285368162140203799886082916142874916556159547556173134812082052469735677421164129</span>
 sage: hex(int(pt2))
-40830dcd4aae2c53b21745244b0a9ee8fc17349e08686a40e82dc1bed948272819131b62e715e0fce9908efaebacc261eab0c5c7446db65a0e874cca941661L'
-sage: &quot;40830dcd4aae2c53b21745244b0a9ee8fc17349e08686a40e82dc1bed948272819131b62e715e0fce9908efaebacc261eab0c5c7446db65a0e874cca941661&quot;.decode('hex')
-&quot;TWCTF{3102628d7059fa267365f8c37a0e56cf7e0797ef}\n\x00\xa0\xdf\xdd\xeb*\xc0\xfd\x93\tL\xe4\x080\xdc\xd4\xaa\xe2\x7f\xd2&lt;\x805\xecS\xb2\x17E$K\n\x9e\xe8\xfc\x174\x9e\x08hj@\xe8-\xc1\xbe\xd9H'(\x19\x13\x1b$\xe7\x15\xe0\xfc\xe9\x90\x8e\xfa\xeb\xac\xc2a\xea\xb0\xc5\xc7Dm\xb6Z\x0e\x87L\xca\x94\x16a&quot;
-</code></pre><p>The last line in the sage REPL is the ciphertext (and random padding). Another flag
+<span style="color:#ae81ff">40830</span>dcd4aae2c53b21745244b0a9ee8fc17349e08686a40e82dc1bed948272819131b62e715e0fce9908efaebacc261eab0c5c7446db65a0e874cca941661L<span style="color:#e6db74"></span><span style="color:#e6db74">&#39;</span>
+sage: <span style="color:#e6db74"></span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">40830dcd4aae2c53b21745244b0a9ee8fc17349e08686a40e82dc1bed948272819131b62e715e0fce9908efaebacc261eab0c5c7446db65a0e874cca941661</span><span style="color:#e6db74">&#34;</span><span style="color:#f92672">.</span>decode(<span style="color:#e6db74"></span><span style="color:#e6db74">&#39;</span><span style="color:#e6db74">hex</span><span style="color:#e6db74">&#39;</span>)
+<span style="color:#e6db74"></span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">TWCTF{3102628d7059fa267365f8c37a0e56cf7e0797ef}</span><span style="color:#ae81ff">\n</span><span style="color:#ae81ff">\x00</span><span style="color:#ae81ff">\xa0</span><span style="color:#ae81ff">\xdf</span><span style="color:#ae81ff">\xdd</span><span style="color:#ae81ff">\xeb</span><span style="color:#e6db74">*</span><span style="color:#ae81ff">\xc0</span><span style="color:#ae81ff">\xfd</span><span style="color:#ae81ff">\x93</span><span style="color:#ae81ff">\t</span><span style="color:#e6db74">L</span><span style="color:#ae81ff">\xe4</span><span style="color:#ae81ff">\x08</span><span style="color:#e6db74">0</span><span style="color:#ae81ff">\xdc</span><span style="color:#ae81ff">\xd4</span><span style="color:#ae81ff">\xaa</span><span style="color:#ae81ff">\xe2</span><span style="color:#ae81ff">\x7f</span><span style="color:#ae81ff">\xd2</span><span style="color:#e6db74">&lt;</span><span style="color:#ae81ff">\x80</span><span style="color:#e6db74">5</span><span style="color:#ae81ff">\xec</span><span style="color:#e6db74">S</span><span style="color:#ae81ff">\xb2</span><span style="color:#ae81ff">\x17</span><span style="color:#e6db74">E$K</span><span style="color:#ae81ff">\n</span><span style="color:#ae81ff">\x9e</span><span style="color:#ae81ff">\xe8</span><span style="color:#ae81ff">\xfc</span><span style="color:#ae81ff">\x17</span><span style="color:#e6db74">4</span><span style="color:#ae81ff">\x9e</span><span style="color:#ae81ff">\x08</span><span style="color:#e6db74">hj@</span><span style="color:#ae81ff">\xe8</span><span style="color:#e6db74">-</span><span style="color:#ae81ff">\xc1</span><span style="color:#ae81ff">\xbe</span><span style="color:#ae81ff">\xd9</span><span style="color:#e6db74">H</span><span style="color:#e6db74">&#39;</span><span style="color:#e6db74">(</span><span style="color:#ae81ff">\x19</span><span style="color:#ae81ff">\x13</span><span style="color:#ae81ff">\x1b</span><span style="color:#e6db74">$</span><span style="color:#ae81ff">\xe7</span><span style="color:#ae81ff">\x15</span><span style="color:#ae81ff">\xe0</span><span style="color:#ae81ff">\xfc</span><span style="color:#ae81ff">\xe9</span><span style="color:#ae81ff">\x90</span><span style="color:#ae81ff">\x8e</span><span style="color:#ae81ff">\xfa</span><span style="color:#ae81ff">\xeb</span><span style="color:#ae81ff">\xac</span><span style="color:#ae81ff">\xc2</span><span style="color:#e6db74">a</span><span style="color:#ae81ff">\xea</span><span style="color:#ae81ff">\xb0</span><span style="color:#ae81ff">\xc5</span><span style="color:#ae81ff">\xc7</span><span style="color:#e6db74">Dm</span><span style="color:#ae81ff">\xb6</span><span style="color:#e6db74">Z</span><span style="color:#ae81ff">\x0e</span><span style="color:#ae81ff">\x87</span><span style="color:#e6db74">L</span><span style="color:#ae81ff">\xca</span><span style="color:#ae81ff">\x94</span><span style="color:#ae81ff">\x16</span><span style="color:#e6db74">a</span><span style="color:#e6db74">&#34;</span>
+</code></pre></div><p>The last line in the sage REPL is the ciphertext (and random padding). Another flag
 captured: <code>TWCTF{3102628d7059fa267365f8c37a0e56cf7e0797ef}</code>.</p>
 
-      
-      
-      
-    </article>
-    
-
-
-  </main>
-  
-  <nav class="pagination-single">
-    
-      <span class="previous">&larr; <a href="https://kel.bz/post/asis-rsa/" rel="prev">asis ctf: rsa write-up</a></span>
-    
-    
-      <span class="next"><a href="https://kel.bz/post/netfilter/" rel="next">modifying ip headers with netfilter</a> &rarr;</span>
-    
-  </nav>
-
+  </article>
 
   
-  <footer role="contentinfo">
-    <div style="text-align:center;">
-      <img src="https://kel.bz/profile.jpg" width="64" height="64"><br>
-      written by kelby ludwig
-    </div>
-  </footer>
+  
+
+  
+
+  
+    <section class="article-labels">
+      
+          
+            
+            <a class="article-tag li" href=/tags/cryptography/><span class="hashtag">#</span>cryptography</a>
+          
+    </section>
+  
+
+  
+    <section class="article-navigation">
+      
+        
+        <p>
+          <a class="link" href="/post/asis-rsa/"><span class="li"></span>asis ctf: rsa write-up</a>
+          
+          
+              
+              <a class="article-tag" href=/tags/cryptography/><span class="hashtag">#</span>cryptography</a>
+          
+        </p>
+        
+
+        
+          <p>
+            <a class="link" href="/post/netfilter/"><span class="li"></span>modifying ip headers with netfilter</a class="link">
+            
+            
+                
+                <a class="article-tag" href=/tags/networking/><span class="hashtag">#</span>networking</a>
+            
+                
+                <a class="article-tag" href=/tags/c/><span class="hashtag">#</span>c</a>
+            
+          </p>
+        
+      
+    </section>
+  
+
+  
+
+
+        </div><section id="footer" class="footer max-body-width">
+  
+  
+    
+  
+  <p>kel.bz</p>
+  <p>
+    <span>Powered by</span>
+    <a href="https://gohugo.io">Hugo</a>
+    <span>and the</span>
+    <a href="https://themes.gohugo.io/hugo-notepadium/">Notepadium</a>
+  </p>
+</section>
+
+
 
 
 </div>
-
-<script src="/js/highlight.pack.js"></script>
-<script>hljs.initHighlightingOnLoad();</script>
-
-
-
-</body>
+    </body>
 </html>
-
