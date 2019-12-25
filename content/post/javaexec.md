@@ -1,6 +1,6 @@
 ---
-date: "2016-12-06T19:21:35-06:00"
-title: "user-influenced os commands are still considered harmful"
+date: 2016-12-06
+title: "User-influenced Shell Commands Are Still Considered Harmful"
 tags: [
     "software-security",
     "java",
@@ -8,9 +8,7 @@ tags: [
 summary: "Non-obvious ways of getting code execution when testing code that uses user input to build shell commands."
 ---
 
-# more of the same (sorta)
-
-Its pretty standard advice to avoid using user-input within code that executes
+It is pretty standard advice to avoid using user-input within code that executes
 operating system commands. However, most of that advice tends to revolve around
 how dangerous it is for a user to provide the *command* to execute and I have
 not seen (good) advice on whether other parts of a command (e.g. flags, flag
@@ -110,7 +108,7 @@ out.  Second, I have included comments on interesting behaviors of
 differences in input parsing could lead to input validation bypasses (and
 subsequently command injection).
 
-# in conclusion...
+# In Conclusion...
 
 `Runtime.exec` is (still) unsafe for user-controlled input! I imagine this is
 not specific to Java or `Runtime.exec` either. Code that constructs OS commands

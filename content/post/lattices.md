@@ -1,6 +1,6 @@
 ---
-date: "2016-11-23"
-title: "the ggh cryptosystem"
+date: 2016-11-23
+title: "The GGH Cryptosystem"
 tags: [
     "cryptography",
 ]
@@ -8,12 +8,10 @@ summary: "An introduction to lattice-based cryptography using the broken Goldrei
 ---
 
 
-# The Goldreich–Goldwasser–Halevi (GGH) Cryptosystem
-
-GGH is an asymmetric cryptosystem based on lattices that can be used for
-encryption. Lattices are pretty cool because lattice-based cryptography has
-some interesting properties (some lattice-based cryptosystems are believed
-to be quantum resistant!).
+The Goldreich–Goldwasser–Halevi (GGH) Cryptosystem is an asymmetric
+cryptosystem based on lattices that can be used for encryption. Lattices are
+pretty cool because lattice-based cryptography has some interesting properties
+(some lattice-based cryptosystems are believed to be quantum resistant!).
 
 GGH is pretty cool because it is straightforward to learn. GGH also has
 interesting properties that could allow an adversary to recover plaintext from
@@ -35,7 +33,7 @@ by focusing less on the math and more on the intuition behind GGH. Nguyen's
 attack toward the end will be a bit less abstract but the math
 involved there is not terrible.
 
-### What is a lattice?
+### What is a Lattice?
 
 A *lattice* can be defined as all linear combinations of a set of vectors where
 the coefficients are integers. If you are familiar with the concept of
@@ -115,7 +113,7 @@ sage: show(plot_2d_lattice(va, vb))
 sage: show(plot_2d_lattice(vc, vd))
 ```
 
-## Why are lattices so special?
+## Why Are Lattices So Special?
 
 Lattices have hard problems associated with them. GGH's security depends on the
 difficulty of the closest vector problem (CVP). Intuitively, CVP involves
@@ -134,7 +132,7 @@ is believed that CVP is difficult for higher dimension lattices (say, 200-400).
 Initially working with and visualizing higher-dimension vectors makes
 the brain sizzle so I plan on sticking with the two dimensional case.
 
-## Solving CVP (in some cases)
+## Solving CVP (In Some Cases)
 
 In a GGH keypair, a public key is a "bad" basis and a private key is a "good"
 basis. A "good" basis is a close to orthogonal with short basis vectors.
@@ -150,7 +148,7 @@ For short and approximately orthogonal bases, Babai works well and will likely
 return the closest lattice point to `w`! For "bad" bases, Babai is likely to
 return a lattice point that is not close to `w`.
 
-## How does GGH use CVP?
+## How Does GGH Use CVP?
 
 GGH takes advantage CVP's assumed difficulty for "bad" bases to create an asymmetric
 key pair. A GGH keypair consists of two bases for the same lattice: one public,
@@ -287,7 +285,7 @@ close to a lattice point. Nguyen also mentions that the "traditional
 methods" of solving special CVP cases work better when an error vector is
 smaller.
 
-## So does this work?
+## Does this work?
 
 Oh yes! This attack has a fun story behind it too.
 

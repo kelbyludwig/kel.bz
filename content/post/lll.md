@@ -1,13 +1,11 @@
 ---
-date: "2017-07-25"
-title: "building lattice reduction (LLL) intuition"
+date: 2017-07-25
+title: "Building Lattice Reduction (LLL) Intuition"
 tags: [
     "cryptography",
 ]
 summary: "My attempt to grok the Lenstra–Lenstra–Lovász (LLL) algorithm used for basis reduction."
 ---
-
-## LLL Motivation
 
 The Lenstra–Lenstra–Lovász (LLL) algorithm is an algorithm that efficiently
 transforms a "bad" basis for a lattice `L` into a "pretty good" basis for the

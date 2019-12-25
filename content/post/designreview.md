@@ -1,6 +1,6 @@
 ---
-date: "2019-05-12"
-title: "questions for system design reviews"
+date: 2019-05-12
+title: "Questions for System Design Reviews"
 tags: [
     "software-security",
 ]

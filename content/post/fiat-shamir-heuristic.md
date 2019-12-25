@@ -1,13 +1,11 @@
 ---
-title: "fiat-shamir heuristic"
+title: "Fiat-Shamir Heuristic"
 date: 2018-09-22
 tags: [
     "cryptography",
 ]
 summary: "Overview and implementation of the Fiat-Shamir heuristic used to build signature schemes from interactive zero-knowledge proofs."
 ---
-
-# Fiat-Shamir Heuristic
 
 The Fiat-Shamir heuristic is commonly referenced method of turning interactive zero-knowledge proofs into signature schemes. I believe this concept was introduced in the paper "[How To Prove Yourself: Practical Solutions to Identification and Signature Problems](https://dl.acm.org/citation.cfm?id=36676)".
 

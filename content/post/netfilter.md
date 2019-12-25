@@ -1,7 +1,6 @@
 ---
-date: "2016-08-20T13:52:18-05:00"
-draft: false
-title: "modifying ip headers with netfilter"
+date: 2016-08-20
+title: "Modifying IP Headers With netfilter"
 tags: [
     "networking",
     "c",

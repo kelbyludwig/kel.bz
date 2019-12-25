@@ -1,7 +1,6 @@
 ---
-date: "2016-09-01T13:52:18-05:00"
-draft: false
-title: "tokyo westerns / mma ctf: twin primes write-up"
+date: 2016-09-01
+title: "Tokyo Westerns / MMA CTF: Twin Primes Write-up"
 tags: [
     "cryptography"
 ]

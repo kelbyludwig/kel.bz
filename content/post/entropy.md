@@ -1,5 +1,5 @@
 ---
-title: "measures of entropy"
+title: "Measures of Entropy"
 date: 2019-06-02
 tags: [
     "cryptography",

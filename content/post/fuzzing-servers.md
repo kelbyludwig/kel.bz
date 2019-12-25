@@ -1,7 +1,6 @@
 ---
-date: "2015-11-11T18:13:14-05:00"
-draft: false
-title: "when fuzzing servers"
+date: 2015-11-11
+title: "Fuzzing Servers"
 tags: [
     "software-testing",
     "software-security",

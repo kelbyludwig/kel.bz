@@ -1,7 +1,6 @@
 ---
-date: "2015-11-27T20:42:26-05:00"
-draft: false
-title: "secure password hash migrations"
+date: 2015-11-27
+title: "Secure Password Hash Migrations"
 tags: [
     "cryptography",
 ]

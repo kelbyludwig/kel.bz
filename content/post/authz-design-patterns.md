@@ -1,7 +1,6 @@
 ---
-date: "2016-08-01T20:53:18-05:00"
-draft: false
-title: "well-tested authorization design patterns"
+date: 2016-08-01
+title: "Authorization Design Patterns"
 tags: [
     "authnz",
     "software-security",

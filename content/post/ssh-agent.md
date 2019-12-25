@@ -1,13 +1,11 @@
 ---
-date: "2019-01-14"
-title: "what is the value-add of ssh-agent?"
+date: 2019-01-14
+title: "What is the Value-add of ssh-agent?"
 tags: [
     "software-security",
 ]
 summary: "The purpose of ssh-agent and observations how ssh-agent improves UX and security."
 ---
-
-## `ssh-agent` overview
 
 `ssh-agent` [is an authentication agent](https://linux.die.net/man/1/ssh-agent). It is a long-running process that (among other things) does private key operations on behalf of your SSH client.
 
@@ -15,7 +13,7 @@ One reason why `ssh-agent` exists is to protect private keys on-disk. It's likel
 
 The reason why you have to only enter this password occasionally instead of approximately every SSH connection (or every time your SSH client wants to do a private key operation like signing) is because `ssh-agent` caches your plaintext private key in-memory for some period of time.
 
-## the ux value-add of ssh-agent
+## The UX Value-add of ssh-agent
 
 Caching the private key is a user experience improvement of using `ssh-agent`. With a long-running agent process you can keep sensitive data (e.g. cleartext private keys) off the filesystem and still avoid having to type your password every time you want to establish a SSH connection.
 
@@ -23,7 +21,7 @@ This improvement, however, assumes that encrypting your private keys on the file
 
 What if you do have FDE enabled? What would encrypting your private keys get you from a security perspective? Given that the primary UX win of `ssh-agent` is dependent on caching cleartext private keys we could just skip the password entry step all together if it didn't meaningfully improve security.
 
-## malware
+## Malware
 
 One potential security control you may want from `ssh-agent` is protecting you from malicious processes running on your machine. This is reasonable, but whether `ssh-agent` helps you here is complex. Why? Reasons include:
 
@@ -35,13 +33,13 @@ One potential security control you may want from `ssh-agent` is protecting you f
 
 One could imagine attacks or vulnerabilities where the attacker either doesn't have persistent access or only has e.g. file read capabilities. `ssh-agent` does provide some level of security control from weaker local attacks like these.
 
-## remote backups
+## Remote Backups
 
 Off-site backups are a strong reason in-favor of keeping cleartext private keys off-disk (Another point for `ssh-agent`!). That is, if you write your private keys in plaintext to disk, it's possible that these files may end up on Google Drive or something. While it's reasonable to place some amount of trust in Google not sniffing around for your private keys, I imagine this isn't an ideal outcome either.
 
 Should you use an encrypted backup service like [tarsnap](https://www.tarsnap.com/)? Yeah. Probably!
 
-## possible improvements
+## Possible Improvements
 
 It is an arguable improvement if you use a Yubikey as an `ssh-agent`. That is, if your SSH private keys are stored in hardware and never touch your disk, the evil processes running on your laptop have to work harder to SSH into your blog.
 

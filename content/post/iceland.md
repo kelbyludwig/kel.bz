@@ -1,6 +1,6 @@
 ---
-date: "2016-08-01T21:00:29-05:00"
-title: "iceland"
+date: 2016-08-01
+title: "Iceland"
 tags: [
     "travel",
     "food",
@@ -12,7 +12,7 @@ I recently spent a couple of weeks in Iceland. I'm using this blog post as a
 dump of information about things I learned or wish to remember about the trip
 and Iceland in general.
 
-## summer "nights"
+## Summer "Nights"
 
 During the summer, Iceland gets around 20-22 hours of daylight. I was aware of
 this, but greatly underestimated (overestimated?) what "nighttime" looked like.
@@ -20,24 +20,24 @@ At the peak of darkness, it was still reasonably bright (I would say it was
 dim). This took some getting used to and initially affected my sleep. A
 sleepmask helped with the initial adjustments from near-constant daylight.
 
-## driving through fjords
+## Driving Through Fjords
 
 Driving through fjords is visually fascinating but time consuming. If you are
 using a paper map, what appears to be a "short" drive can be long. (This
 is obnoxiously obvious in hindsight)
 
-## animals
+## Animals
 
 Whale watching is worth it. Puffin watching is not. Also, when driving, birds
 may have a tendency to dive bomb the car.
 
-## rental car
+## Rental Car
 
 Get a decent rental car. When you are driving alongside a mountain on wet
 roads in a dense fog, doing 180° turns with an intermittent power-steering
 system is nerve-wracking.
 
-## notable food and stuff
+## Notable Food and Stuff
 
 * [Reykjavík Roasters](http://reykjavikroasters.is/) - Reykjavík
     * Get two aeropress coffees. One for each type of coffee bean.

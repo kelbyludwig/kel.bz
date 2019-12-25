@@ -1,5 +1,5 @@
 ---
-title: "ecdsa is weird"
+title: "ECDSA is Weird"
 date: 2019-07-28
 math: true
 tags: [
@@ -7,8 +7,6 @@ tags: [
 ]
 summary: "Unexpected properties of ECDSA signatures."
 ---
-
-# ECDSA is Weird
 
 This notebook demonstrates some unexpected properties of ECDSA signatures. This notebook was heavily inspired by [SalusaSecondus's "Crypto Gotchas"](https://github.com/SalusaSecondus/CryptoGotchas/blob/master/README.md).
 

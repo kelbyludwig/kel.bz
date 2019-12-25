@@ -1,5 +1,5 @@
 ---
-title: "the hidden number problem"
+title: "The Hidden Number Problem"
 date: 2019-08-10
 math: true
 tags: [
@@ -7,8 +7,6 @@ tags: [
 ]
 summary: "Notes on the Boneh and Venkatesan's paper describing the Hidden Number Problem and code demonstrating some of the results."
 ---
-
-# The Hidden Number Problem
 
 The Hidden Number Problem (HNP) is a problem that poses the question: Are the most signficant bits of a Diffie-Hellman shared key as hard to compute as the entire secret? The original problem was defined in the paper ["Hardness of computing the most significant bits of secret keys in Diffie-Hellman and related schemes" by Dan Boneh and Ramarathnam Venkatesan](https://crypto.stanford.edu/~dabo/pubs/abstracts/dhmsb.html).
 

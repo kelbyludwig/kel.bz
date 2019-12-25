@@ -1,6 +1,6 @@
 ---
-title: "rsa-based key encapsulation mechanisms"
-date: "2019-05-27"
+title: "RSA-based Key Encapsulation Mechanisms"
+date: 2019-05-27
 tags: [
     "cryptography",
 ]

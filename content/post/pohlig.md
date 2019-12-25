@@ -1,6 +1,6 @@
 ---
-date: "2017-01-14"
-title: "a note on subgroup confinement attacks"
+date: 2017-01-14
+title: "Subgroup Confinement Attacks"
 tags: [
     "cryptography"
 ]
