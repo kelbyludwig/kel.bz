@@ -1,8 +1,12 @@
-+++
-date = "2016-08-01T21:00:29-05:00"
-draft = false
-title = "iceland"
-+++
+---
+date: "2016-08-01T21:00:29-05:00"
+draft: false
+title: "iceland"
+tags: [
+    "travel",
+    "food",
+]
+---
 
 I recently spent a couple of weeks in Iceland. I'm using this blog post as a
 dump of information about things I learned or wish to remember about the trip
