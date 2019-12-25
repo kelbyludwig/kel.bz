@@ -1,5 +1,7 @@
-+++
-title = "about kel.bz"
-+++
+---
+title: "About kel.bz"
+type: "about"
+layout: "single"
+---
 
-my name is kelby ludwig. i like math, cryptography, and software security. my resume can be found [here](/resume.html).
+My name is Kelby Ludwig. I like math, cryptography, and software security. My resume can be found [here](/resume.html).
