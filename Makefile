@@ -1,4 +1,4 @@
-.PHONY: test demo build deploy
+.PHONY: test demo build
 
 test:
 	echo "no tests configured"
@@ -17,6 +17,3 @@ build:
 		--rm \
 		--cap-drop=all \
 		-it hugo:latest hugo -b https://kel.bz -t hugo-notepadium
-
-deploy: build
-	# scp -r public/* blog:/var/www/blog/
