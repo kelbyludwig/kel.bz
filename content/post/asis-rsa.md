@@ -5,6 +5,7 @@ title: "asis ctf: rsa write-up"
 tags: [
     "cryptography",
 ]
+summary: "Breaking RSA with sequential prime key parameter generation."
 ---
 
 # The Problem
@@ -152,6 +153,7 @@ key = PKCS1_v1_5.new(privkey)
 pt = key.decrypt(ctb, "")
 print(pt)
 ```
+
 Well that won't work because the numeric representation of the ciphertext was
 _much_ larger than the modulus. If you follow the python script, you may notice
 that the public key written to `pubkey.pem` is not necessarily the public key

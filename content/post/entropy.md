@@ -4,6 +4,7 @@ date: 2019-06-02
 tags: [
     "cryptography",
 ]
+summary: "Different ways to describe the entropy of a random variable."
 ---
 
 ## What is entropy?

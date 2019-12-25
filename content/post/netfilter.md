@@ -6,6 +6,7 @@ tags: [
     "networking",
     "c",
 ]
+summary: "Using netfilter to programmtically rewrite the source IP address of ICMP packets."
 ---
 
 # Motivation

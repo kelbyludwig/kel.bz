@@ -5,6 +5,7 @@ tags: [
     "software-security",
     "java",
 ]
+summary: "Non-obvious ways of getting code execution when testing code that uses user input to build shell commands."
 ---
 
 # more of the same (sorta)

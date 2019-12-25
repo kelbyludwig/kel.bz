@@ -4,6 +4,7 @@ date: "2019-05-27"
 tags: [
     "cryptography",
 ]
+summary: "How to use RSA to encrypt symmetric keys and how RSA-KEM relates to RSA-OAEP."
 ---
 
 A key encapsulation mechanism (KEM) can be used to construct a "hybrid"

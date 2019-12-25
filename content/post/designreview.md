@@ -4,6 +4,7 @@ title: "questions for system design reviews"
 tags: [
     "software-security",
 ]
+summary: "Moving towards operationalizing system design reviews. What questions should a review team ask, or expect to be answered?"
 ---
 
 Often I am responsible for providing feedback on system designs prior to implementation. These reviews are usually focused on identifying or validating security properties of the proposed design.

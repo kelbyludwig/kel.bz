@@ -4,6 +4,7 @@ title: "building lattice reduction (LLL) intuition"
 tags: [
     "cryptography",
 ]
+summary: "My attempt to grok the Lenstra–Lenstra–Lovász (LLL) algorithm used for basis reduction."
 ---
 
 ## LLL Motivation

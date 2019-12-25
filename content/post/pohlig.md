@@ -4,6 +4,7 @@ title: "a note on subgroup confinement attacks"
 tags: [
     "cryptography"
 ]
+summary: "Subgroup confinement attacks can apply in offline and online contexts."
 ---
 
 The Pohlig-Hellman algorithm is a efficient method of solving the discrete log

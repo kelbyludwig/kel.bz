@@ -6,6 +6,7 @@ tags: [
     "software-testing",
     "software-security",
 ]
+summary: "One tip for finding fast and useful fuzz targets for networked code."
 ---
 
 If you want to use a fuzzer that writes data to STDIN (e.g. [afl-fuzz]) to fuzz

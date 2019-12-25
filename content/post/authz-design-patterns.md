@@ -7,7 +7,7 @@ tags: [
     "software-security",
     "software-testing",
 ]
-
+summary: "Patterns/anti-patterns for designing authorization APIs."
 ---
 
 Authorization is a strange beast. In theory, it appears to be rather

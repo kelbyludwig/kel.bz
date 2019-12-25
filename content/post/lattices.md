@@ -1,11 +1,12 @@
 ---
 date: "2016-11-23"
 title: "the ggh cryptosystem"
-enableEmoji: true
 tags: [
     "cryptography",
 ]
+summary: "An introduction to lattice-based cryptography using the broken Goldreich–Goldwasser–Halevi (GGH) cryptosystem."
 ---
+
 
 # The Goldreich–Goldwasser–Halevi (GGH) Cryptosystem
 

@@ -5,6 +5,7 @@ title: "secure password hash migrations"
 tags: [
     "cryptography",
 ]
+summary: "How to securely migrate from an insecure password hash algorithm to a secure one."
 ---
 
 Suppose you are in a situation where you need to migrate from one password

@@ -5,6 +5,7 @@ title: "tokyo westerns / mma ctf: twin primes write-up"
 tags: [
     "cryptography"
 ]
+summary: "Decrypting RSA ciphertexts using correlated parameters."
 ---
 
 # The Problem
