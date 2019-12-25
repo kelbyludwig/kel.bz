@@ -1,0 +1,322 @@
+
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+
+  
+  <meta charset="UTF-8">
+  <title>
+    the ggh cryptosystem | kel.bz
+  </title>
+
+
+  
+  <meta name="viewport" content="width=device-width,user-scalable=no,maximum-scale=1,initial-scale=1">
+
+  
+  <link rel="canonical" href="https://kel.bz/post/lattices/"/>
+
+  
+  <link rel="stylesheet" href="/css/sanitize.css">
+  <link rel="stylesheet" href="/css/responsive.css">
+  <link rel="stylesheet" href="/css/highlight_monokai.css">
+  <link rel="stylesheet" href="/css/theme.css">
+  <link rel="stylesheet" href="/css/custom.css">
+  
+  
+  <link href="https://kel.bz//index.xml" rel="alternate" type="application/rss+xml" title="kel.bz" />
+  <link href="https://kel.bz//index.xml" rel="feed" type="application/rss+xml" title="kel.bz" />
+
+  
+  
+
+
+</head>
+
+
+
+<body>
+<div class="container">
+
+  
+  <header role="banner">
+    <div class="row gutters">
+      <div id="site-title" class="col span_6">
+        <h1><a href="https://kel.bz/">kel.bz</a></h1>
+        
+      </div>
+      <div id="social" class="col span_6">
+        <ul>
+          <li><a href="/about/me">about kel.bz</a></li>
+          <li><a href="https://twitter.com/kelbyludwig" target="_blank">twitter</a></li>
+          
+          <li><a href="https://github.com/kelbyludwig" target="_blank">github</a></li>
+          <li><a href="https://kel.bz//index.xml" type="application/rss+xml" target="_blank">rss</a></li>
+        </ul>
+      </div>
+    </div>
+  </header>
+
+
+  
+  <main id="single" role="main">
+    <div class="article-header">
+      <h1>the ggh cryptosystem</h1>
+      <div class="meta">
+        Nov 23, 2016 &nbsp;
+        
+      </div>
+    </div>
+    <article>
+      <h1 id="the-goldreichgoldwasserhalevi-ggh-cryptosystem">The Goldreich–Goldwasser–Halevi (GGH) Cryptosystem</h1>
+<p>GGH is an asymmetric cryptosystem based on lattices that can be used for
+encryption. Lattices are pretty cool because lattice-based cryptography has
+some interesting properties (some lattice-based cryptosystems are believed
+to be quantum resistant!).</p>
+<p>GGH is pretty cool because it is straightforward to learn. GGH also has
+interesting properties that could allow an adversary to recover plaintext from
+a given ciphertext (I said cool not secure).</p>
+<p>This blog post will serve as an introduction to lattices and some concepts
+surrounding lattice-based cryptography. After getting a feel for lattices and
+how GGH works, I will subsequently demonstrate that GGH is squishy when
+implemented as the author originally described it.</p>
+<h2 id="lattices">Lattices</h2>
+<p>If the words &ldquo;linear algebra&rdquo; make you nervous don't fret. I believe this
+walkthrough can be understood using knowledge at about the level of the
+<a href="https://www.youtube.com/playlist?list=PLZHQObOWTQDPD3MizzM2xVFitgF8hE_ab">&ldquo;Essence of Linear
+Algebra&rdquo;</a>
+from 3Blue1Brown. At first, I plan on taking a similar approach to 3Blue1Brown
+by focusing less on the math and more on the intuition behind GGH. Nguyen's
+attack toward the end will be a bit less abstract but the math
+involved there is not terrible.</p>
+<h3 id="what-is-a-lattice">What is a lattice?</h3>
+<p>A <em>lattice</em> can be defined as all linear combinations of a set of vectors where
+the coefficients are integers. If you are familiar with the concept of
+vector spaces, a lattice is similar (If you aren't watch <a href="https://www.youtube.com/watch?v=k7RM-ot2NWY">this</a>).
+To be concrete, consider the set of vectors constructed using <code>sage</code>:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">sage: vector_a <span style="color:#f92672">=</span> vector(RR, [<span style="color:#ae81ff">1</span>,<span style="color:#ae81ff">0</span>])
+sage: vector_b <span style="color:#f92672">=</span> vector(RR, [<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">1</span>])
+</code></pre></div><p>If you take all linear combinations of those vectors using
+real number coefficients, you could get <em>any possible 2-dimensional point</em>.
+What about <code>[17, -1.6]</code> you ask? Well just do the following:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">sage: <span style="color:#ae81ff">17</span><span style="color:#f92672">*</span>vector_a <span style="color:#f92672">+</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1.6</span><span style="color:#f92672">*</span>vector_b
+</code></pre></div><p>Basically, the <em>span</em> of <code>vector_a</code> and <code>vector_b</code> is the entire 2D plane and
+those two vectors form the <em>basis</em> of our vector space. What if we had all
+linear combinations of the same vectors but required integer coefficients?
+That gives us a lattice. Is <code>[17, -1.6]</code> a lattice point? Nope! It
+requires non-integer coefficients. But <code>[3, 4]</code> is a lattice point
+because it can be written as a linear combination of the basis vectors
+with integer coefficients.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">sage: vector_a <span style="color:#f92672">=</span> vector(ZZ, [<span style="color:#ae81ff">1</span>,<span style="color:#ae81ff">0</span>]) 
+sage: vector_b <span style="color:#f92672">=</span> vector(ZZ, [<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">1</span>])
+sage: <span style="color:#ae81ff">3</span><span style="color:#f92672">*</span>vector_a <span style="color:#f92672">+</span> <span style="color:#ae81ff">4</span><span style="color:#f92672">*</span>vector_b
+</code></pre></div><p>So with lattices, our span would not cover (for example) all possible
+2-dimensional points so we get this weird collection of dots.</p>
+<p>To assist with visualizing some of the concepts discussed here, I wrote <a href="https://gist.github.com/kelbyludwig/201d08e3e8e9a4f3764f366398f12a47">some
+code</a> for
+sage to plot a lattice from given basis vectors.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">sage: load(<span style="color:#e6db74"></span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">ggh.sage</span><span style="color:#e6db74">&#34;</span>)
+sage: va <span style="color:#f92672">=</span> vector(ZZ, [<span style="color:#ae81ff">1</span>,<span style="color:#ae81ff">0</span>])
+sage: vb <span style="color:#f92672">=</span> vector(ZZ, [<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">1</span>])
+sage: show(plot_2d_lattice(va, vb))
+sage: vc <span style="color:#f92672">=</span> vector(ZZ, [<span style="color:#ae81ff">1</span>,<span style="color:#ae81ff">2</span>])
+sage: show(plot_2d_lattice(va, vc)) 
+sage: show(plot_2d_lattice(va, vc, show_basis_vectors<span style="color:#f92672">=</span>False)) 
+sage: vd <span style="color:#f92672">=</span> vector(ZZ, [<span style="color:#ae81ff">25</span>,<span style="color:#ae81ff">2</span>])
+sage: show(plot_2d_lattice(va, vd, xmin<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>, xmax<span style="color:#f92672">=</span><span style="color:#ae81ff">50</span>, ymin<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>, ymax<span style="color:#f92672">=</span><span style="color:#ae81ff">50</span>))
+</code></pre></div><p>It is important to note that a basis consists of only the vectors
+needed to span the lattice. In other words, a set of vectors that
+make up a lattice will not have any redundant vectors.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">sage: va <span style="color:#f92672">=</span> vector(ZZ, [<span style="color:#ae81ff">1</span>,<span style="color:#ae81ff">0</span>])
+sage: vb <span style="color:#f92672">=</span> vector(ZZ, [<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">1</span>])
+sage: vc <span style="color:#f92672">=</span> vector(ZZ, [<span style="color:#ae81ff">1</span>,<span style="color:#ae81ff">1</span>])
+</code></pre></div><p>In the above example, a lattice constructed with <code>va</code>, <code>vb</code>, and <code>vc</code> would not
+form a basis because <code>vc = va + vb</code>. Furthermore, any given lattice can have
+multiple bases. Below, <code>va</code> and <code>vb</code> span the same lattice as <code>vc</code> and <code>vd</code>
+(the plots created by <code>plot_2d_lattice</code> may look different but the lattices are
+the same).</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">sage: va <span style="color:#f92672">=</span> vector(ZZ, [<span style="color:#ae81ff">1</span>,<span style="color:#ae81ff">0</span>])
+sage: vb <span style="color:#f92672">=</span> vector(ZZ, [<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">1</span>])
+sage: vc <span style="color:#f92672">=</span> vector(ZZ, [<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">1</span>])
+sage: vd <span style="color:#f92672">=</span> vector(ZZ, [<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>,<span style="color:#f92672">-</span><span style="color:#ae81ff">2</span>])
+sage: show(plot_2d_lattice(va, vb))
+sage: show(plot_2d_lattice(vc, vd))
+</code></pre></div><h2 id="why-are-lattices-so-special">Why are lattices so special?</h2>
+<p>Lattices have hard problems associated with them. GGH's security depends on the
+difficulty of the closest vector problem (CVP). Intuitively, CVP involves
+finding the closest lattice point to an arbitrary point. For example:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">sage: ol <span style="color:#f92672">=</span> vector(RR, [<span style="color:#ae81ff">1.7</span>, <span style="color:#ae81ff">2</span>]) <span style="color:#75715e"># a point that is not on the lattice</span>
+sage: show(plot_2d_lattice(va, vb, xmin<span style="color:#f92672">=</span><span style="color:#f92672">-</span><span style="color:#ae81ff">5</span>, xmax<span style="color:#f92672">=</span><span style="color:#ae81ff">5</span>, ymin<span style="color:#f92672">=</span><span style="color:#f92672">-</span><span style="color:#ae81ff">5</span>, ymax<span style="color:#f92672">=</span><span style="color:#ae81ff">5</span>) <span style="color:#f92672">+</span> plot(points(ol, color<span style="color:#f92672">=</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#39;</span><span style="color:#e6db74">red</span><span style="color:#e6db74">&#39;</span>)))
+</code></pre></div><p>In this example, the lattice point <code>[2, 2]</code> would be the solution to CVP as its
+closest to the off-lattice point <code>[1.7, 2]</code>.</p>
+<p>CVP appears to be straightforward in the two-dimensional example but it
+is believed that CVP is difficult for higher dimension lattices (say, 200</p>
+<ul>
+<li>400). Initially working with and visualizing higher-dimension vectors makes
+the brain sizzle so I plan on sticking with the two dimensional case.</li>
+</ul>
+<h2 id="solving-cvp-in-some-cases">Solving CVP (in some cases)</h2>
+<p>In a GGH keypair, a public key is a &ldquo;bad&rdquo; basis and a private key is a &ldquo;good&rdquo;
+basis. A &ldquo;good&rdquo; basis is a close to orthogonal with short basis vectors.
+There exist algorithms for approximating CVP for a &ldquo;good&rdquo; basis. One
+such algorithm is called Babai's Closest Vector algorithm.</p>
+<p>Babai's algorithm takes a point <code>w</code> and a set of basis vectors <code>[v1, ... , vn]</code>
+as input. The algorithm then solves <code>w = t1*v1 + ... + tn*vn</code> where <code>[t1, ... , tn]</code> are
+<em>real number</em> coefficients. Babai then approximates a solution to CVP by
+rounding all coefficients <code>t1, ... , tn</code> to their nearest integer.</p>
+<p>For short and approximately orthogonal bases, Babai works well and will likely
+return the closest lattice point to <code>w</code>! For &ldquo;bad&rdquo; bases, Babai is likely to
+return a lattice point that is not close to <code>w</code>.</p>
+<h2 id="how-does-ggh-use-cvp">How does GGH use CVP?</h2>
+<p>GGH takes advantage CVP's assumed difficulty for &ldquo;bad&rdquo; bases to create an asymmetric
+key pair. A GGH keypair consists of two bases for the same lattice: one public,
+one private. A plaintext message is encoded as a vector with integer
+coefficients and a ciphertext is a vector that is not a lattice point.</p>
+<p>When Alice wants to send a message to Bob, Alice encodes her message as a
+vector and computes <code>ic = message_vector * bobs_public_basis</code>. This is then
+&ldquo;perturbed&rdquo; with a small, randomly generated vector <code>r</code>. Alice's ciphertext
+is <code>ct = ic + r = message_vector*bobs_public_basis + r</code>.</p>
+<p>To decrypt the message, Bob uses his private basis to solve for <code>ic</code> and then
+retrieves the original plaintext by multiplying the result by the inverse
+of his public key.</p>
+<h2 id="some-implementation-details">Some Implementation Details</h2>
+<h3 id="why-the-perturbation-vector-how-should-the-perturbation-vector-be-generated">Why the perturbation vector? How should the perturbation vector be generated?</h3>
+<p><code>message_vec * public_basis</code> will always return a lattice point. Why? Because
+<code>message_vec * public_basis</code> is just a linear combination of basis vectors, and
+therefore, results in a lattice point. The perturbation vector bumps <code>ic</code> off
+the lattice.</p>
+<p>Generating the perturbation vector is almost as simple as generating a random
+vector. Resources I found suggesting picking a parameter <code>d</code> and generating a
+n-dimensional vector with elements from <code>-d -&gt; d</code>. This threw me for a loop
+initially because my perturbation vector would be large enough (because
+my basis was small) where my ciphertext vector would be closer to a
+<em>different</em> lattice point other than my original <code>ic</code> point. :shrug:</p>
+<h3 id="how-do-you-generate-a-public-key-from-the-private-key-why-do-you-use-unimodular-matrices-to-generate-the-public-key">How do you generate a public key from the private key? Why do you use unimodular matrices to generate the public key?</h3>
+<p>My code uses a loop that generates random small bases until a basis exceeds
+some orthogonality threshold (I determined the threshold experimentally). Once
+a &ldquo;good&rdquo; private basis was generated, a public basis is generated by
+multiplying the private basis by randomly generated unimodular matrices.  When
+a basis is multiplied by a unimodular matrix, the lattice spanned by the
+resultant matrix is equal to the original basis. This is covered a bit more in
+<a href="https://cseweb.ucsd.edu/classes/wi10/cse206a/lec1.pdf">these</a> lecture notes.</p>
+<h3 id="how-do-you-measure-orthogonality-of-a-basis">How do you measure &ldquo;orthogonality&rdquo; of a basis?</h3>
+<p>Orthogonality can be measured with something called the Hadamard ratio. The
+provided sage code uses this to generate GGH keypairs.</p>
+<h2 id="nyguens-attack">Nyguen's Attack</h2>
+<p>GGH (as the author's originally described it) is basically toast. A couple
+years after GGH was published, <a href="https://www.di.ens.fr/~pnguyen/pub_Ng08.htm">Phong Q.
+Nguyen</a> demonstrated an attack
+against GGH that allows an attacker to decrypt a ciphertext encrypted via a
+given a public key. Ouch. Nguyen's attack is also decently simple to follow!</p>
+<p>In the <a href="https://groups.csail.mit.edu/cis/pubs/shafi/1997-lncs-ggh.pdf">original GGH
+paper</a>, the
+error vector used during message encryption is an n-vector <code>e</code> with its entries
+set to <code>sigma</code> or <code>-sigma</code>(<code>sigma</code> is commonly 3). Recall that in GGH a
+message <code>m</code> is encrypted with a public key <code>B</code> using the following formula:</p>
+<!-- raw HTML omitted -->
+<!-- raw HTML omitted -->
+<p><!-- raw HTML omitted -->c = m*B + e<!-- raw HTML omitted --></p>
+<p>Nyguen attack works as follows. First, taking the ciphertext modulo <code>sigma</code>
+causes <code>e</code> to disappear from the equation. Why? Because <code>e</code> is a vector
+consisting only of <code>sigma</code> and <code>-sigma</code> (which are both 0 modulo <code>sigma</code>).</p>
+<p><!-- raw HTML omitted -->c = m<em>B + e
+c = m</em>B (mod sigma)
+<!-- raw HTML omitted --></p>
+<p>While this leaks some information about <code>m</code> (specifically <code>m (mod sigma)</code>),
+more information could be leaked with a little algebra and a slightly larger
+modulus. This is accomplished by increasing the modulus to <code>2*sigma</code> and adding
+an all-<code>sigma</code> vector <code>s</code> to the equation.</p>
+<p><!-- raw HTML omitted -->c = m<em>B + e
+s + e = 0 (mod 2</em>sigma)
+c + s = m<em>B + e + s (mod 2</em>sigma)
+c + s = m<em>B + 0 (mod 2</em>sigma)
+c + s = m<em>B (mod 2</em>sigma) # nice!
+<!-- raw HTML omitted --></p>
+<p>We know <code>c</code>, <code>s</code>, and <code>B</code> in this equation. If we solve for <code>m</code>, we reveal
+information about <code>m</code>. Specifically, we learn <code>m (mod 2*sigma)</code>. A solution to
+<code>m</code> is not guaranteed but Nyguen also demonstrated that in most cases it could
+be easily solved. This is already not looking great for GGH but it
+definitely gets worse.</p>
+<p>Working under the assumption that we solved the previous equation, denote <code>m (mod 2*sigma)</code> by <code>m2s</code>. Using some more algebra magic we can create the
+following equation (I'll explain it in just a second):</p>
+<p><!-- raw HTML omitted -->c - m2s*B = (m - m2s)*B + e<!-- raw HTML omitted --></p>
+<p>Note, that <code>(m - m2s)</code> will give a vector of the form <code>2*sigma*m_p</code> (I had to puzzle
+this out in sage but some small examples make it obvious). We don't know what <code>m_p</code>
+is just yet but that is fine. Now lets incorporate that into our previous equation:</p>
+<p><!-- raw HTML omitted -->c - m2s<em>B = (m - m2s)<em>B + e
+c - m2s</em>B = 2</em>sigma<em>m_p</em>B + e
+c - m2s<em>B = 2</em>sigma (m_p<em>B + (e/2</em>sigma)
+(c - m2s<em>B) / (2</em>sigma) = m_p<em>B + (e/2</em>sigma)
+<!-- raw HTML omitted --></p>
+<p>Yeah that looks awful. Okay. Hear me out. We know everything on the left-hand
+side there. Lets just call it <code>c_p</code>.</p>
+<p><!-- raw HTML omitted -->c_p = m_p<em>B + (e/2</em>sigma)<!-- raw HTML omitted --></p>
+<p><code>c_p</code> is just a point in space. It is similar to a GGH ciphertext. Recall the equation
+for a ciphertext in GGH:</p>
+<p><!-- raw HTML omitted -->c = m<em>B + e
+c_p = m_p</em>B + (e/2*sigma)
+<!-- raw HTML omitted --></p>
+<p>We have reduced the original CVP problem to another CVP problem with an
+effectively random message using an error vector that is a <em>much shorter version
+of the original</em>. Considering this is a &ldquo;special&rdquo; case of the CVP problem, it
+could be solved using specialized algorithms that solve CVP for points that are
+close to a lattice point. Nguyen also mentions that the &ldquo;traditional
+methods&rdquo; of solving special CVP cases work better when an error vector is
+smaller.</p>
+<h2 id="so-does-this-work">So does this work?</h2>
+<p>Oh yes! This attack has a fun story behind it too.</p>
+<p>Sometimes cryptographers will provide some form of a &ldquo;challenge&rdquo; to encourage
+analysis of their cryptosystems. If the system holds up, the challenge should
+increase confidence in the scheme. These challenges, however, are not always
+well-received because they are believed to be
+<a href="https://moxie.org/blog/telegram-crypto-challenge/">unrealistic</a> and/or
+<a href="https://www.schneier.com/crypto-gram/archives/1998/1215.html#1">unfair</a>.</p>
+<p>GGH's authors hosted a challenge to demonstrate GGH's security. They presented
+5 public keys of differing security levels and 5 messages encrypted using GGH. This
+&ldquo;Ciphertext Only&rdquo; attack model is a pretty low bar. There are probably a good
+number of questionable cryptosystems that could stand-up to such an attack but
+would crumble instantly under increased pressure.</p>
+<p>Nguyen used this technique to break <em>all five</em> of the GGH challenges in
+&ldquo;reasonable time&rdquo;. A choice quote from Nguyen's paper:</p>
+<p><code>This proves that GGH is insecure for the parameters suggested by Goldreich, Goldwasser and Halevi. Learning the result of our experiments, one of the authors of GGH declared the scheme as “dead”</code></p>
+<p>RIP</p>
+<!-- raw HTML omitted -->
+
+      
+      
+      
+    </article>
+    
+
+
+  </main>
+  
+  <nav class="pagination-single">
+    
+      <span class="previous">&larr; <a href="https://kel.bz/post/javaexec/" rel="prev">user-influenced os commands are still considered harmful</a></span>
+    
+    
+      <span class="next"><a href="https://kel.bz/post/asis-rsa/" rel="next">asis ctf: rsa write-up</a> &rarr;</span>
+    
+  </nav>
+
+
+  
+  <footer role="contentinfo">
+    <div style="text-align:center;">
+      <img src="https://kel.bz/profile.jpg" width="64" height="64"><br>
+      written by kelby ludwig
+    </div>
+  </footer>
+
+
+</div>
+
+<script src="/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+</body>
+</html>
+

@@ -1,0 +1,220 @@
+
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+
+  
+  <meta charset="UTF-8">
+  <title>
+    measures of entropy | kel.bz
+  </title>
+
+
+  
+  <meta name="viewport" content="width=device-width,user-scalable=no,maximum-scale=1,initial-scale=1">
+
+  
+  <link rel="canonical" href="https://kel.bz/post/entropy/"/>
+
+  
+  <link rel="stylesheet" href="/css/sanitize.css">
+  <link rel="stylesheet" href="/css/responsive.css">
+  <link rel="stylesheet" href="/css/highlight_monokai.css">
+  <link rel="stylesheet" href="/css/theme.css">
+  <link rel="stylesheet" href="/css/custom.css">
+  
+  
+  <link href="https://kel.bz//index.xml" rel="alternate" type="application/rss+xml" title="kel.bz" />
+  <link href="https://kel.bz//index.xml" rel="feed" type="application/rss+xml" title="kel.bz" />
+
+  
+  
+
+
+</head>
+
+
+
+<body>
+<div class="container">
+
+  
+  <header role="banner">
+    <div class="row gutters">
+      <div id="site-title" class="col span_6">
+        <h1><a href="https://kel.bz/">kel.bz</a></h1>
+        
+      </div>
+      <div id="social" class="col span_6">
+        <ul>
+          <li><a href="/about/me">about kel.bz</a></li>
+          <li><a href="https://twitter.com/kelbyludwig" target="_blank">twitter</a></li>
+          
+          <li><a href="https://github.com/kelbyludwig" target="_blank">github</a></li>
+          <li><a href="https://kel.bz//index.xml" type="application/rss+xml" target="_blank">rss</a></li>
+        </ul>
+      </div>
+    </div>
+  </header>
+
+
+  
+  <main id="single" role="main">
+    <div class="article-header">
+      <h1>measures of entropy</h1>
+      <div class="meta">
+        Jun 2, 2019 &nbsp;
+        
+      </div>
+    </div>
+    <article>
+      <h2 id="what-is-entropy">What is entropy?</h2>
+<p>Entropy is a measure of information for a random variable. Entropy is often
+presented in units of bits. Random events that are likely to happen carry
+fewer bits of information than random events that occur infrequently.</p>
+<p>One view of entropy is the optimal bit encoding of the outcome of a random variable.
+Suppose I needed to transmit to you the winner of a checkers tournament. If
+there were 32 players in this tournament, each with equal chances of winning, I
+could encode the outcome as:</p>
+<table>
+<thead>
+<tr>
+<th>Winner</th>
+<th>Encoding</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Player 1</td>
+<td>00000</td>
+</tr>
+<tr>
+<td>Player 2</td>
+<td>00001</td>
+</tr>
+<tr>
+<td>Player 3</td>
+<td>00010</td>
+</tr>
+<tr>
+<td>Player 4</td>
+<td>00011</td>
+</tr>
+<tr>
+<td>Player 5</td>
+<td>00100</td>
+</tr>
+<tr>
+<td>&hellip;&hellip;</td>
+<td>&hellip;&hellip;</td>
+</tr>
+<tr>
+<td>Player 31</td>
+<td>11110</td>
+</tr>
+<tr>
+<td>Player 32</td>
+<td>11111</td>
+</tr>
+</tbody>
+</table>
+<p>Due to the uniform outcome the result of the tournament has higher
+entropy and there is no better bit encoding of winner.</p>
+<p>We could do better if Player 1 was highly favored to win. We could encode
+&ldquo;Player 1&rdquo; in fewer bits (say, 1 bit) and encode other players in <em>more</em> bits
+(say, 6). Dependent on exactly how probable Player 1's victory is, encoding the
+outcome of this tournament could be more efficient than the 5-bit encoding
+above. The tournament where Player 1 is favored has less entropy since the
+winner is more predictable.</p>
+<p>Entropy can be measured in multiple ways. Some measurements <a href="#hartley">only rely on
+the number of possible outcomes</a> while others <a href="#shannon">factor in the
+probability of each possible outcome</a>. Others only measure <a href="#minentropy">specific
+properties of the random variable</a>. This post explores
+multiple entropy measurements and how they differ.</p>
+<h2 id="hartley">Hartley entropy</h2>
+<p>Hartley entropy is a simple measurement that only relies on the
+cardinality of the set of possible outcomes. Hartley entropy assumes the
+distribution of outcomes are uniform.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">import</span> math
+
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">hartley_entropy</span>(outcome_set, base<span style="color:#f92672">=</span><span style="color:#ae81ff">2</span>):
+    set_cardinality <span style="color:#f92672">=</span> len(outcome_set)
+    <span style="color:#66d9ef">return</span> math<span style="color:#f92672">.</span>log(set_cardinality, base)
+
+coin_toss <span style="color:#f92672">=</span> {<span style="color:#e6db74"></span><span style="color:#e6db74">&#39;</span><span style="color:#e6db74">heads</span><span style="color:#e6db74">&#39;</span>, <span style="color:#e6db74"></span><span style="color:#e6db74">&#39;</span><span style="color:#e6db74">tails</span><span style="color:#e6db74">&#39;</span>}
+dice_roll <span style="color:#f92672">=</span> {<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">3</span>, <span style="color:#ae81ff">4</span>, <span style="color:#ae81ff">5</span>, <span style="color:#ae81ff">6</span>}
+hartley_entropy(coin_toss) <span style="color:#75715e">#=&gt; 1.0 bits</span>
+hartley_entropy(dice_roll) <span style="color:#75715e">#=&gt; 2.58 bits</span>
+</code></pre></div><h2 id="shannon">Shannon entropy</h2>
+<p>Shannon entropy is a generalization of Hartley entropy. Shannon entropy takes
+the probability of each outcome into account given an &ldquo;average&rdquo; measure of
+entropy across all outcomes. Given a uniform set of outcomes, Shannon entropy
+is equivalent to Hartley entropy.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">shannon_entropy</span>(outcome_dict, base<span style="color:#f92672">=</span><span style="color:#ae81ff">2</span>):
+    entropy <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+    <span style="color:#66d9ef">for</span> _, probability <span style="color:#f92672">in</span> outcome_dict<span style="color:#f92672">.</span>items():
+        entropy <span style="color:#f92672">+</span><span style="color:#f92672">=</span> probability <span style="color:#f92672">*</span> math<span style="color:#f92672">.</span>log(probability, base)
+    <span style="color:#66d9ef">return</span> <span style="color:#f92672">-</span>entropy
+
+<span style="color:#75715e"># uniform coin toss</span>
+coin_toss <span style="color:#f92672">=</span> {<span style="color:#e6db74"></span><span style="color:#e6db74">&#39;</span><span style="color:#e6db74">heads</span><span style="color:#e6db74">&#39;</span>: <span style="color:#ae81ff">1</span><span style="color:#f92672">/</span><span style="color:#ae81ff">2.</span>, <span style="color:#e6db74"></span><span style="color:#e6db74">&#39;</span><span style="color:#e6db74">tails</span><span style="color:#e6db74">&#39;</span>: <span style="color:#ae81ff">1</span><span style="color:#f92672">/</span><span style="color:#ae81ff">2.</span>}
+shannon_entropy(coin_toss) <span style="color:#75715e">#=&gt; 1.0 bits, same as hartley_entropy</span>
+
+biased_coin_toss <span style="color:#f92672">=</span> {<span style="color:#e6db74"></span><span style="color:#e6db74">&#39;</span><span style="color:#e6db74">heads</span><span style="color:#e6db74">&#39;</span>: <span style="color:#ae81ff">3</span><span style="color:#f92672">/</span><span style="color:#ae81ff">4.</span>, <span style="color:#e6db74"></span><span style="color:#e6db74">&#39;</span><span style="color:#e6db74">tails</span><span style="color:#e6db74">&#39;</span>: <span style="color:#ae81ff">1</span><span style="color:#f92672">/</span><span style="color:#ae81ff">4.</span>}
+shannon_entropy(biased_coin_toss) <span style="color:#75715e">#=&gt; .81 bits, less than the fair coin</span>
+</code></pre></div><h2 id="conditional-entropy">Conditional entropy</h2>
+<p>Conditional entropy is a generalization on Shannon entropy. While Shannon
+entropy does factor in the probability of each outcome it assumes that each
+outcome occurs independently from one another. Conditional entropy is a measure
+of uncertainty given known outcomes. If two events are correlated then knowing
+one event happened would lower the entropy of the other.</p>
+<h2 id="minentropy">Min-entropy</h2>
+<p>Min-entropy is a measure of the entropy of the most likely outcome. Constrast
+this with Shannon entropy which is a measure of the average outcome.</p>
+<p>When a random variable has uniform outcomes, the min-entropy is the same as the
+Shannon entropy (and the Hartley entropy).  However, min-entropy is less
+forgiving when dealing with biased outcomes. Recall the Shannon entropy from
+the biased coin toss above (<code>.81</code> bits).  The min-entropy of that outcome is
+calculated as:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">-</span>math<span style="color:#f92672">.</span>log(<span style="color:#ae81ff">3</span><span style="color:#f92672">/</span><span style="color:#ae81ff">4.</span>, <span style="color:#ae81ff">2</span>)
+</code></pre></div><p>Which is only about <code>.42</code> bits of entropy which is much lower than the Shannon
+entropy calculation.</p>
+
+      
+      
+      
+    </article>
+    
+
+
+  </main>
+  
+  <nav class="pagination-single">
+    
+      <span class="previous">&larr; <a href="https://kel.bz/post/ecdsa-is-weird/" rel="prev">ecdsa is weird</a></span>
+    
+    
+      <span class="next"><a href="https://kel.bz/post/kem/" rel="next">rsa-based key encapsulation mechanisms</a> &rarr;</span>
+    
+  </nav>
+
+
+  
+  <footer role="contentinfo">
+    <div style="text-align:center;">
+      <img src="https://kel.bz/profile.jpg" width="64" height="64"><br>
+      written by kelby ludwig
+    </div>
+  </footer>
+
+
+</div>
+
+<script src="/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+</body>
+</html>
+

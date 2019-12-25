@@ -1,0 +1,131 @@
+
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+
+  
+  <meta charset="UTF-8">
+  <title>
+    questions for system design reviews | kel.bz
+  </title>
+
+
+  
+  <meta name="viewport" content="width=device-width,user-scalable=no,maximum-scale=1,initial-scale=1">
+
+  
+  <link rel="canonical" href="https://kel.bz/post/designreview/"/>
+
+  
+  <link rel="stylesheet" href="/css/sanitize.css">
+  <link rel="stylesheet" href="/css/responsive.css">
+  <link rel="stylesheet" href="/css/highlight_monokai.css">
+  <link rel="stylesheet" href="/css/theme.css">
+  <link rel="stylesheet" href="/css/custom.css">
+  
+  
+  <link href="https://kel.bz//index.xml" rel="alternate" type="application/rss+xml" title="kel.bz" />
+  <link href="https://kel.bz//index.xml" rel="feed" type="application/rss+xml" title="kel.bz" />
+
+  
+  
+
+
+</head>
+
+
+
+<body>
+<div class="container">
+
+  
+  <header role="banner">
+    <div class="row gutters">
+      <div id="site-title" class="col span_6">
+        <h1><a href="https://kel.bz/">kel.bz</a></h1>
+        
+      </div>
+      <div id="social" class="col span_6">
+        <ul>
+          <li><a href="/about/me">about kel.bz</a></li>
+          <li><a href="https://twitter.com/kelbyludwig" target="_blank">twitter</a></li>
+          
+          <li><a href="https://github.com/kelbyludwig" target="_blank">github</a></li>
+          <li><a href="https://kel.bz//index.xml" type="application/rss+xml" target="_blank">rss</a></li>
+        </ul>
+      </div>
+    </div>
+  </header>
+
+
+  
+  <main id="single" role="main">
+    <div class="article-header">
+      <h1>questions for system design reviews</h1>
+      <div class="meta">
+        May 12, 2019 &nbsp;
+        
+      </div>
+    </div>
+    <article>
+      <p>Often I am responsible for providing feedback on system designs prior to implementation. These reviews are usually focused on identifying or validating security properties of the proposed design.</p>
+<p>When doing these reviews I find it easy to miss out on feedback opportunities when I get stuck down some rabbit hole. This is a short checklist to remind myself what questions I might want to answer during a review.</p>
+<ul>
+<li>
+<p>Is the problem clear? Does the design appear to solve this problem?</p>
+</li>
+<li>
+<p>Is the rationale behind design decisions clear? Are design constraints enumerated?</p>
+</li>
+<li>
+<p>Have alternate designs been explored? Is the rationale for why a specific design was selected clear?</p>
+</li>
+<li>
+<p>Are desired security properties enumerated? Are the enumerated properties strong? Are any properties missing?</p>
+</li>
+<li>
+<p>Does the design meet all desired security properties? Is it stated why they are met? Are those statements correct?</p>
+</li>
+<li>
+<p>Does anything in the design feel superfluous? Can superfluous components be eliminated safely?</p>
+</li>
+</ul>
+
+      
+      
+      
+    </article>
+    
+
+
+  </main>
+  
+  <nav class="pagination-single">
+    
+      <span class="previous">&larr; <a href="https://kel.bz/post/kem/" rel="prev">rsa-based key encapsulation mechanisms</a></span>
+    
+    
+      <span class="next"><a href="https://kel.bz/post/ssh-agent/" rel="next">what is the value-add of ssh-agent?</a> &rarr;</span>
+    
+  </nav>
+
+
+  
+  <footer role="contentinfo">
+    <div style="text-align:center;">
+      <img src="https://kel.bz/profile.jpg" width="64" height="64"><br>
+      written by kelby ludwig
+    </div>
+  </footer>
+
+
+</div>
+
+<script src="/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+</body>
+</html>
+

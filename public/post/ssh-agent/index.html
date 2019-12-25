@@ -1,0 +1,139 @@
+
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+
+  
+  <meta charset="UTF-8">
+  <title>
+    what is the value-add of ssh-agent? | kel.bz
+  </title>
+
+
+  
+  <meta name="viewport" content="width=device-width,user-scalable=no,maximum-scale=1,initial-scale=1">
+
+  
+  <link rel="canonical" href="https://kel.bz/post/ssh-agent/"/>
+
+  
+  <link rel="stylesheet" href="/css/sanitize.css">
+  <link rel="stylesheet" href="/css/responsive.css">
+  <link rel="stylesheet" href="/css/highlight_monokai.css">
+  <link rel="stylesheet" href="/css/theme.css">
+  <link rel="stylesheet" href="/css/custom.css">
+  
+  
+  <link href="https://kel.bz//index.xml" rel="alternate" type="application/rss+xml" title="kel.bz" />
+  <link href="https://kel.bz//index.xml" rel="feed" type="application/rss+xml" title="kel.bz" />
+
+  
+  
+
+
+</head>
+
+
+
+<body>
+<div class="container">
+
+  
+  <header role="banner">
+    <div class="row gutters">
+      <div id="site-title" class="col span_6">
+        <h1><a href="https://kel.bz/">kel.bz</a></h1>
+        
+      </div>
+      <div id="social" class="col span_6">
+        <ul>
+          <li><a href="/about/me">about kel.bz</a></li>
+          <li><a href="https://twitter.com/kelbyludwig" target="_blank">twitter</a></li>
+          
+          <li><a href="https://github.com/kelbyludwig" target="_blank">github</a></li>
+          <li><a href="https://kel.bz//index.xml" type="application/rss+xml" target="_blank">rss</a></li>
+        </ul>
+      </div>
+    </div>
+  </header>
+
+
+  
+  <main id="single" role="main">
+    <div class="article-header">
+      <h1>what is the value-add of ssh-agent?</h1>
+      <div class="meta">
+        Jan 14, 2019 &nbsp;
+        
+      </div>
+    </div>
+    <article>
+      <h2 id="ssh-agent-overview"><code>ssh-agent</code> overview</h2>
+<p><code>ssh-agent</code> <a href="https://linux.die.net/man/1/ssh-agent">is an authentication agent</a>. It is a long-running process that (among other things) does private key operations on behalf of your SSH client.</p>
+<p>One reason why <code>ssh-agent</code> exists is to protect private keys on-disk. It's likely that your SSH private keys are encrypted with a key derived from a password you have set. That is why you may occasionally have to enter a password prior to establishing a SSH connection with some server.</p>
+<p>The reason why you have to only enter this password occasionally instead of approximately every SSH connection (or every time your SSH client wants to do a private key operation like signing) is because <code>ssh-agent</code> caches your plaintext private key in-memory for some period of time.</p>
+<h2 id="the-ux-value-add-of-ssh-agent">the ux value-add of ssh-agent</h2>
+<p>Caching the private key is a user experience improvement of using <code>ssh-agent</code>. With a long-running agent process you can keep sensitive data (e.g. cleartext private keys) off the filesystem and still avoid having to type your password every time you want to establish a SSH connection.</p>
+<p>This improvement, however, assumes that encrypting your private keys on the filesystem is useful. Individually encrypted files are probably useful if you <em>don't</em> already have full-disk encryption (FDE) like FileVault enabled but you should have FDE enabled on your machine! If you don't, go ahead and take the time now-ish to set it up.</p>
+<p>What if you do have FDE enabled? What would encrypting your private keys get you from a security perspective? Given that the primary UX win of <code>ssh-agent</code> is dependent on caching cleartext private keys we could just skip the password entry step all together if it didn't meaningfully improve security.</p>
+<h2 id="malware">malware</h2>
+<p>One potential security control you may want from <code>ssh-agent</code> is protecting you from malicious processes running on your machine. This is reasonable, but whether <code>ssh-agent</code> helps you here is complex. Why? Reasons include:</p>
+<ul>
+<li>
+<p>The location of your <code>ssh-agent</code> socket is often specified by an environment variable. It may be trivial for a malicious process to overwrite this environment variable and point to a socket that steals your <code>ssh-agent</code> password or your private keys when they are loaded into the agent.</p>
+</li>
+<li>
+<p><a href="https://latacora.micro.blog/2018/08/03/the-default-openssh.html">&ldquo;The default OpenSSH key encryption is worse than plaintext&rdquo;</a>. Do you have a stellar password protecting your private keys?</p>
+</li>
+<li>
+<p>Side channels are plentiful!</p>
+</li>
+</ul>
+<p>One could imagine attacks or vulnerabilities where the attacker either doesn't have persistent access or only has e.g. file read capabilities. <code>ssh-agent</code> does provide some level of security control from weaker local attacks like these.</p>
+<h2 id="remote-backups">remote backups</h2>
+<p>Off-site backups are a strong reason in-favor of keeping cleartext private keys off-disk (Another point for <code>ssh-agent</code>!). That is, if you write your private keys in plaintext to disk, it's possible that these files may end up on Google Drive or something. While it's reasonable to place some amount of trust in Google not sniffing around for your private keys, I imagine this isn't an ideal outcome either.</p>
+<p>Should you use an encrypted backup service like <a href="https://www.tarsnap.com/">tarsnap</a>? Yeah. Probably!</p>
+<h2 id="possible-improvements">possible improvements</h2>
+<p>It is an arguable improvement if you use a Yubikey as an <code>ssh-agent</code>. That is, if your SSH private keys are stored in hardware and never touch your disk, the evil processes running on your laptop have to work harder to SSH into your blog.</p>
+<p>Additionally, keys that require physical interaction (e.g. TouchID authZ, Yubikey taps) may further limit exposure.</p>
+<p>In both of these cases, however, you need at least a halfway decent backup plan in case you lose/break/swallow your security key.</p>
+<p>It is still worthwhile to use <code>ssh-agent</code> unless you have a strong reason not to.</p>
+
+      
+      
+      
+    </article>
+    
+
+
+  </main>
+  
+  <nav class="pagination-single">
+    
+      <span class="previous">&larr; <a href="https://kel.bz/post/designreview/" rel="prev">questions for system design reviews</a></span>
+    
+    
+      <span class="next"><a href="https://kel.bz/post/lll/" rel="next">building lattice reduction (LLL) intuition</a> &rarr;</span>
+    
+  </nav>
+
+
+  
+  <footer role="contentinfo">
+    <div style="text-align:center;">
+      <img src="https://kel.bz/profile.jpg" width="64" height="64"><br>
+      written by kelby ludwig
+    </div>
+  </footer>
+
+
+</div>
+
+<script src="/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+</body>
+</html>
+

@@ -1,0 +1,370 @@
+
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+
+  
+  <meta charset="UTF-8">
+  <title>
+    modifying ip headers with netfilter | kel.bz
+  </title>
+
+
+  
+  <meta name="viewport" content="width=device-width,user-scalable=no,maximum-scale=1,initial-scale=1">
+
+  
+  <link rel="canonical" href="https://kel.bz/post/netfilter/"/>
+
+  
+  <link rel="stylesheet" href="/css/sanitize.css">
+  <link rel="stylesheet" href="/css/responsive.css">
+  <link rel="stylesheet" href="/css/highlight_monokai.css">
+  <link rel="stylesheet" href="/css/theme.css">
+  <link rel="stylesheet" href="/css/custom.css">
+  
+  
+  <link href="https://kel.bz//index.xml" rel="alternate" type="application/rss+xml" title="kel.bz" />
+  <link href="https://kel.bz//index.xml" rel="feed" type="application/rss+xml" title="kel.bz" />
+
+  
+  
+
+
+</head>
+
+
+
+<body>
+<div class="container">
+
+  
+  <header role="banner">
+    <div class="row gutters">
+      <div id="site-title" class="col span_6">
+        <h1><a href="https://kel.bz/">kel.bz</a></h1>
+        
+      </div>
+      <div id="social" class="col span_6">
+        <ul>
+          <li><a href="/about/me">about kel.bz</a></li>
+          <li><a href="https://twitter.com/kelbyludwig" target="_blank">twitter</a></li>
+          
+          <li><a href="https://github.com/kelbyludwig" target="_blank">github</a></li>
+          <li><a href="https://kel.bz//index.xml" type="application/rss+xml" target="_blank">rss</a></li>
+        </ul>
+      </div>
+    </div>
+  </header>
+
+
+  
+  <main id="single" role="main">
+    <div class="article-header">
+      <h1>modifying ip headers with netfilter</h1>
+      <div class="meta">
+        Aug 20, 2016 &nbsp;
+        
+      </div>
+    </div>
+    <article>
+      <h1 id="motivation">Motivation</h1>
+<p>I recently read the <a href="http://www.cs.ucr.edu/~zhiyunq/pub/sec16_TCP_pure_offpath.pdf">&ldquo;Off-Path TCP
+Exploits&rdquo;</a>
+whitepaper and it made me a bit curious. How would I approach
+recreating a PoC for this attack? While the authors mention hurdles
+that they had to overcome for their experiments, the first snag I ran into is
+one of the core assumptions in the paper: An attacker can send packets with a
+spoofed source IP address across the Internet. I'm skeptical that my ISP would
+be cool with this, so I wanted to recreate this scenario on my local network.
+Even with a isolated network setup, I still need to be able to create packets
+that have a spoofed source IP. I know there are <a href="https://nmap.org/">existing
+tools</a> with this functionality but that seemed too easy. I
+came up with two approaches.</p>
+<ol>
+<li>
+<p>I could build IP packets from scratch.</p>
+</li>
+<li>
+<p>I could route traffic through a router that rewrites the source IP.</p>
+</li>
+</ol>
+<p>Option 1 seemed interesting, but I was concerned it wasn't flexible enough. I
+was assuming after I constructed the IP-layer headers I would have to
+manually build the TCP layer as well. Option 2 seemed more re-usable. I could
+just configure my host OS to send TCP traffic through the router and it would
+re-write the source IP. In this configuration, I only have to send TCP traffic
+on my host OS.</p>
+<p>Option 2 also appealed to me because I could dig into kernel modules and
+Netfilter. I had written kernel modules a year or two ago and I recently have
+been in the mood to revisit kernel programming. So I read some content online,
+and I thought I would share my results here. I didn't find much content on
+using Netfilter to <em>modify</em> packets, so hopefully this is useful for others as
+well.</p>
+<p><em>Note:</em> I recognize <code>iptables</code> has support for packet mangling. I have used
+it <a href="https://github.com/praetorian-inc/mitm-vm">in other projects</a>. That's
+too easy though!</p>
+<h1 id="the-setup">The Setup</h1>
+<p>My router will be a Vagrant VM running Debian. To prepare the VM for kernel
+module writing the following command should be ran:</p>
+<pre><code>sudo apt-get update
+sudo apt-get install build-essential linux-headers-$(uname -r) make vim
+</code></pre><p>Once that Vagrant VM is setup, we can install a kernel module that uses
+Netfilter to modify packets on the fly. We can then use that Vagrant VM as our
+router, and let the kernel hooks work their magic.</p>
+<h1 id="writing-and-building-a-kernel-module">Writing and Building A Kernel Module</h1>
+<p>To begin, we start with a basic &ldquo;Hello, world!&rdquo; kernel module.</p>
+<pre><code>#Filename: Makefile
+obj-m := hello.o
+KDIR := /lib/modules/$(shell uname -r)/build
+PWD := $(shell pwd)
+
+all:
+        $(MAKE) -C $(KDIR) SUBDIRS=$(PWD) modules
+clean:
+        rm *o
+</code></pre><pre><code>//Filename: hello.c
+#include &lt;linux/module.h&gt; 
+#include &lt;linux/init.h&gt;   
+
+//setup will be the function that is called when our module is loaded.
+static int __init setup(void) {
+        printk(KERN_INFO &quot;Hello, world!\n&quot;); //printk is the kernel's version of printf. KERN_INFO is a log-level macro.
+        return 0; //a return value of zero tells insmod that the module loaded successfully
+}
+
+//teardown will be the function that is called when our module is unloaded.
+static void __exit teardown(void) {
+        printk(KERN_INFO &quot;Goodbye, cruel world!\n&quot;);
+}
+
+module_init(setup); //module_init defines the setup function for inserting the module
+module_exit(teardown); //module_exit defines the teardown function for removing the module
+</code></pre><p>Once those files are created, the module can be compiled by running <code>make</code> and then loaded
+as a module by running <code>insmod hello.ko</code>. To see our module it action, run <code>dmesg | tail</code>.
+You should see something like the following:</p>
+<pre><code>[14843.182893] hello: module license 'unspecified' taints kernel.
+[14843.182896] Disabling lock debugging due to kernel taint
+[14843.183267] Hello, world!
+</code></pre><p>To remove our module, we can run <code>rmmod hello</code>. Running <code>dmesg | tail</code> again will show us
+the results of our super fantastic teardown function:</p>
+<pre><code>[14843.182893] hello: module license 'unspecified' taints kernel.
+[14843.182896] Disabling lock debugging due to kernel taint
+[14843.183267] Hello, world!
+[15006.239774] Goodbye, cruel world!
+</code></pre><p>You are officially a kernel hacker! I tried to add some comments in the code to explain a little
+bit about what is going on. For a more thorough analysis, the following resources maybe useful:</p>
+<ul>
+<li><a href="https://www.kernel.org/doc/Documentation/kbuild/modules.txt">kbuild: The build system used by the Linux kernel</a></li>
+<li><a href="http://www.makelinux.net/books/lkd2/ch16lev2sec1">A &ldquo;Hello, World!&rdquo; Kernel Module</a></li>
+<li><a href="http://www.tldp.org/LDP/lkmpg/2.4/html/x281.htm">The init and exit Macros</a></li>
+</ul>
+<h1 id="introducing-netfilter">Introducing Netfilter</h1>
+<p>The next step is introducing Netfilter into our module. Netfilter is &ldquo;a set of
+hooks inside the Linux kernel that allows kernel modules to register callback
+functions with the network stack.&rdquo; Netfilter sits at key points in the kernel's
+network stack and allows developer to extend or add functionality.</p>
+<p>Lets add a function that just logs when the kernel has recieved a packet at
+Netfilter's pre-routing hook. (A lot of Netfilter tutorials like to just drop
+packets at this stage. Considering we are SSH'd into our Vagrant VM that is not
+a great idea.) We can use roughly the same Makefile as our previous example.</p>
+<pre><code>//Filename: hello-netfilter.c
+#include &lt;linux/module.h&gt;
+#include &lt;linux/init.h&gt;
+#include &lt;linux/netfilter.h&gt;
+#include &lt;linux/netfilter_ipv4.h&gt;
+
+//nfho is a nf_hook_ops struct. This struct stores all the
+//required information to register a Netfilter hook.
+static struct nf_hook_ops nfho;
+
+//hook_func is our Netfilter function that will be called at the pre-routing
+//hook. This hook merely logs that Netfilter received a packet and tells
+//Netfilter to continue processing that packet.
+unsigned int hook_func(unsigned int hooknum,
+                       struct sk_buff **skb,
+                       const struct net_device *in,
+                       const struct net_device *out,
+                       int (*okfn)(struct sk_buff *)) {
+
+        printk(KERN_INFO &quot;Packet!\n&quot;); //Lets log that we recieved a packet.
+        return NF_ACCEPT; //NF_ACCEPT tells the hook to continue processing the packet.
+
+}
+
+//initialize will setup our Netfilter hook when our kernel
+//module is loaded.
+static int __init initialize(void) {
+        nfho.hook     = hook_func; //Points to our hook function.
+        nfho.hooknum  = NF_INET_PRE_ROUTING; //Our function will run at Netfilter's pre-routing hook.
+        nfho.pf       = PF_INET; //pf = protocol family. We are only interested in IPv4 traffic.
+        nfho.priority = NF_IP_PRI_FIRST; //Tells Netfilter this hook should be ran &quot;first&quot; (there is of-course, more to this when other hooks have this priority)
+        nf_register_hook(&amp;nfho); //We now register our hook function.
+        return 0;
+}
+
+static void __exit cleanup(void) {
+        nf_unregister_hook(&amp;nfho); //unregister our hook
+}
+
+module_init(initialize);
+module_exit(cleanup);
+</code></pre><p>We can see this module in action by using <code>insmod</code> to load the module and
+viewing <code>dmesg</code>. Because we are using SSH, there are a good number of &ldquo;Packet!&rdquo;
+logs. Neat! For greater understanding of this code beyond my comments, I
+recommend reading bioforge's Phrack article <a href="http://phrack.org/issues/61/13.html">&ldquo;Hacking the Linux Kernel Network
+Stack&rdquo;</a>.</p>
+<h1 id="modifying-packets-using-netfilter">Modifying Packets Using Netfilter</h1>
+<p>Making minor modifications to packets appeared to be simple (at least
+what I tried). If you google something similar to &ldquo;modify packets netfilter&rdquo;
+you may not see a ton of results. However, after a bit of research I learned
+that the data structure that represents a packet in Netfilter hooks is not
+specific to Netfilter but, the <code>sk_buff</code> type is a key Linux kernel data
+structure. Socket buffers are pretty large so I won't cover them in their
+entirety here. I do recommend reviewing the &ldquo;SKB: Linux Networking Data
+Structure&rdquo; below. I also included some (hopefully) useful commented code to
+highlight some socket buffer components. The following kernel module will
+modify the source IP address of incoming ICMP packets.</p>
+<pre><code>#include &lt;linux/module.h&gt;
+#include &lt;linux/kernel.h&gt;
+#include &lt;linux/init.h&gt;
+#include &lt;linux/netdevice.h&gt;
+#include &lt;linux/netfilter.h&gt;
+#include &lt;linux/netfilter_ipv4.h&gt;
+#include &lt;linux/ip.h&gt;
+#include &lt;linux/tcp.h&gt;
+
+#define NIPQUAD(addr) \
+    ((unsigned char *)&amp;addr)[0], \
+    ((unsigned char *)&amp;addr)[1], \
+    ((unsigned char *)&amp;addr)[2], \
+    ((unsigned char *)&amp;addr)[3]
+
+static struct nf_hook_ops nfho;
+struct iphdr *iph;
+struct tcphdr *tcp_header;
+struct sk_buff *sock_buff;
+unsigned int sport, dport;
+
+unsigned int hook_func(unsigned int hooknum,
+                       struct sk_buff **skb,
+                       const struct net_device *in,
+                       const struct net_device *out,
+                       int (*okfn)(struct sk_buff *)) 
+{
+    //NOTE: Feel free to uncomment printks! If you are using Vagrant and SSH
+     //      too many printk's will flood your logs.
+    //printk(KERN_INFO &quot;=== BEGIN HOOK ===\n&quot;);
+
+    sock_buff = skb;
+
+    if (!sock_buff) {
+        return NF_ACCEPT;
+    }
+
+    iph = (struct iphdr *)skb_network_header(sock_buff);
+
+    if (!iph) {
+        //printk(KERN_INFO &quot;no ip header\n&quot;);
+        return NF_ACCEPT;
+    }
+
+    if(iph-&gt;protocol==IPPROTO_TCP) {
+        return NF_ACCEPT;
+
+        //tcp_header = tcp_hdr(sock_buff);
+        //sport = htons((unsigned short int) tcp_header-&gt;source);
+        //dport = htons((unsigned short int) tcp_header-&gt;dest);
+        //printk(KERN_INFO &quot;TCP ports: source: %d, dest: %d \n&quot;, sport, dport);
+        //printk(KERN_INFO &quot;SKBuffer: len %d, data_len %d\n&quot;, sock_buff-&gt;len, sock_buff-&gt;data_len);
+    }
+
+    if(iph-&gt;protocol==IPPROTO_ICMP) {
+        printk(KERN_INFO &quot;=== BEGIN ICMP ===\n&quot;);
+        printk(KERN_INFO &quot;IP header: original source: %d.%d.%d.%d\n&quot;, NIPQUAD(iph-&gt;saddr));
+        iph-&gt;saddr = iph-&gt;saddr ^ 0x10000000;
+        printk(KERN_INFO &quot;IP header: modified source: %d.%d.%d.%d\n&quot;, NIPQUAD(iph-&gt;saddr));
+        printk(KERN_INFO &quot;IP header: original destin: %d.%d.%d.%d\n&quot;, NIPQUAD(iph-&gt;daddr));
+        printk(KERN_INFO &quot;=== END ICMP ===\n&quot;);
+
+    }
+
+    //if(in) { printk(KERN_INFO &quot;in-&gt;name:  %s\n&quot;, in-&gt;name); }
+    //if(out) { printk(KERN_INFO &quot;out-&gt;name: %s\n&quot;, out-&gt;name); }
+    //printk(KERN_INFO &quot;=== END HOOK ===\n&quot;);
+    return NF_ACCEPT;        
+
+}
+
+static int __init initialize(void) {
+    nfho.hook = hook_func;
+    //nfho.hooknum = NF_INET_PRE_ROUTING;
+    //Interesting note: A pre-routing hook may not work here if our Vagrant
+    //                  box does not know how to route to the modified source.
+    //                  For the record, mine did not.
+    nfho.hooknum = NF_INET_POST_ROUTING;
+    nfho.pf = PF_INET;
+    nfho.priority = NF_IP_PRI_FIRST;
+    nf_register_hook(&amp;nfho);
+    return 0;    
+}
+
+static void __exit teardown(void) {
+    nf_unregister_hook(&amp;nfho);
+}
+
+module_init(initialize);
+module_exit(teardown);
+</code></pre><p>Try pinging the Vagrant machine before and after the module is loaded. Once the
+module is loaded you should see that ping replies don't reach your machine.
+Perfect! If we monitor the Vagrant machine's network traffic, it may look like
+this Wireshark capture:</p>
+<figure>
+    <img src="/ip_spoof_wireshark.png"/> 
+</figure>
+
+<p>Voila!</p>
+<h1 id="collection-of-useful-resources">Collection of Useful Resources</h1>
+<ul>
+<li><a href="https://sandilands.info/sgordon/address-spoofing-with-iptables-in-linux">IP Spoofing with iptables</a></li>
+<li><a href="http://vger.kernel.org/~davem/skb.html">SKBs: Linux Networking Data Structure</a></li>
+</ul>
+
+      
+      
+      
+    </article>
+    
+
+
+  </main>
+  
+  <nav class="pagination-single">
+    
+      <span class="previous">&larr; <a href="https://kel.bz/post/twinprimes/" rel="prev">tokyo westerns / mma ctf: twin primes write-up</a></span>
+    
+    
+      <span class="next"><a href="https://kel.bz/post/iceland/" rel="next">iceland</a> &rarr;</span>
+    
+  </nav>
+
+
+  
+  <footer role="contentinfo">
+    <div style="text-align:center;">
+      <img src="https://kel.bz/profile.jpg" width="64" height="64"><br>
+      written by kelby ludwig
+    </div>
+  </footer>
+
+
+</div>
+
+<script src="/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+</body>
+</html>
+
