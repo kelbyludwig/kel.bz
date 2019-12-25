@@ -1,9 +1,14 @@
-+++
-date = "2016-08-01T20:53:18-05:00"
-draft = false
-title = "well-tested authorization design patterns"
+---
+date: "2016-08-01T20:53:18-05:00"
+draft: false
+title: "well-tested authorization design patterns"
+tags: [
+    "authnz",
+    "software-security",
+    "software-testing",
+]
 
-+++
+---
 
 Authorization is a strange beast. In theory, it appears to be rather
 straight-forward: a user should not be able to create, read, update, or delete
