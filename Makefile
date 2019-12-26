@@ -20,4 +20,4 @@ build:
 		-v $(PWD):/home/kelby/ \
 		--rm \
 		--cap-drop=all \
-		-it hugo:latest hugo -b https://kel.bz -t hugo-notepadium
+		-it hugo:latest hugo --gc -b https://kel.bz -t hugo-notepadium
