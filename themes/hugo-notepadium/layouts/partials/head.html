@@ -47,4 +47,4 @@
 
 {{ $themeCSS := resources.Get $themePath }}
 {{ $coreCSS = slice $coreCSS $themeCSS | resources.Concat "css/core.css" | minify | fingerprint "sha384" }}
-<link rel="stylesheet" href="{{ $coreCSS.RelPermalink }}" integrity="{{ $coreCSS.Data.Integrity }}">
+<link rel="stylesheet" href="{{ $coreCSS.RelPermalink }}" >
