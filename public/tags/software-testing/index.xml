@@ -6,24 +6,24 @@
     <description>Recent content in software-testing on kel.bz</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 01 Aug 2016 20:53:18 -0500</lastBuildDate>
+    <lastBuildDate>Mon, 01 Aug 2016 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://kel.bz/tags/software-testing/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
-      <title>well-tested authorization design patterns</title>
+      <title>Authorization Design Patterns</title>
       <link>https://kel.bz/post/authz-design-patterns/</link>
-      <pubDate>Mon, 01 Aug 2016 20:53:18 -0500</pubDate>
+      <pubDate>Mon, 01 Aug 2016 00:00:00 +0000</pubDate>
       
       <guid>https://kel.bz/post/authz-design-patterns/</guid>
       <description>Patterns/anti-patterns for designing authorization APIs.</description>
     </item>
     
     <item>
-      <title>when fuzzing servers</title>
+      <title>Fuzzing Servers</title>
       <link>https://kel.bz/post/fuzzing-servers/</link>
-      <pubDate>Wed, 11 Nov 2015 18:13:14 -0500</pubDate>
+      <pubDate>Wed, 11 Nov 2015 00:00:00 +0000</pubDate>
       
       <guid>https://kel.bz/post/fuzzing-servers/</guid>
       <description>One tip for finding fast and useful fuzz targets for networked code.</description>

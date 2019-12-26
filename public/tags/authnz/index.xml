@@ -6,15 +6,15 @@
     <description>Recent content in authnz on kel.bz</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 01 Aug 2016 20:53:18 -0500</lastBuildDate>
+    <lastBuildDate>Mon, 01 Aug 2016 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://kel.bz/tags/authnz/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
-      <title>well-tested authorization design patterns</title>
+      <title>Authorization Design Patterns</title>
       <link>https://kel.bz/post/authz-design-patterns/</link>
-      <pubDate>Mon, 01 Aug 2016 20:53:18 -0500</pubDate>
+      <pubDate>Mon, 01 Aug 2016 00:00:00 +0000</pubDate>
       
       <guid>https://kel.bz/post/authz-design-patterns/</guid>
       <description>Patterns/anti-patterns for designing authorization APIs.</description>

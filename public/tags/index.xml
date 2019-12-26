@@ -32,7 +32,7 @@
     <item>
       <title>java</title>
       <link>https://kel.bz/tags/java/</link>
-      <pubDate>Tue, 06 Dec 2016 19:21:35 -0600</pubDate>
+      <pubDate>Tue, 06 Dec 2016 00:00:00 +0000</pubDate>
       
       <guid>https://kel.bz/tags/java/</guid>
       <description></description>
@@ -41,7 +41,7 @@
     <item>
       <title>c</title>
       <link>https://kel.bz/tags/c/</link>
-      <pubDate>Sat, 20 Aug 2016 13:52:18 -0500</pubDate>
+      <pubDate>Sat, 20 Aug 2016 00:00:00 +0000</pubDate>
       
       <guid>https://kel.bz/tags/c/</guid>
       <description></description>
@@ -50,45 +50,45 @@
     <item>
       <title>networking</title>
       <link>https://kel.bz/tags/networking/</link>
-      <pubDate>Sat, 20 Aug 2016 13:52:18 -0500</pubDate>
+      <pubDate>Sat, 20 Aug 2016 00:00:00 +0000</pubDate>
       
       <guid>https://kel.bz/tags/networking/</guid>
       <description></description>
     </item>
     
     <item>
-      <title>food</title>
-      <link>https://kel.bz/tags/food/</link>
-      <pubDate>Mon, 01 Aug 2016 21:00:29 -0500</pubDate>
-      
-      <guid>https://kel.bz/tags/food/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>travel</title>
-      <link>https://kel.bz/tags/travel/</link>
-      <pubDate>Mon, 01 Aug 2016 21:00:29 -0500</pubDate>
-      
-      <guid>https://kel.bz/tags/travel/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>authnz</title>
       <link>https://kel.bz/tags/authnz/</link>
-      <pubDate>Mon, 01 Aug 2016 20:53:18 -0500</pubDate>
+      <pubDate>Mon, 01 Aug 2016 00:00:00 +0000</pubDate>
       
       <guid>https://kel.bz/tags/authnz/</guid>
       <description></description>
     </item>
     
     <item>
+      <title>food</title>
+      <link>https://kel.bz/tags/food/</link>
+      <pubDate>Mon, 01 Aug 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://kel.bz/tags/food/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>software-testing</title>
       <link>https://kel.bz/tags/software-testing/</link>
-      <pubDate>Mon, 01 Aug 2016 20:53:18 -0500</pubDate>
+      <pubDate>Mon, 01 Aug 2016 00:00:00 +0000</pubDate>
       
       <guid>https://kel.bz/tags/software-testing/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>travel</title>
+      <link>https://kel.bz/tags/travel/</link>
+      <pubDate>Mon, 01 Aug 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://kel.bz/tags/travel/</guid>
       <description></description>
     </item>
     

@@ -12,7 +12,7 @@
     
     
     <item>
-      <title>the hidden number problem</title>
+      <title>The Hidden Number Problem</title>
       <link>https://kel.bz/post/hnp/</link>
       <pubDate>Sat, 10 Aug 2019 00:00:00 +0000</pubDate>
       
@@ -21,7 +21,7 @@
     </item>
     
     <item>
-      <title>ecdsa is weird</title>
+      <title>ECDSA is Weird</title>
       <link>https://kel.bz/post/ecdsa-is-weird/</link>
       <pubDate>Sun, 28 Jul 2019 00:00:00 +0000</pubDate>
       
@@ -30,7 +30,7 @@
     </item>
     
     <item>
-      <title>measures of entropy</title>
+      <title>Measures of Entropy</title>
       <link>https://kel.bz/post/entropy/</link>
       <pubDate>Sun, 02 Jun 2019 00:00:00 +0000</pubDate>
       
@@ -39,7 +39,7 @@
     </item>
     
     <item>
-      <title>rsa-based key encapsulation mechanisms</title>
+      <title>RSA-based Key Encapsulation Mechanisms</title>
       <link>https://kel.bz/post/kem/</link>
       <pubDate>Mon, 27 May 2019 00:00:00 +0000</pubDate>
       
@@ -48,7 +48,16 @@
     </item>
     
     <item>
-      <title>building lattice reduction (LLL) intuition</title>
+      <title>Fiat-Shamir Heuristic</title>
+      <link>https://kel.bz/post/fiat-shamir-heuristic/</link>
+      <pubDate>Sat, 22 Sep 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://kel.bz/post/fiat-shamir-heuristic/</guid>
+      <description>Overview and implementation of the Fiat-Shamir heuristic used to build signature schemes from interactive zero-knowledge proofs.</description>
+    </item>
+    
+    <item>
+      <title>Building Lattice Reduction (LLL) Intuition</title>
       <link>https://kel.bz/post/lll/</link>
       <pubDate>Tue, 25 Jul 2017 00:00:00 +0000</pubDate>
       
@@ -57,7 +66,7 @@
     </item>
     
     <item>
-      <title>a note on subgroup confinement attacks</title>
+      <title>Subgroup Confinement Attacks</title>
       <link>https://kel.bz/post/pohlig/</link>
       <pubDate>Sat, 14 Jan 2017 00:00:00 +0000</pubDate>
       
@@ -66,7 +75,7 @@
     </item>
     
     <item>
-      <title>the ggh cryptosystem</title>
+      <title>The GGH Cryptosystem</title>
       <link>https://kel.bz/post/lattices/</link>
       <pubDate>Wed, 23 Nov 2016 00:00:00 +0000</pubDate>
       
@@ -75,27 +84,27 @@
     </item>
     
     <item>
-      <title>asis ctf: rsa write-up</title>
+      <title>ASIS CTF 2016: RSA Write-up</title>
       <link>https://kel.bz/post/asis-rsa/</link>
-      <pubDate>Sun, 18 Sep 2016 14:45:13 -0500</pubDate>
+      <pubDate>Sun, 18 Sep 2016 00:00:00 +0000</pubDate>
       
       <guid>https://kel.bz/post/asis-rsa/</guid>
       <description>Breaking RSA with sequential prime key parameter generation.</description>
     </item>
     
     <item>
-      <title>tokyo westerns / mma ctf: twin primes write-up</title>
+      <title>Tokyo Westerns / MMA CTF: Twin Primes Write-up</title>
       <link>https://kel.bz/post/twinprimes/</link>
-      <pubDate>Thu, 01 Sep 2016 13:52:18 -0500</pubDate>
+      <pubDate>Thu, 01 Sep 2016 00:00:00 +0000</pubDate>
       
       <guid>https://kel.bz/post/twinprimes/</guid>
       <description>Decrypting RSA ciphertexts using correlated parameters.</description>
     </item>
     
     <item>
-      <title>secure password hash migrations</title>
+      <title>Secure Password Hash Migrations</title>
       <link>https://kel.bz/post/password-hash-migrations/</link>
-      <pubDate>Fri, 27 Nov 2015 20:42:26 -0500</pubDate>
+      <pubDate>Fri, 27 Nov 2015 00:00:00 +0000</pubDate>
       
       <guid>https://kel.bz/post/password-hash-migrations/</guid>
       <description>How to securely migrate from an insecure password hash algorithm to a secure one.</description>

@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8">
+<meta name="generator" content="Hugo 0.62.0" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light only">
+<meta name="supported-color-schemes" content="light only">
+
+
+  
+  
+    <title>Fiat-Shamir Heuristic &ndash; kel.bz</title>
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/core.min.871c51706cba837f31c3028126e8801b3ced6615f16b6ef7dbba11efc23280f506ef819d15b556880689cd71206843b7.css" integrity="sha384-hxxRcGy6g38xwwKBJuiAGzztZhXxa27327oR78IygPUG74GdFbVWiAaJzXEgaEO3">
+<body>
+      <div class="base-body max-width"><section id="header" class="header max-body-width">
+  <p>
+    <a class="site-name" href="/">
+      
+        kel.bz
+      
+    </a>
+    
+      <span class="site-slogan">Where I take notes.</span>
+    
+  </p>
+</section><div id="content" class="flex-body max-body-width">
+  
+  
+
+  <section class="article-header" >
+      <h1>Fiat-Shamir Heuristic</h1>
+      <p class="article-date">2018-09-22</p>
+  </section>
+
+  <article class="markdown-body" >
+    <p>The Fiat-Shamir heuristic is commonly referenced method of turning interactive zero-knowledge proofs into signature schemes. I believe this concept was introduced in the paper &ldquo;
+
+<a href="https://dl.acm.org/citation.cfm?id=36676"  target="_blank">How To Prove Yourself: Practical Solutions to Identification and Signature Problems</a>&quot;.</p>
+<p>The basic idea of the heuristic is that one of the interactive steps performed by the verifier, specifically the selection of a set of random bits, is replaced by a hash function.</p>
+<p>The &ldquo;How To Prove Yourself&rdquo; (HTPY) paper also describes a specific identification protocol. This notebook implements that identification protocol, as well as the transformation of the identification protocol to signature scheme using the described heuristic.</p>
+<blockquote>
+<p>This blog post was originally written as a Sage notebook. The original
+notebook can be found
+
+
+<a href="https://github.com/kelbyludwig/kel.bz/blob/master/notebooks/fiat-shamir-heuristic.ipynb"  target="_blank">here</a>.</p>
+</blockquote>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">import</span> hashlib
+
+<span style="color:#75715e"># secret parameters only known to the Center</span>
+p, q <span style="color:#f92672">=</span> next_prime(<span style="color:#ae81ff">2</span><span style="color:#f92672">^</span><span style="color:#ae81ff">32</span>), next_prime(<span style="color:#ae81ff">2</span><span style="color:#f92672">^</span><span style="color:#ae81ff">33</span>)
+
+<span style="color:#75715e"># global parameters</span>
+N <span style="color:#f92672">=</span> p<span style="color:#f92672">*</span>q
+ZN <span style="color:#f92672">=</span> Zmod(N)
+t, k <span style="color:#f92672">=</span> <span style="color:#ae81ff">4</span>, <span style="color:#ae81ff">4</span>
+
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">f</span>(<span style="color:#f92672">*</span>args):
+    h <span style="color:#f92672">=</span> hashlib<span style="color:#f92672">.</span>md5()
+    <span style="color:#66d9ef">for</span> a <span style="color:#f92672">in</span> args:
+        h<span style="color:#f92672">.</span>update(str(a))
+    hd <span style="color:#f92672">=</span> h<span style="color:#f92672">.</span>hexdigest()
+    <span style="color:#66d9ef">return</span> ZN(int(hd, <span style="color:#ae81ff">16</span>))
+
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Center</span>(object):
+    
+    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">provision_prover</span>(self, identity):
+        secret_root <span style="color:#f92672">=</span> ZN(randint(<span style="color:#ae81ff">1</span>, N<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>))<span style="color:#f92672">^</span><span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>
+        <span style="color:#66d9ef">return</span> InteractiveProver(identity, secret_root)
+
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">InteractiveProver</span>(object):
+    
+    <span style="color:#66d9ef">def</span> __init__(self, identity, secret_root):
+        self<span style="color:#f92672">.</span>identity <span style="color:#f92672">=</span> identity
+        self<span style="color:#f92672">.</span>secret_root <span style="color:#f92672">=</span> secret_root
+        
+    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">commit</span>(self):
+        self<span style="color:#f92672">.</span>prover_random <span style="color:#f92672">=</span> ZN(randint(<span style="color:#ae81ff">1</span>, N<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>))
+        <span style="color:#66d9ef">return</span> self<span style="color:#f92672">.</span>identity, self<span style="color:#f92672">.</span>secret_root<span style="color:#f92672">^</span><span style="color:#ae81ff">2</span>, self<span style="color:#f92672">.</span>prover_random<span style="color:#f92672">^</span><span style="color:#ae81ff">2</span>
+    
+    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">respond</span>(self, verifier_random):
+        y <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>secret_root<span style="color:#f92672">^</span>verifier_random
+        <span style="color:#66d9ef">return</span> self<span style="color:#f92672">.</span>prover_random<span style="color:#f92672">*</span>y
+            
+
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">InteractiveVerifier</span>(object):
+    
+    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">challenge</span>(self, identity, public_square, prover_random):
+        self<span style="color:#f92672">.</span>prover_random <span style="color:#f92672">=</span> prover_random
+        self<span style="color:#f92672">.</span>verifier_random <span style="color:#f92672">=</span> randint(<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">1</span>)
+        self<span style="color:#f92672">.</span>public_square <span style="color:#f92672">=</span> public_square
+        <span style="color:#66d9ef">return</span> self<span style="color:#f92672">.</span>verifier_random
+        
+    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">check</span>(self, proof):
+        y <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>public_square<span style="color:#f92672">^</span>self<span style="color:#f92672">.</span>verifier_random
+        <span style="color:#66d9ef">return</span> proof<span style="color:#f92672">^</span><span style="color:#ae81ff">2</span> <span style="color:#f92672">==</span> self<span style="color:#f92672">.</span>prover_random<span style="color:#f92672">*</span>y
+        
+
+center <span style="color:#f92672">=</span> Center()
+verifier <span style="color:#f92672">=</span> InteractiveVerifier()
+me <span style="color:#f92672">=</span> center<span style="color:#f92672">.</span>provision_prover(<span style="color:#e6db74"></span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">@kelbyludwig</span><span style="color:#e6db74">&#34;</span>)
+
+<span style="color:#66d9ef">for</span> _ <span style="color:#f92672">in</span> range(<span style="color:#ae81ff">256</span>):
+    <span style="color:#75715e"># begin identification protocol</span>
+    (identity, public_square, prover_random) <span style="color:#f92672">=</span> me<span style="color:#f92672">.</span>commit()
+    verifier_random <span style="color:#f92672">=</span> verifier<span style="color:#f92672">.</span>challenge(identity, public_square, prover_random)
+
+    <span style="color:#75715e"># generate my proof</span>
+    proof <span style="color:#f92672">=</span> me<span style="color:#f92672">.</span>respond(verifier_random)
+
+    <span style="color:#75715e"># present proof to verifier</span>
+    <span style="color:#66d9ef">assert</span>(verifier<span style="color:#f92672">.</span>check(proof))
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">NewCenter</span>(object):
+    
+    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">provision_signer</span>(self, identity):
+        secret_root <span style="color:#f92672">=</span> ZN(randint(<span style="color:#ae81ff">1</span>, N<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>))
+        <span style="color:#66d9ef">return</span> Signer(identity, secret_root)
+
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Signer</span>(object):
+    
+    <span style="color:#66d9ef">def</span> __init__(self, identity, secret_root):
+        self<span style="color:#f92672">.</span>identity <span style="color:#f92672">=</span> identity
+        self<span style="color:#f92672">.</span>secret_root <span style="color:#f92672">=</span> secret_root
+        self<span style="color:#f92672">.</span>public_square <span style="color:#f92672">=</span> secret_root<span style="color:#f92672">^</span><span style="color:#f92672">-</span><span style="color:#ae81ff">2</span>
+    
+    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">sign</span>(self, message):
+        r <span style="color:#f92672">=</span> f(randint(<span style="color:#ae81ff">1</span>, N<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>))
+        x <span style="color:#f92672">=</span> r<span style="color:#f92672">^</span><span style="color:#ae81ff">2</span>
+        e <span style="color:#f92672">=</span> f(message, x)<span style="color:#f92672">.</span>lift()<span style="color:#f92672">.</span>bits()[<span style="color:#ae81ff">0</span>]
+        y <span style="color:#f92672">=</span> r<span style="color:#f92672">*</span>self<span style="color:#f92672">.</span>secret_root<span style="color:#f92672">^</span>e
+        <span style="color:#66d9ef">return</span> self<span style="color:#f92672">.</span>public_square, e, y
+        
+    
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Verifier</span>(object):
+    
+    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">verify</span>(self, message, public_square, e, y):
+        <span style="color:#75715e"># assume the verifier knows the `public_square` is</span>
+        <span style="color:#75715e"># legitimately tied to the signer</span>
+        z <span style="color:#f92672">=</span> y<span style="color:#f92672">^</span><span style="color:#ae81ff">2</span> <span style="color:#f92672">*</span> public_square<span style="color:#f92672">^</span>e
+        calculated_e <span style="color:#f92672">=</span> f(message, z)<span style="color:#f92672">.</span>lift()<span style="color:#f92672">.</span>bits()[<span style="color:#ae81ff">0</span>]
+        <span style="color:#66d9ef">return</span> calculated_e <span style="color:#f92672">==</span> e
+
+center <span style="color:#f92672">=</span> NewCenter()
+verifier <span style="color:#f92672">=</span> Verifier()
+
+<span style="color:#66d9ef">for</span> _ <span style="color:#f92672">in</span> range(<span style="color:#ae81ff">256</span>):
+    me <span style="color:#f92672">=</span> center<span style="color:#f92672">.</span>provision_signer(<span style="color:#e6db74"></span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">@kelbyludwig</span><span style="color:#e6db74">&#34;</span>)
+    message <span style="color:#f92672">=</span> <span style="color:#e6db74"></span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">foo</span><span style="color:#e6db74">&#34;</span>
+    public_square, e, y <span style="color:#f92672">=</span> me<span style="color:#f92672">.</span>sign(message)
+    <span style="color:#66d9ef">assert</span>(verifier<span style="color:#f92672">.</span>verify(message, public_square, e, y))
+</code></pre></div><h1 id="notes">Notes</h1>
+<h2 id="the-selection-of-the-function-f">The Selection of the Function <code>f</code></h2>
+<p>In the HTPY paper, the function <code>f</code> is described as a &ldquo;pseudo random function&hellip; which maps arbitrary strings to the range [0, N)&quot;. However, the applications of the Fiat-Shamir heuristic that I have seen have used a hash function as <code>f</code>. It's my understanding that hash functions are <em>not</em> PRFs, so maybe the original definition of the heuristic has just changed over time.</p>
+<p>My selection of <code>f</code> in my code above is for simplicity (Or at least that is what I have told myself). I can pretty much gaurantee it's broken in some way.</p>
+<h2 id="why-does-the-interactive-version-in-htpy-use-the-function-f-to-generate-public-values-on-each-protocol-run">Why does the interactive version in HTPY use the function <code>f</code> to generate public values on each protocol run?</h2>
+<p>I do not do this in the code above, but in the original HTPY paper, the list of <code>vj</code> values is created by applying <code>f</code> to the user's identifier and a series of small indices.</p>
+<p>This seems superfluous, as the user's identifier and these indices are public information. I'm guessing that this is used to lower the size of data transmitted in the protocol, since the target application described in the paper is constrained smartcards.</p>
+<p>Also, since <code>f</code> is used during transformation to a signature scheme, there is no extra cost to keep <code>f</code> in the smartcard.</p>
+
+  </article>
+
+  
+  
+
+  
+
+  
+    <section class="article-labels">
+      
+          
+            
+            <a class="article-tag li" href=/tags/cryptography/><span class="hashtag">#</span>cryptography</a>
+          
+    </section>
+  
+
+  
+    <section class="article-navigation">
+      
+        
+        <p>
+          <a class="link" href="/post/ssh-agent/"><span class="li"></span>What is the Value-add of ssh-agent?</a>
+          
+          
+              
+              <a class="article-tag" href=/tags/software-security/><span class="hashtag">#</span>software-security</a>
+          
+        </p>
+        
+
+        
+          <p>
+            <a class="link" href="/post/lll/"><span class="li"></span>Building Lattice Reduction (LLL) Intuition</a class="link">
+            
+            
+                
+                <a class="article-tag" href=/tags/cryptography/><span class="hashtag">#</span>cryptography</a>
+            
+          </p>
+        
+      
+    </section>
+  
+
+  
+
+
+        </div><section id="footer" class="footer max-body-width">
+  
+  
+    
+  
+  <p>kel.bz</p>
+  <p>
+    <span>Powered by</span>
+    <a href="https://gohugo.io">Hugo</a>
+    <span>and the</span>
+    <a href="https://themes.gohugo.io/hugo-notepadium/">Notepadium</a>
+  </p>
+</section>
+
+
+
+
+</div>
+    </body>
+</html>

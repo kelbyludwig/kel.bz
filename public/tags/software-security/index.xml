@@ -12,7 +12,7 @@
     
     
     <item>
-      <title>questions for system design reviews</title>
+      <title>Questions for System Design Reviews</title>
       <link>https://kel.bz/post/designreview/</link>
       <pubDate>Sun, 12 May 2019 00:00:00 +0000</pubDate>
       
@@ -21,7 +21,7 @@
     </item>
     
     <item>
-      <title>what is the value-add of ssh-agent?</title>
+      <title>What is the Value-add of ssh-agent?</title>
       <link>https://kel.bz/post/ssh-agent/</link>
       <pubDate>Mon, 14 Jan 2019 00:00:00 +0000</pubDate>
       
@@ -30,27 +30,27 @@
     </item>
     
     <item>
-      <title>user-influenced os commands are still considered harmful</title>
+      <title>User-influenced Shell Commands Are Still Considered Harmful</title>
       <link>https://kel.bz/post/javaexec/</link>
-      <pubDate>Tue, 06 Dec 2016 19:21:35 -0600</pubDate>
+      <pubDate>Tue, 06 Dec 2016 00:00:00 +0000</pubDate>
       
       <guid>https://kel.bz/post/javaexec/</guid>
       <description>Non-obvious ways of getting code execution when testing code that uses user input to build shell commands.</description>
     </item>
     
     <item>
-      <title>well-tested authorization design patterns</title>
+      <title>Authorization Design Patterns</title>
       <link>https://kel.bz/post/authz-design-patterns/</link>
-      <pubDate>Mon, 01 Aug 2016 20:53:18 -0500</pubDate>
+      <pubDate>Mon, 01 Aug 2016 00:00:00 +0000</pubDate>
       
       <guid>https://kel.bz/post/authz-design-patterns/</guid>
       <description>Patterns/anti-patterns for designing authorization APIs.</description>
     </item>
     
     <item>
-      <title>when fuzzing servers</title>
+      <title>Fuzzing Servers</title>
       <link>https://kel.bz/post/fuzzing-servers/</link>
-      <pubDate>Wed, 11 Nov 2015 18:13:14 -0500</pubDate>
+      <pubDate>Wed, 11 Nov 2015 00:00:00 +0000</pubDate>
       
       <guid>https://kel.bz/post/fuzzing-servers/</guid>
       <description>One tip for finding fast and useful fuzz targets for networked code.</description>

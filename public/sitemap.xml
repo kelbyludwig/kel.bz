@@ -58,6 +58,11 @@
   </url>
   
   <url>
+    <loc>/post/fiat-shamir-heuristic/</loc>
+    <lastmod>2018-09-22T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/post/lll/</loc>
     <lastmod>2017-07-25T00:00:00+00:00</lastmod>
   </url>
@@ -69,12 +74,12 @@
   
   <url>
     <loc>/tags/java/</loc>
-    <lastmod>2016-12-06T19:21:35-06:00</lastmod>
+    <lastmod>2016-12-06T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>/post/javaexec/</loc>
-    <lastmod>2016-12-06T19:21:35-06:00</lastmod>
+    <lastmod>2016-12-06T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -84,67 +89,67 @@
   
   <url>
     <loc>/post/asis-rsa/</loc>
-    <lastmod>2016-09-18T14:45:13-05:00</lastmod>
+    <lastmod>2016-09-18T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>/post/twinprimes/</loc>
-    <lastmod>2016-09-01T13:52:18-05:00</lastmod>
+    <lastmod>2016-09-01T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>/tags/c/</loc>
-    <lastmod>2016-08-20T13:52:18-05:00</lastmod>
+    <lastmod>2016-08-20T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>/post/netfilter/</loc>
-    <lastmod>2016-08-20T13:52:18-05:00</lastmod>
+    <lastmod>2016-08-20T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>/tags/networking/</loc>
-    <lastmod>2016-08-20T13:52:18-05:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/tags/food/</loc>
-    <lastmod>2016-08-01T21:00:29-05:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/post/iceland/</loc>
-    <lastmod>2016-08-01T21:00:29-05:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/tags/travel/</loc>
-    <lastmod>2016-08-01T21:00:29-05:00</lastmod>
+    <lastmod>2016-08-20T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>/tags/authnz/</loc>
-    <lastmod>2016-08-01T20:53:18-05:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/tags/software-testing/</loc>
-    <lastmod>2016-08-01T20:53:18-05:00</lastmod>
+    <lastmod>2016-08-01T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>/post/authz-design-patterns/</loc>
-    <lastmod>2016-08-01T20:53:18-05:00</lastmod>
+    <lastmod>2016-08-01T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/food/</loc>
+    <lastmod>2016-08-01T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/post/iceland/</loc>
+    <lastmod>2016-08-01T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/software-testing/</loc>
+    <lastmod>2016-08-01T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/travel/</loc>
+    <lastmod>2016-08-01T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>/post/password-hash-migrations/</loc>
-    <lastmod>2015-11-27T20:42:26-05:00</lastmod>
+    <lastmod>2015-11-27T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>/post/fuzzing-servers/</loc>
-    <lastmod>2015-11-11T18:13:14-05:00</lastmod>
+    <lastmod>2015-11-11T00:00:00+00:00</lastmod>
   </url>
   
   <url>

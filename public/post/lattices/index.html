@@ -9,7 +9,7 @@
 
   
   
-    <title>the ggh cryptosystem &ndash; kel.bz</title>
+    <title>The GGH Cryptosystem &ndash; kel.bz</title>
     
 
 
@@ -39,7 +39,7 @@
       
     </a>
     
-      <span class="site-slogan">where i take notes</span>
+      <span class="site-slogan">Where I take notes.</span>
     
   </p>
 </section><div id="content" class="flex-body max-body-width">
@@ -47,16 +47,15 @@
   
 
   <section class="article-header" >
-      <h1>the ggh cryptosystem</h1>
+      <h1>The GGH Cryptosystem</h1>
       <p class="article-date">2016-11-23</p>
   </section>
 
   <article class="markdown-body" >
-    <h1 id="the-goldreichgoldwasserhalevi-ggh-cryptosystem">The Goldreich–Goldwasser–Halevi (GGH) Cryptosystem</h1>
-<p>GGH is an asymmetric cryptosystem based on lattices that can be used for
-encryption. Lattices are pretty cool because lattice-based cryptography has
-some interesting properties (some lattice-based cryptosystems are believed
-to be quantum resistant!).</p>
+    <p>The Goldreich–Goldwasser–Halevi (GGH) Cryptosystem is an asymmetric
+cryptosystem based on lattices that can be used for encryption. Lattices are
+pretty cool because lattice-based cryptography has some interesting properties
+(some lattice-based cryptosystems are believed to be quantum resistant!).</p>
 <p>GGH is pretty cool because it is straightforward to learn. GGH also has
 interesting properties that could allow an adversary to recover plaintext from
 a given ciphertext (I said cool not secure).</p>
@@ -75,7 +74,7 @@ from 3Blue1Brown. At first, I plan on taking a similar approach to 3Blue1Brown
 by focusing less on the math and more on the intuition behind GGH. Nguyen's
 attack toward the end will be a bit less abstract but the math
 involved there is not terrible.</p>
-<h3 id="what-is-a-lattice">What is a lattice?</h3>
+<h3 id="what-is-a-lattice">What is a Lattice?</h3>
 <p>A <em>lattice</em> can be defined as all linear combinations of a set of vectors where
 the coefficients are integers. If you are familiar with the concept of
 vector spaces, a lattice is similar (If you aren't watch 
@@ -131,7 +130,7 @@ sage: vc <span style="color:#f92672">=</span> vector(ZZ, [<span style="color:#ae
 sage: vd <span style="color:#f92672">=</span> vector(ZZ, [<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>,<span style="color:#f92672">-</span><span style="color:#ae81ff">2</span>])
 sage: show(plot_2d_lattice(va, vb))
 sage: show(plot_2d_lattice(vc, vd))
-</code></pre></div><h2 id="why-are-lattices-so-special">Why are lattices so special?</h2>
+</code></pre></div><h2 id="why-are-lattices-so-special">Why Are Lattices So Special?</h2>
 <p>Lattices have hard problems associated with them. GGH's security depends on the
 difficulty of the closest vector problem (CVP). Intuitively, CVP involves
 finding the closest lattice point to an arbitrary point. For example:</p>
@@ -143,7 +142,7 @@ closest to the off-lattice point <code>[1.7, 2]</code>.</p>
 is believed that CVP is difficult for higher dimension lattices (say, 200-400).
 Initially working with and visualizing higher-dimension vectors makes
 the brain sizzle so I plan on sticking with the two dimensional case.</p>
-<h2 id="solving-cvp-in-some-cases">Solving CVP (in some cases)</h2>
+<h2 id="solving-cvp-in-some-cases">Solving CVP (In Some Cases)</h2>
 <p>In a GGH keypair, a public key is a &ldquo;bad&rdquo; basis and a private key is a &ldquo;good&rdquo;
 basis. A &ldquo;good&rdquo; basis is a close to orthogonal with short basis vectors.
 There exist algorithms for approximating CVP for a &ldquo;good&rdquo; basis. One
@@ -155,7 +154,7 @@ rounding all coefficients <code>t1, ... , tn</code> to their nearest integer.</p
 <p>For short and approximately orthogonal bases, Babai works well and will likely
 return the closest lattice point to <code>w</code>! For &ldquo;bad&rdquo; bases, Babai is likely to
 return a lattice point that is not close to <code>w</code>.</p>
-<h2 id="how-does-ggh-use-cvp">How does GGH use CVP?</h2>
+<h2 id="how-does-ggh-use-cvp">How Does GGH Use CVP?</h2>
 <p>GGH takes advantage CVP's assumed difficulty for &ldquo;bad&rdquo; bases to create an asymmetric
 key pair. A GGH keypair consists of two bases for the same lattice: one public,
 one private. A plaintext message is encoded as a vector with integer
@@ -251,7 +250,7 @@ could be solved using specialized algorithms that solve CVP for points that are
 close to a lattice point. Nguyen also mentions that the &ldquo;traditional
 methods&rdquo; of solving special CVP cases work better when an error vector is
 smaller.</p>
-<h2 id="so-does-this-work">So does this work?</h2>
+<h2 id="does-this-work">Does this work?</h2>
 <p>Oh yes! This attack has a fun story behind it too.</p>
 <p>Sometimes cryptographers will provide some form of a &ldquo;challenge&rdquo; to encourage
 analysis of their cryptosystems. If the system holds up, the challenge should
@@ -300,7 +299,7 @@ authors of GGH declared the scheme as “dead”</p>
       
         
         <p>
-          <a class="link" href="/post/javaexec/"><span class="li"></span>user-influenced os commands are still considered harmful</a>
+          <a class="link" href="/post/javaexec/"><span class="li"></span>User-influenced Shell Commands Are Still Considered Harmful</a>
           
           
               
@@ -314,7 +313,7 @@ authors of GGH declared the scheme as “dead”</p>
 
         
           <p>
-            <a class="link" href="/post/asis-rsa/"><span class="li"></span>asis ctf: rsa write-up</a class="link">
+            <a class="link" href="/post/asis-rsa/"><span class="li"></span>ASIS CTF 2016: RSA Write-up</a class="link">
             
             
                 

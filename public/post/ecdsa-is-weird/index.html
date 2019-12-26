@@ -9,7 +9,7 @@
 
   
   
-    <title>ecdsa is weird &ndash; kel.bz</title>
+    <title>ECDSA is Weird &ndash; kel.bz</title>
     
 
 
@@ -39,7 +39,7 @@
       
     </a>
     
-      <span class="site-slogan">where i take notes</span>
+      <span class="site-slogan">Where I take notes.</span>
     
   </p>
 </section><div id="content" class="flex-body max-body-width">
@@ -47,14 +47,317 @@
   
 
   <section class="article-header" >
-      <h1>ecdsa is weird</h1>
+      <h1>ECDSA is Weird</h1>
       <p class="article-date">2019-07-28</p>
   </section>
 
   <article class="markdown-body" >
-    <p>I created a Sage notebook to show off some odd properties of ECDSA. It is titled &ldquo;ECDSA is Weird&rdquo; and you can find it on 
+    <p>This notebook demonstrates some unexpected properties of ECDSA signatures. This notebook was heavily inspired by 
 
-<a href="https://github.com/kelbyludwig/notebooks/blob/master/ecdsa-is-weird.ipynb"  target="_blank">Github</a>!</p>
+<a href="https://github.com/SalusaSecondus/CryptoGotchas/blob/master/README.md"  target="_blank">SalusaSecondus's &ldquo;Crypto Gotchas&rdquo;</a>.</p>
+<blockquote>
+<p>This blog post was originally written as a Sage notebook. The original
+notebook can be found
+
+
+<a href="https://github.com/kelbyludwig/kel.bz/blob/master/notebooks/ecdsa-is-weird.ipynb"  target="_blank">here</a>.</p>
+</blockquote>
+<h2 id="ecdsa-implementation-using-nist-p-256">ECDSA implementation using NIST P-256</h2>
+<p>This notebook uses the NIST P-256 curve for demonstration, so we'll need to define that curve and it's base point first. This first block of code may be opaque. An annotated version is in its own 
+
+<a href="https://github.com/kelbyludwig/notebooks/blob/master/p-256.ipynb"  target="_blank">notebook</a>.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">p256 <span style="color:#f92672">=</span> <span style="color:#ae81ff">115792089210356248762697446949407573530086143415290314195533631308867097853951</span> 
+a256 <span style="color:#f92672">=</span> p256 <span style="color:#f92672">-</span> <span style="color:#ae81ff">3</span> 
+b256 <span style="color:#f92672">=</span> <span style="color:#ae81ff">41058363725152142129326129780047268409114441015993725554835256314039467401291</span> 
+gx <span style="color:#f92672">=</span> <span style="color:#ae81ff">48439561293906451759052585252797914202762949526041747995844080717082404635286</span>
+gy <span style="color:#f92672">=</span> <span style="color:#ae81ff">36134250956749795798585127919587881956611106672985015071877198253568414405109</span>
+qq <span style="color:#f92672">=</span> <span style="color:#ae81ff">115792089210356248762697446949407573529996955224135760342422259061068512044369</span>
+
+FF <span style="color:#f92672">=</span> GF(p256) 
+EC <span style="color:#f92672">=</span> EllipticCurve([FF(a256), FF(b256)]) 
+EC<span style="color:#f92672">.</span>set_order(qq) 
+
+<span style="color:#75715e"># base point</span>
+G <span style="color:#f92672">=</span> EC(FF(gx), FF(gy))
+
+<span style="color:#75715e"># finite field of GF(qq) where qq is the order of the group G</span>
+Fq <span style="color:#f92672">=</span> GF(qq)
+</code></pre></div><p>Now that we have a base point, we can define some functions that make up ECDSA signing and verification.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">from</span> hashlib <span style="color:#f92672">import</span> sha256
+
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">sha256_hasher</span>(m):
+    <span style="color:#e6db74"></span><span style="color:#e6db74">&#34;&#34;&#34;</span><span style="color:#e6db74">Hash a message and map it to an Integer</span><span style="color:#e6db74">
+</span><span style="color:#e6db74"></span><span style="color:#e6db74">    </span><span style="color:#e6db74">&#34;&#34;&#34;</span>
+    s <span style="color:#f92672">=</span> sha256()
+    s<span style="color:#f92672">.</span>update(m)
+    digest <span style="color:#f92672">=</span> s<span style="color:#f92672">.</span>hexdigest()
+    <span style="color:#66d9ef">return</span> Integer(digest, <span style="color:#ae81ff">16</span>)
+
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">generate_keypair</span>(k<span style="color:#f92672">=</span>None):
+    <span style="color:#e6db74"></span><span style="color:#e6db74">&#34;&#34;&#34;</span><span style="color:#e6db74">Generate a keypair. If k is provided, use it as the private scalar.</span><span style="color:#e6db74">
+</span><span style="color:#e6db74"></span><span style="color:#e6db74">    </span><span style="color:#e6db74">&#34;&#34;&#34;</span>
+    <span style="color:#66d9ef">if</span> k <span style="color:#f92672">is</span> None:
+        <span style="color:#75715e"># a random private scalar, generated using a unsafe RNG </span>
+        <span style="color:#75715e"># for simplicity</span>
+        k <span style="color:#f92672">=</span> randint(<span style="color:#ae81ff">1</span>, qq)
+    <span style="color:#66d9ef">return</span> k, k<span style="color:#f92672">*</span>G
+
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">sign</span>(private_key, message, k<span style="color:#f92672">=</span>None, hasher<span style="color:#f92672">=</span>sha256_hasher):
+    <span style="color:#e6db74"></span><span style="color:#e6db74">&#34;&#34;&#34;</span><span style="color:#e6db74">Sign `message` with the specified private key.</span><span style="color:#e6db74">
+</span><span style="color:#e6db74"></span><span style="color:#e6db74">    </span><span style="color:#e6db74">
+</span><span style="color:#e6db74"></span><span style="color:#e6db74">    `message` is hashed and mapped to a group element</span><span style="color:#e6db74">
+</span><span style="color:#e6db74"></span><span style="color:#e6db74">    as part of signing. The default implementation of </span><span style="color:#e6db74">
+</span><span style="color:#e6db74"></span><span style="color:#e6db74">    is sha256_hasher.</span><span style="color:#e6db74">
+</span><span style="color:#e6db74"></span><span style="color:#e6db74">    </span><span style="color:#e6db74">&#34;&#34;&#34;</span>
+    <span style="color:#75715e"># a per-signature random scalar</span>
+    <span style="color:#66d9ef">if</span> k <span style="color:#f92672">is</span> None:
+        k <span style="color:#f92672">=</span> randint(<span style="color:#ae81ff">1</span>, qq)
+    <span style="color:#75715e"># a per-signature random point</span>
+    x, _ <span style="color:#f92672">=</span> (k<span style="color:#f92672">*</span>G)<span style="color:#f92672">.</span>xy()
+    <span style="color:#75715e"># map various values to GF(qq) where qq is the order of</span>
+    <span style="color:#75715e"># group generated by G.</span>
+    r <span style="color:#f92672">=</span> Fq(x)
+    k <span style="color:#f92672">=</span> Fq(k)
+    z <span style="color:#f92672">=</span> Fq(hasher(message))
+    pkq <span style="color:#f92672">=</span> Fq(private_key)
+    <span style="color:#75715e"># compute the s value of the signature, in GF(qq)</span>
+    s <span style="color:#f92672">=</span> k<span style="color:#f92672">^</span><span style="color:#f92672">-</span><span style="color:#ae81ff">1</span> <span style="color:#f92672">*</span> (z <span style="color:#f92672">+</span> r <span style="color:#f92672">*</span> pkq)
+    <span style="color:#66d9ef">return</span> (r, s)
+
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">verify</span>(public_key, message, r, s, hasher<span style="color:#f92672">=</span>sha256_hasher):
+    <span style="color:#e6db74"></span><span style="color:#e6db74">&#34;&#34;&#34;</span><span style="color:#e6db74">Verify a signature (`r`,`s`) over `message` with the</span><span style="color:#e6db74">
+</span><span style="color:#e6db74"></span><span style="color:#e6db74">    specified public key.</span><span style="color:#e6db74">
+</span><span style="color:#e6db74"></span><span style="color:#e6db74">    </span><span style="color:#e6db74">
+</span><span style="color:#e6db74"></span><span style="color:#e6db74">    `message` is hashed and mapped to a group element as part</span><span style="color:#e6db74">
+</span><span style="color:#e6db74"></span><span style="color:#e6db74">    of verification. The default implementation is sha256_hasher.</span><span style="color:#e6db74">
+</span><span style="color:#e6db74"></span><span style="color:#e6db74">    Verification must use the same hasher as `sign` in order to</span><span style="color:#e6db74">
+</span><span style="color:#e6db74"></span><span style="color:#e6db74">    produce correct results.</span><span style="color:#e6db74">
+</span><span style="color:#e6db74"></span><span style="color:#e6db74">    </span><span style="color:#e6db74">&#34;&#34;&#34;</span>
+    <span style="color:#75715e"># map the message to a element in GF(qq)</span>
+    z <span style="color:#f92672">=</span> Fq(hasher(message))
+    <span style="color:#75715e"># invert s in GF(qq)</span>
+    sinv <span style="color:#f92672">=</span> s<span style="color:#f92672">^</span><span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>
+    <span style="color:#75715e"># compute intermediate verification scalars</span>
+    u1 <span style="color:#f92672">=</span> z<span style="color:#f92672">*</span>sinv
+    u2 <span style="color:#f92672">=</span> r<span style="color:#f92672">*</span>sinv
+    <span style="color:#75715e"># extract x, y values from point addition and scaling</span>
+    x, _ <span style="color:#f92672">=</span> (Integer(u1)<span style="color:#f92672">*</span>G <span style="color:#f92672">+</span> Integer(u2)<span style="color:#f92672">*</span>public_key)<span style="color:#f92672">.</span>xy()
+    <span style="color:#66d9ef">return</span> Fq(x) <span style="color:#f92672">==</span> r
+</code></pre></div><p>Now that we have these functions, we can do a basic signing and verification roundtrip to check that we have done everything correctly.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e"># generate a keypair</span>
+private, public <span style="color:#f92672">=</span> generate_keypair(<span style="color:#ae81ff">13</span>)
+
+<span style="color:#75715e"># sign a message with our private key</span>
+message <span style="color:#f92672">=</span> <span style="color:#e6db74"></span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">a message to sign!</span><span style="color:#e6db74">&#34;</span>
+r, s <span style="color:#f92672">=</span> sign(private, message)
+
+<span style="color:#75715e"># verify the signature is correct!</span>
+<span style="color:#66d9ef">assert</span> verify(public, message, r, s), <span style="color:#e6db74"></span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">Signature was invalid!</span><span style="color:#e6db74">&#34;</span>
+
+<span style="color:#75715e"># verify incorrect signatures are invalid!</span>
+_, new_public <span style="color:#f92672">=</span> generate_keypair(<span style="color:#ae81ff">7</span>)
+<span style="color:#66d9ef">assert</span> <span style="color:#f92672">not</span> verify(new_public, message, r, s), <span style="color:#e6db74"></span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">Invalid signature was valid!</span><span style="color:#e6db74">&#34;</span>
+<span style="color:#66d9ef">print</span>(<span style="color:#e6db74"></span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">no problem!</span><span style="color:#e6db74">&#34;</span>)
+</code></pre></div><pre><code>no problem!
+</code></pre>
+<p>With that out of the way we can start with the first weird property.</p>
+<h2 id="signature-malleability">Signature malleability</h2>
+<p>ECDSA signatures are malleable. Given a valid signature <code>(r, s)</code>, one can create a second valid signature by negating the <code>s</code> value. This is demonstrated below.</p>
+<p>This is not the only way in which signatures are malleable. Since ECDSA signatures are pairs of numbers, their encoding maybe maellable. Encodings of these pairs <em>should</em> only have one representation but some implementations may be more permissive. For example, the integer 2 may be encoded as the byte string <code>\x02</code> or <code>\x00\x02</code>. 
+
+<a href="https://github.com/google/wycheproof/blob/master/java/com/google/security/wycheproof/testcases/EcdsaTest.java"  target="_blank">Project Wycheproof has great set of test vectors</a> that looks for implementations that accept multiple encodings as valid.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e"># generate a random keypair</span>
+private, public <span style="color:#f92672">=</span> generate_keypair()
+
+<span style="color:#75715e"># sign a message with our private key</span>
+message <span style="color:#f92672">=</span> <span style="color:#e6db74"></span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">a test of malleable signatures</span><span style="color:#e6db74">&#34;</span>
+r, s <span style="color:#f92672">=</span> sign(private, message)
+
+<span style="color:#75715e"># verify the signature is correct</span>
+<span style="color:#66d9ef">assert</span> verify(public, message, r, s), <span style="color:#e6db74"></span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">Signature was invalid!</span><span style="color:#e6db74">&#34;</span>
+
+<span style="color:#75715e"># negate s and the signature will still be valid!</span>
+<span style="color:#66d9ef">assert</span> verify(public, message, r, <span style="color:#f92672">-</span>s), <span style="color:#e6db74"></span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">Negated s signature was invalid!</span><span style="color:#e6db74">&#34;</span>
+<span style="color:#66d9ef">print</span>(<span style="color:#e6db74"></span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">no problem!</span><span style="color:#e6db74">&#34;</span>)
+</code></pre></div><pre><code>no problem!
+</code></pre>
+<h2 id="duplicate-signatures">Duplicate signatures</h2>
+<p>The paper 
+
+<a href="https://www.researchgate.net/publication/221355164_Flaws_in_Applying_Proof_Methodologies_to_Signature_Schemes"  target="_blank">&ldquo;Flaws in Applying Proof Methodologies to Signature Schemes&rdquo;</a> describes an interesting property of ECDSA which the author's call &ldquo;Duplicate Signatures&rdquo;.</p>
+<p>Duplicate signatures are signatures that are the exact same for multiple distinct messages. It is trivial to generate a keypair that has valid duplicate signatures for chosen messages!</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">create_duplicate_signatures_keypair</span>(m1, m2):
+    <span style="color:#e6db74"></span><span style="color:#e6db74">&#34;&#34;&#34;</span><span style="color:#e6db74">Generates a keypair and signature given two messages `m1` and `m2`.</span><span style="color:#e6db74">
+</span><span style="color:#e6db74"></span><span style="color:#e6db74">    </span><span style="color:#e6db74">
+</span><span style="color:#e6db74"></span><span style="color:#e6db74">    The generated keypair will be valid. The generated (`r`, `s`) values are</span><span style="color:#e6db74">
+</span><span style="color:#e6db74"></span><span style="color:#e6db74">    a valid signature on both `m1` and `m2` for the generated public key.</span><span style="color:#e6db74">
+</span><span style="color:#e6db74"></span><span style="color:#e6db74">    </span><span style="color:#e6db74">&#34;&#34;&#34;</span>
+    <span style="color:#75715e"># generate a random scalar</span>
+    k <span style="color:#f92672">=</span> randint(<span style="color:#ae81ff">1</span>, qq)
+    <span style="color:#75715e"># get a random point&#39;s x value</span>
+    x, _ <span style="color:#f92672">=</span> (k<span style="color:#f92672">*</span>G)<span style="color:#f92672">.</span>xy()
+    <span style="color:#75715e"># map values to GF(qq)</span>
+    r <span style="color:#f92672">=</span> Fq(x)
+    k <span style="color:#f92672">=</span> Fq(k)
+    h1 <span style="color:#f92672">=</span> Fq(sha256_hasher(m1))
+    h2 <span style="color:#f92672">=</span> Fq(sha256_hasher(m2))
+    <span style="color:#75715e"># generate a private scalar using specific values derived</span>
+    <span style="color:#75715e"># from the input messages and the random scalar</span>
+    private_scalar <span style="color:#f92672">=</span> <span style="color:#f92672">-</span>(h1 <span style="color:#f92672">+</span> h2) <span style="color:#f92672">/</span> (<span style="color:#ae81ff">2</span><span style="color:#f92672">*</span>r)
+    <span style="color:#75715e"># generate a signature value for both messages</span>
+    s <span style="color:#f92672">=</span> k<span style="color:#f92672">^</span><span style="color:#f92672">-</span><span style="color:#ae81ff">1</span> <span style="color:#f92672">*</span> (h1 <span style="color:#f92672">+</span> private_scalar<span style="color:#f92672">*</span>r)
+    private_scalar <span style="color:#f92672">=</span> Integer(private_scalar)
+    <span style="color:#66d9ef">return</span> private_scalar, private_scalar<span style="color:#f92672">*</span>G, r, s
+
+
+private, public, r, s <span style="color:#f92672">=</span> create_duplicate_signatures_keypair(<span style="color:#e6db74"></span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">foo</span><span style="color:#e6db74">&#34;</span>, <span style="color:#e6db74"></span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">bar</span><span style="color:#e6db74">&#34;</span>)
+<span style="color:#75715e"># verify the duplicate signature property</span>
+<span style="color:#66d9ef">assert</span> verify(public, <span style="color:#e6db74"></span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">foo</span><span style="color:#e6db74">&#34;</span>, r, s)
+<span style="color:#66d9ef">assert</span> verify(public, <span style="color:#e6db74"></span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">bar</span><span style="color:#e6db74">&#34;</span>, r, s)
+
+<span style="color:#75715e"># generate another signature to test the keypair being otherwise valid</span>
+r2, s2 <span style="color:#f92672">=</span> sign(private, <span style="color:#e6db74"></span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">baz</span><span style="color:#e6db74">&#34;</span>)
+<span style="color:#66d9ef">assert</span> verify(public, <span style="color:#e6db74"></span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">baz</span><span style="color:#e6db74">&#34;</span>, r2, s2)
+
+<span style="color:#66d9ef">print</span>(<span style="color:#e6db74"></span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">no problem!</span><span style="color:#e6db74">&#34;</span>)
+</code></pre></div><pre><code>no problem!
+</code></pre>
+<h2 id="creating-a-valid-signatures-without-knowledge-of-a-message">Creating a valid signatures without knowledge of a message</h2>
+<p>Suppose I'm using a signature verification interface that accepts a hashed value instead of a message. That is, instead of a function like <code>verify</code> below, I use a function like <code>direct_verify</code>:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">verify</span>(public_key, message, r, s):
+    digest <span style="color:#f92672">=</span> hash(message)
+    <span style="color:#75715e"># verification using digest</span>
+    <span style="color:#75715e"># ....</span>
+    
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">direct_verify</span>(public_key, digest, r, s):
+    <span style="color:#75715e"># i trust you provided me a trustworthy digest</span>
+    <span style="color:#75715e"># verification using digest</span>
+    <span style="color:#75715e"># ....</span>
+</code></pre></div><p>As a signature verifier, if I trust digests without knowing the corresponding message, an attacker can generate valid signatures for any public key. In this case, the attacker doesn't necessarily know the corresponding <em>message</em> to the digest but a sufficiently trusting (or faulty) verifier may not recognize that.</p>
+<p>This trick was used by some person in an attempt to convince people that they invented Bitcoin. This great 
+
+<a href="https://albacore.io/faketoshi"  target="_blank">&ldquo;Faketoshi&rdquo; application</a> demonstrates that you too can trick people into believing you invented Bitcoin!</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">direct_verify</span>(public, digest, r, s):
+    <span style="color:#e6db74"></span><span style="color:#e6db74">&#34;&#34;&#34;</span><span style="color:#e6db74">Verifies a signature given an already hashed message digest as an Integer</span><span style="color:#e6db74">
+</span><span style="color:#e6db74"></span><span style="color:#e6db74">    </span><span style="color:#e6db74">&#34;&#34;&#34;</span>
+    direct_hasher <span style="color:#f92672">=</span> <span style="color:#66d9ef">lambda</span> x: x
+    <span style="color:#66d9ef">return</span> verify(public, digest, r, s, hasher<span style="color:#f92672">=</span>direct_hasher)
+
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">generate_signature_for_public_key</span>(public_key):
+    <span style="color:#e6db74"></span><span style="color:#e6db74">&#34;&#34;&#34;</span><span style="color:#e6db74">Given any public key, this create a signature for a random digest.</span><span style="color:#e6db74">
+</span><span style="color:#e6db74"></span><span style="color:#e6db74">    </span><span style="color:#e6db74">
+</span><span style="color:#e6db74"></span><span style="color:#e6db74">    The corresponding message to the generated digest is unknown.</span><span style="color:#e6db74">
+</span><span style="color:#e6db74"></span><span style="color:#e6db74">    </span><span style="color:#e6db74">&#34;&#34;&#34;</span>
+    <span style="color:#75715e"># generate random scalars</span>
+    a <span style="color:#f92672">=</span> randint(<span style="color:#ae81ff">1</span>, qq)
+    b <span style="color:#f92672">=</span> randint(<span style="color:#ae81ff">1</span>, qq)
+    <span style="color:#75715e"># generate a random point using the above </span>
+    <span style="color:#75715e"># scalars and the target public key</span>
+    R <span style="color:#f92672">=</span> a<span style="color:#f92672">*</span>G <span style="color:#f92672">+</span> b<span style="color:#f92672">*</span>public_key
+    x, _ <span style="color:#f92672">=</span> R<span style="color:#f92672">.</span>xy()
+    <span style="color:#75715e"># map values to GF(qq)</span>
+    a <span style="color:#f92672">=</span> Fq(a)
+    b <span style="color:#f92672">=</span> Fq(b)
+    <span style="color:#75715e"># compute the signature values</span>
+    r <span style="color:#f92672">=</span> Fq(x)
+    s <span style="color:#f92672">=</span> r <span style="color:#f92672">/</span> b
+    <span style="color:#75715e"># compute the digest value</span>
+    z <span style="color:#f92672">=</span> r <span style="color:#f92672">*</span> (a<span style="color:#f92672">/</span>b)
+    <span style="color:#66d9ef">return</span> Integer(z), r, s
+
+<span style="color:#75715e"># generate a new keypair</span>
+private, public <span style="color:#f92672">=</span> generate_keypair()
+
+<span style="color:#75715e"># generate a signature and digest using only knowledge of the public key!</span>
+digest, r, s <span style="color:#f92672">=</span> generate_signature_for_public_key(public)
+
+<span style="color:#75715e"># verify the signature validates when the digest is used directly</span>
+<span style="color:#66d9ef">assert</span> direct_verify(public, digest, r, s)
+<span style="color:#66d9ef">print</span>(<span style="color:#e6db74"></span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">no problem!</span><span style="color:#e6db74">&#34;</span>)
+</code></pre></div><pre><code>no problem!
+</code></pre>
+<h2 id="knowledge-of-k-for-a-given-signature-leaks-the-private-key">Knowledge of k for a given signature leaks the private key</h2>
+<p>If the random <code>k</code> value used during signature generation is ever known, an attacker with that value can recover the private key used to sign that message.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">recover_private_scalar</span>(message, r, s, k, hasher<span style="color:#f92672">=</span>sha256_hasher):
+    h <span style="color:#f92672">=</span> Fq(hasher(message))
+    k <span style="color:#f92672">=</span> Fq(k)
+    <span style="color:#66d9ef">return</span> (s<span style="color:#f92672">*</span>k <span style="color:#f92672">-</span> h) <span style="color:#f92672">/</span> r
+
+<span style="color:#75715e"># generate a keypair</span>
+private, public <span style="color:#f92672">=</span> generate_keypair()
+
+message <span style="color:#f92672">=</span> <span style="color:#e6db74"></span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">i used a bad k!</span><span style="color:#e6db74">&#34;</span>
+<span style="color:#75715e"># fix a k value</span>
+fixed_k <span style="color:#f92672">=</span> <span style="color:#ae81ff">1337</span>
+
+<span style="color:#75715e"># generate a signature with known k value</span>
+r, s <span style="color:#f92672">=</span> sign(private, message, k<span style="color:#f92672">=</span>fixed_k)
+
+<span style="color:#75715e"># confirm the signature is valid</span>
+<span style="color:#66d9ef">assert</span> verify(public, message, r, s), <span style="color:#e6db74"></span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">Signature was invalid!</span><span style="color:#e6db74">&#34;</span>
+
+<span style="color:#75715e"># recover private scalar given known k</span>
+recovered_private <span style="color:#f92672">=</span> recover_private_scalar(message, r, s, fixed_k)
+<span style="color:#66d9ef">assert</span> recovered_private <span style="color:#f92672">==</span> private, <span style="color:#e6db74"></span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">Recovered private scalar was wrong</span><span style="color:#e6db74">&#34;</span>
+
+<span style="color:#66d9ef">print</span>(<span style="color:#e6db74"></span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">no problem!</span><span style="color:#e6db74">&#34;</span>)
+</code></pre></div><pre><code>no problem!
+</code></pre>
+<h2 id="repeating-k-values-for-two-distinct-messages-leaks-the-private-key">Repeating k values for two distinct messages leaks the private key</h2>
+<p>If a signer repeats a <code>k</code> value for two distinct messages <code>k</code> can be recovered. This, as was just shown, leaks the private key.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">recover_private_scalar_from_repeated_k</span>(m1, r1, s1, m2, r2, s2, hasher<span style="color:#f92672">=</span>sha256_hasher):
+    <span style="color:#e6db74"></span><span style="color:#e6db74">&#34;&#34;&#34;</span><span style="color:#e6db74">Recovers the private scalar given two signatures over distinct </span><span style="color:#e6db74">
+</span><span style="color:#e6db74"></span><span style="color:#e6db74">    messages with repeating k values.</span><span style="color:#e6db74">
+</span><span style="color:#e6db74"></span><span style="color:#e6db74">    </span><span style="color:#e6db74">&#34;&#34;&#34;</span>
+    <span style="color:#75715e"># Note that a repeat k value can be detected by colliding r values</span>
+    <span style="color:#66d9ef">assert</span> r1 <span style="color:#f92672">==</span> r2
+    h1 <span style="color:#f92672">=</span> Fq(hasher(m1))
+    h2 <span style="color:#f92672">=</span> Fq(hasher(m2))
+    <span style="color:#75715e"># recover k</span>
+    k <span style="color:#f92672">=</span> (h1 <span style="color:#f92672">-</span> h2) <span style="color:#f92672">/</span> (s1 <span style="color:#f92672">-</span> s2)
+    <span style="color:#75715e"># recover private key from k</span>
+    <span style="color:#66d9ef">return</span> recover_private_scalar(m1, r1, s1, k, hasher<span style="color:#f92672">=</span>hasher)
+
+<span style="color:#75715e"># generate a keypair</span>
+private, public <span style="color:#f92672">=</span> generate_keypair()
+
+<span style="color:#75715e"># generate two messages and a fixed nonce</span>
+m1 <span style="color:#f92672">=</span> <span style="color:#e6db74"></span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">message one with k</span><span style="color:#e6db74">&#34;</span>
+m2 <span style="color:#f92672">=</span> <span style="color:#e6db74"></span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">message two with k</span><span style="color:#e6db74">&#34;</span>
+fixed_k <span style="color:#f92672">=</span> <span style="color:#ae81ff">0xcafe</span>
+
+<span style="color:#75715e"># generate signatures with fixed k value</span>
+r1, s1 <span style="color:#f92672">=</span> sign(private, m1, k<span style="color:#f92672">=</span>fixed_k)
+r2, s2 <span style="color:#f92672">=</span> sign(private, m2, k<span style="color:#f92672">=</span>fixed_k)
+
+<span style="color:#75715e"># confirm the signatures are valid</span>
+<span style="color:#66d9ef">assert</span> verify(public, m1, r1, s1), <span style="color:#e6db74"></span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">Signature one was invalid!</span><span style="color:#e6db74">&#34;</span>
+<span style="color:#66d9ef">assert</span> verify(public, m2, r2, s2), <span style="color:#e6db74"></span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">Signature two was invalid!</span><span style="color:#e6db74">&#34;</span>
+
+<span style="color:#75715e"># recover private scalar given known k</span>
+recovered_private <span style="color:#f92672">=</span> recover_private_scalar_from_repeated_k(m1, r1, s1, m2, r2, s2)
+<span style="color:#66d9ef">assert</span> recovered_private <span style="color:#f92672">==</span> private, <span style="color:#e6db74"></span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">Recovered private scalar was wrong</span><span style="color:#e6db74">&#34;</span>
+
+<span style="color:#66d9ef">print</span>(<span style="color:#e6db74"></span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">no problem!</span><span style="color:#e6db74">&#34;</span>)
+</code></pre></div><pre><code>no problem!
+</code></pre>
+<h2 id="more">More?</h2>
+<p>There are some other fun ECDSA properties worth exploring but they are probably best covered in their own notebook.</p>
+<ul>
+<li>
+<p>Duplicate signature key selection from Koblitz's and Menezes&rsquo; 
+
+<a href="https://eprint.iacr.org/2011/343.pdf"  target="_blank">&ldquo;Another Look at Security Definitions&rdquo;</a></p>
+</li>
+<li>
+<p>Private key recovery against a signer using biased <code>k</code> values as described in Nguyen's 
+
+<a href="https://dl.acm.org/citation.cfm?id=937385"  target="_blank">&ldquo;The insecurity of the elliptic curve digital signature algorithm with partially known nonces&rdquo;</a></p>
+</li>
+</ul>
+<p>Both of these are covered in 
+
+<a href="https://cryptopals.com/sets/8"  target="_blank">Set 8 of Cryptopals</a>.</p>
 
   </article>
 
@@ -78,7 +381,7 @@
       
         
         <p>
-          <a class="link" href="/post/hnp/"><span class="li"></span>the hidden number problem</a>
+          <a class="link" href="/post/hnp/"><span class="li"></span>The Hidden Number Problem</a>
           
           
               
@@ -89,7 +392,7 @@
 
         
           <p>
-            <a class="link" href="/post/entropy/"><span class="li"></span>measures of entropy</a class="link">
+            <a class="link" href="/post/entropy/"><span class="li"></span>Measures of Entropy</a class="link">
             
             
                 
@@ -118,6 +421,12 @@
   </p>
 </section>
 
+
+  
+  
+  
+  <script type="text/javascript" src=https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.6/MathJax.js?config&#61;TeX-AMS-MML_HTMLorMML></script>
+  <script type="text/x-mathjax-config">MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$'], ['\\(','\\)']] } });</script>
 
 
 

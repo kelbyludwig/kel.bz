@@ -12,7 +12,7 @@
     
     
     <item>
-      <title>the hidden number problem</title>
+      <title>The Hidden Number Problem</title>
       <link>https://kel.bz/post/hnp/</link>
       <pubDate>Sat, 10 Aug 2019 00:00:00 +0000</pubDate>
       
@@ -21,7 +21,7 @@
     </item>
     
     <item>
-      <title>ecdsa is weird</title>
+      <title>ECDSA is Weird</title>
       <link>https://kel.bz/post/ecdsa-is-weird/</link>
       <pubDate>Sun, 28 Jul 2019 00:00:00 +0000</pubDate>
       
@@ -30,7 +30,7 @@
     </item>
     
     <item>
-      <title>measures of entropy</title>
+      <title>Measures of Entropy</title>
       <link>https://kel.bz/post/entropy/</link>
       <pubDate>Sun, 02 Jun 2019 00:00:00 +0000</pubDate>
       
@@ -39,7 +39,7 @@
     </item>
     
     <item>
-      <title>rsa-based key encapsulation mechanisms</title>
+      <title>RSA-based Key Encapsulation Mechanisms</title>
       <link>https://kel.bz/post/kem/</link>
       <pubDate>Mon, 27 May 2019 00:00:00 +0000</pubDate>
       
@@ -48,7 +48,7 @@
     </item>
     
     <item>
-      <title>questions for system design reviews</title>
+      <title>Questions for System Design Reviews</title>
       <link>https://kel.bz/post/designreview/</link>
       <pubDate>Sun, 12 May 2019 00:00:00 +0000</pubDate>
       
@@ -57,7 +57,7 @@
     </item>
     
     <item>
-      <title>what is the value-add of ssh-agent?</title>
+      <title>What is the Value-add of ssh-agent?</title>
       <link>https://kel.bz/post/ssh-agent/</link>
       <pubDate>Mon, 14 Jan 2019 00:00:00 +0000</pubDate>
       
@@ -66,7 +66,16 @@
     </item>
     
     <item>
-      <title>building lattice reduction (LLL) intuition</title>
+      <title>Fiat-Shamir Heuristic</title>
+      <link>https://kel.bz/post/fiat-shamir-heuristic/</link>
+      <pubDate>Sat, 22 Sep 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://kel.bz/post/fiat-shamir-heuristic/</guid>
+      <description>Overview and implementation of the Fiat-Shamir heuristic used to build signature schemes from interactive zero-knowledge proofs.</description>
+    </item>
+    
+    <item>
+      <title>Building Lattice Reduction (LLL) Intuition</title>
       <link>https://kel.bz/post/lll/</link>
       <pubDate>Tue, 25 Jul 2017 00:00:00 +0000</pubDate>
       
@@ -75,7 +84,7 @@
     </item>
     
     <item>
-      <title>a note on subgroup confinement attacks</title>
+      <title>Subgroup Confinement Attacks</title>
       <link>https://kel.bz/post/pohlig/</link>
       <pubDate>Sat, 14 Jan 2017 00:00:00 +0000</pubDate>
       
@@ -84,16 +93,16 @@
     </item>
     
     <item>
-      <title>user-influenced os commands are still considered harmful</title>
+      <title>User-influenced Shell Commands Are Still Considered Harmful</title>
       <link>https://kel.bz/post/javaexec/</link>
-      <pubDate>Tue, 06 Dec 2016 19:21:35 -0600</pubDate>
+      <pubDate>Tue, 06 Dec 2016 00:00:00 +0000</pubDate>
       
       <guid>https://kel.bz/post/javaexec/</guid>
       <description>Non-obvious ways of getting code execution when testing code that uses user input to build shell commands.</description>
     </item>
     
     <item>
-      <title>the ggh cryptosystem</title>
+      <title>The GGH Cryptosystem</title>
       <link>https://kel.bz/post/lattices/</link>
       <pubDate>Wed, 23 Nov 2016 00:00:00 +0000</pubDate>
       
@@ -102,75 +111,75 @@
     </item>
     
     <item>
-      <title>asis ctf: rsa write-up</title>
+      <title>ASIS CTF 2016: RSA Write-up</title>
       <link>https://kel.bz/post/asis-rsa/</link>
-      <pubDate>Sun, 18 Sep 2016 14:45:13 -0500</pubDate>
+      <pubDate>Sun, 18 Sep 2016 00:00:00 +0000</pubDate>
       
       <guid>https://kel.bz/post/asis-rsa/</guid>
       <description>Breaking RSA with sequential prime key parameter generation.</description>
     </item>
     
     <item>
-      <title>tokyo westerns / mma ctf: twin primes write-up</title>
+      <title>Tokyo Westerns / MMA CTF: Twin Primes Write-up</title>
       <link>https://kel.bz/post/twinprimes/</link>
-      <pubDate>Thu, 01 Sep 2016 13:52:18 -0500</pubDate>
+      <pubDate>Thu, 01 Sep 2016 00:00:00 +0000</pubDate>
       
       <guid>https://kel.bz/post/twinprimes/</guid>
       <description>Decrypting RSA ciphertexts using correlated parameters.</description>
     </item>
     
     <item>
-      <title>modifying ip headers with netfilter</title>
+      <title>Modifying IP Headers With netfilter</title>
       <link>https://kel.bz/post/netfilter/</link>
-      <pubDate>Sat, 20 Aug 2016 13:52:18 -0500</pubDate>
+      <pubDate>Sat, 20 Aug 2016 00:00:00 +0000</pubDate>
       
       <guid>https://kel.bz/post/netfilter/</guid>
       <description>Using netfilter to programmtically rewrite the source IP address of ICMP packets.</description>
     </item>
     
     <item>
-      <title>iceland</title>
-      <link>https://kel.bz/post/iceland/</link>
-      <pubDate>Mon, 01 Aug 2016 21:00:29 -0500</pubDate>
-      
-      <guid>https://kel.bz/post/iceland/</guid>
-      <description>Takeaways from my first trip to Iceland and places I hope to revisit.</description>
-    </item>
-    
-    <item>
-      <title>well-tested authorization design patterns</title>
+      <title>Authorization Design Patterns</title>
       <link>https://kel.bz/post/authz-design-patterns/</link>
-      <pubDate>Mon, 01 Aug 2016 20:53:18 -0500</pubDate>
+      <pubDate>Mon, 01 Aug 2016 00:00:00 +0000</pubDate>
       
       <guid>https://kel.bz/post/authz-design-patterns/</guid>
       <description>Patterns/anti-patterns for designing authorization APIs.</description>
     </item>
     
     <item>
-      <title>secure password hash migrations</title>
+      <title>Iceland</title>
+      <link>https://kel.bz/post/iceland/</link>
+      <pubDate>Mon, 01 Aug 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://kel.bz/post/iceland/</guid>
+      <description>Takeaways from my first trip to Iceland and places I hope to revisit.</description>
+    </item>
+    
+    <item>
+      <title>Secure Password Hash Migrations</title>
       <link>https://kel.bz/post/password-hash-migrations/</link>
-      <pubDate>Fri, 27 Nov 2015 20:42:26 -0500</pubDate>
+      <pubDate>Fri, 27 Nov 2015 00:00:00 +0000</pubDate>
       
       <guid>https://kel.bz/post/password-hash-migrations/</guid>
       <description>How to securely migrate from an insecure password hash algorithm to a secure one.</description>
     </item>
     
     <item>
-      <title>when fuzzing servers</title>
+      <title>Fuzzing Servers</title>
       <link>https://kel.bz/post/fuzzing-servers/</link>
-      <pubDate>Wed, 11 Nov 2015 18:13:14 -0500</pubDate>
+      <pubDate>Wed, 11 Nov 2015 00:00:00 +0000</pubDate>
       
       <guid>https://kel.bz/post/fuzzing-servers/</guid>
       <description>One tip for finding fast and useful fuzz targets for networked code.</description>
     </item>
     
     <item>
-      <title>about kel.bz</title>
+      <title>About kel.bz</title>
       <link>https://kel.bz/about/me/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://kel.bz/about/me/</guid>
-      <description>my name is kelby ludwig. i like math, cryptography, and software security. my resume can be found here.</description>
+      <description>My name is Kelby Ludwig. I like math, cryptography, and software security. My resume can be found here.</description>
     </item>
     
   </channel>
