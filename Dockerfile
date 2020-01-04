@@ -4,7 +4,7 @@ FROM golang:1.13-buster
 RUN apt-get update && apt-get install -y python3 python3-pip
 
 # Install jupyter
-RUN pip3 install jupyter
+RUN pip3 install jupyter attrs cryptography
 
 # Download and install Hugo v0.62.0
 RUN wget -O hugo.tar.gz https://github.com/gohugoio/hugo/releases/download/v0.62.0/hugo_0.62.0_Linux-64bit.tar.gz
