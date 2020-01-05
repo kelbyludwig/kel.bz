@@ -17,6 +17,10 @@ If you are familiar with how [certificate transparency log proofs](https://www.c
 
 This notebook implements some of the ideas from Goodrich et. al.'s paper and captures some notes I took along the way.
 
+> This blog post was originally written as a Python notebook. The original
+> notebook can be found
+> [here](https://github.com/kelbyludwig/kel.bz/blob/master/notebooks/authdict.ipynb).
+
 ## Skip lists
 
 Skip lists are a data structure that were introduced by [William Pugh](https://epaperpress.com/sortsearch/download/skiplist.pdf) as a simpler to implement alternative to self-balancing trees with reasonably efficient search, insertion, and deletion properties. Goodrich's paper uses skip lists to implement authenticated dictionaries for similar reasons why one would choose a skip list over other tree-like structures.
@@ -52,7 +56,7 @@ Why introduce commutative hashing? From Section 1.3 of the paper:
 > Second, we introduce the use of commutative hashing as a means to greatly simplify the verification process
 for a user, while retaining the basic security properties...
 
-(Aside: I was confused by this at first! I explain in **Why is commutative hashing valuable?** in the appendix below. However, diving into that tangent now wouldn't be fruitful it depends on other parts of the paper we have not touched on.)
+(Aside: I was confused by this at first! I explain this in **Why is commutative hashing valuable?** in the appendix below. However, diving into that tangent now wouldn't be fruitful it depends on other parts of the paper we have not touched on.)
 
 The commutative hash function they implement is simple. We first hash the smaller element of the two inputs and then the larger. This is implemented below.
 
