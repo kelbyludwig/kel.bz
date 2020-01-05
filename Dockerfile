@@ -1,10 +1,10 @@
 FROM golang:1.13-buster
 
 # Install pre-requisites
-RUN apt-get update && apt-get install -y python3 python3-pip
+RUN apt-get update && apt-get install -y python3 python3-pip graphviz
 
 # Install jupyter
-RUN pip3 install jupyter attrs cryptography
+RUN pip3 install jupyter attrs cryptography graphviz
 
 # Download and install Hugo v0.62.0
 RUN wget -O hugo.tar.gz https://github.com/gohugoio/hugo/releases/download/v0.62.0/hugo_0.62.0_Linux-64bit.tar.gz

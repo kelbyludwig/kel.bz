@@ -8,7 +8,7 @@ nbconvert:
 		-v $(PWD):/home/kelby \
 		--rm \
 		--cap-drop=all \
-		-it kelbz:latest jupyter nbconvert --to markdown /home/kelby/notebooks/*
+		-it kelbz:latest jupyter nbconvert --to markdown /home/kelby/notebooks/*.ipynb
 
 
 notebook:
@@ -33,3 +33,10 @@ build:
 		--rm \
 		--cap-drop=all \
 		-it kelbz:latest hugo --gc -b https://kel.bz -t hugo-notepadium
+
+clean:
+	rm -rf notebooks/.ipynb_checkpoints/ 
+	rm -rf notebooks/.ipython/
+	rm -rf notebooks/.jupyter/
+	rm -rf notebooks/.local/
+	rm -rf notebooks/kelbz/__pycache__/
