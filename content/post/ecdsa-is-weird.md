@@ -16,7 +16,7 @@ This notebook demonstrates some unexpected properties of ECDSA signatures. This 
 
 ## ECDSA implementation using NIST P-256
 
-This notebook uses the NIST P-256 curve for demonstration, so we'll need to define that curve and it's base point first. This first block of code may be opaque. An annotated version is in its own [notebook](https://github.com/kelbyludwig/notebooks/blob/master/p-256.ipynb).
+This notebook uses the NIST P-256 curve for demonstration, so we'll need to define that curve and it's base point first. This first block of code may be opaque. An annotated version is in its own [blog post](https://kel.bz/post/sage-p256/).
 
 
 ```python
