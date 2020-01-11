@@ -16,5 +16,3 @@ If you have questions about my writing or my past research, please feel free to
 DM me on [Twitter](https://twitter.com/kelbyludwig). If you are in the Austin,
 Texas area and want to chat I will happily meet up with you and buy you a
 coffee.
-
-[Test](https://kel.bz/lol)
