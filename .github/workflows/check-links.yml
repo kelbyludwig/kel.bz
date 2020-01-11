@@ -1,12 +1,19 @@
 name: Check markdown links
 
-on: push
+on:
+  pull_request:
+    paths:
+      - "content/**/*.md"
 
 jobs:
   markdown-link-check:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@master
-      with:
-        fetch-depth: 1
-    - uses: gaurav-nelson/github-action-markdown-link-check@0.4.0
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '10.x'
+      - name: Install markdown-link-check
+        run: npm i -g markdown-link-check
+      - name: Run markdown-link-check on content markdown
+        run: find . -name "*.md" -exec markdown-link-check {} \;
