@@ -13,4 +13,4 @@ jobs:
       - name: Install markdown-link-check
         run: npm i -g markdown-link-check
       - name: Run markdown-link-check on content markdown
-        run: find ./content -name "*.md" -exec markdown-link-check {} \;
+        run: find ./content -name "*.md" -print0 | xargs -0 -n 1 markdown-link-check
