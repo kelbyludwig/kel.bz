@@ -6,10 +6,6 @@ The repository of my blog: https://kel.bz
 
 ## TODO
 
-* Migrate write-good from Travis to Github actions.
+* prose linting (e.g. proselint, write-good) in Github actions.
 
 * Add wrapper command for creating new posts (e.g. With approx. correct frontmatter, tags, summary, etc.).
-
-* Add CI for dead-link checks (e.g. wget)
-
-* Deploy unindexed drafts for feedback/sharing.

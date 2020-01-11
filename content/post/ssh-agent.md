@@ -27,7 +27,7 @@ One potential security control you may want from `ssh-agent` is protecting you f
 
 * The location of your `ssh-agent` socket is often specified by an environment variable. It may be trivial for a malicious process to overwrite this environment variable and point to a socket that steals your `ssh-agent` password or your private keys when they are loaded into the agent.
 
-* ["The default OpenSSH key encryption is worse than plaintext"](https://latacora.micro.blog/2018/08/03/the-default-openssh.html). Do you have a stellar password protecting your private keys?
+* ["The default OpenSSH key encryption is worse than plaintext"](https://latacora.micro.blog/the-default-openssh/). Do you have a stellar password protecting your private keys?
 
 * Side channels are plentiful!
 

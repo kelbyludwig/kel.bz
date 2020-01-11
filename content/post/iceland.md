@@ -43,15 +43,15 @@ system is nerve-wracking.
     * Get two aeropress coffees. One for each type of coffee bean.
 * [BRAUÐ & CO](http://www.braudogco.is/) - Reykjavík
     * Get the blueberry licorice danish and a personal loaf of bread.
-* [Nora Magasin](https://www.facebook.com/NoraMagasin) - Reykjavík
+* Nora Magasin - Reykjavík (Closed)
     * Get small plates.
 * [Baejarins Beztu Pylsur](http://www.bbp.is/) - Reykjavík
     * Get hotdogs with everything on it.
 * [Microbar](https://www.facebook.com/MicroBarIceland/) - Reykjavík
     * Get beer.
-* [Fjöruhúsið](http://www.west.is/en/inspiration/services/fjoruhusid-cafe-restaurant) - Hellnar
+* [Fjöruhúsið](https://www.west.is/en/inspiration/services/fjoruhusid) - Hellnar
     * Get seafood soup, bread, and coffee. 
-* [Bakaríið Við Brúna](http://beiceland.is/bakariid-vid-bruna) - Akureyri
+* [Bakaríið Við Brúna](https://www.facebook.com/pages/category/Bakery/Bakar%C3%ADi%C3%B0-vi%C3%B0-br%C3%BAna-146464288760643/) - Akureyri
     * Get anything.
 * [Skaftfell Bistro](http://skaftfell.is/bistro/?lang=en) - Seydisfjordur
     * Get a pizza. I recommend one with gorgonzola.

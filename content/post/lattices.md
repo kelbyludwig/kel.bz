@@ -293,7 +293,7 @@ Sometimes cryptographers will provide some form of a "challenge" to encourage
 analysis of their cryptosystems. If the system holds up, the challenge should
 increase confidence in the scheme. These challenges, however, are not always
 well-received because they are believed to be
-[unrealistic](https://moxie.org/blog/telegram-crypto-challenge/) and/or
+[unrealistic](https://web.archive.org/web/20171213214126/https://moxie.org/blog/telegram-crypto-challenge/) and/or
 [unfair](https://www.schneier.com/crypto-gram/archives/1998/1215.html#1).
 
 GGH's authors hosted a challenge to demonstrate GGH's security. They presented

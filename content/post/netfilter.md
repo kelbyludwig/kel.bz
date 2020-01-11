@@ -119,7 +119,7 @@ You are officially a kernel hacker! I tried to add some comments in the code to 
 bit about what is going on. For a more thorough analysis, the following resources maybe useful:
 
 * [kbuild: The build system used by the Linux kernel](https://www.kernel.org/doc/Documentation/kbuild/modules.txt)
-* [A "Hello, World!" Kernel Module](http://www.makelinux.net/books/lkd2/ch16lev2sec1)
+* ["Hellow World" Kernel Module](https://girishjoshi.io/post/linux-kernel-module-hello-world/)
 * [The init and exit Macros](http://www.tldp.org/LDP/lkmpg/2.4/html/x281.htm)
 
 # Introducing Netfilter
