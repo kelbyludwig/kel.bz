@@ -11,7 +11,7 @@ summary: "Reference code for creating NIST P-256 curve objects in Sagemath."
 This notebook demonstrates how to create a NIST P-256 curve ([aka secp256r1](https://tools.ietf.org/search/rfc4492#appendix-A)) and it's standard base point in [Sagemath](https://www.sagemath.org/).
 
 
-> This blog post was originally written as a Python notebook. The original
+> This blog post was originally written as a Sagemath notebook. The original
 > notebook can be found
 > [here](https://github.com/kelbyludwig/kel.bz/blob/master/notebooks/sage-p256.ipynb).
 
@@ -23,10 +23,10 @@ First, we define the parameters that make up the P-256 curve. The parameters are
 p256 = 0xFFFFFFFF00000001000000000000000000000000FFFFFFFFFFFFFFFFFFFFFFFF
 
 # Curve parameters for the curve equation: y^2 = x^3 + a256*x +b256
-a256 = p256 - 3 
+a256 = p256 - 3
 b256 = 0x5AC635D8AA3A93E7B3EBBD55769886BC651D06B0CC53B0F63BCE3C3E27D2604B
 
-# Base point (x, y)  
+# Base point (x, y)
 gx = 0x6B17D1F2E12C4247F8BCE6E563A440F277037D812DEB33A0F4A13945D898C296
 gy = 0x4FE342E2FE1A7F9B8EE7EB4A7C0F9E162BCE33576B315ECECBB6406837BF51F5
 
@@ -39,13 +39,13 @@ Then we can create a EllipticCurve sage object over a finite field.
 
 ```python
 # Create a finite field of order p256
-FF = GF(p256) 
+FF = GF(p256)
 
 # Define a curve over that field with specified Weierstrass a and b parameters
-EC = EllipticCurve([FF(a256), FF(b256)]) 
+EC = EllipticCurve([FF(a256), FF(b256)])
 
 # Since we know P-256's order we can skip computing it and set it explicitly
-EC.set_order(qq) 
+EC.set_order(qq)
 
 # Create a variable for the base point
 G = EC(FF(gx), FF(gy))
@@ -58,8 +58,8 @@ These test vectors are defined as three-tuples: (scalar `k`, x-coordinate of `k*
 
 ```python
 test_vectors = [
-    (1, 
-     0x6B17D1F2E12C4247F8BCE6E563A440F277037D812DEB33A0F4A13945D898C296, 
+    (1,
+     0x6B17D1F2E12C4247F8BCE6E563A440F277037D812DEB33A0F4A13945D898C296,
      0x4FE342E2FE1A7F9B8EE7EB4A7C0F9E162BCE33576B315ECECBB6406837BF51F5),
     (2,
      0x7CF27B188D034F7E8A52380304B51AC3C08969E277F21B35A60B48FC47669978,
