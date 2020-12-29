@@ -65,7 +65,7 @@ dig more into how Virtualization.Framework was implemented so I could see if I
 could better understand what I might be doing wrong (Spoiler: I didn't figure
 this out but I took notes along the way).
 
-## Debugging vftool and Virtualization.Framework
+# Debugging vftool and Virtualization.Framework
 
 My original approach was debugging vftool with lldb and trying to find some
 indication of something failing. During this time I also used [this helpful
@@ -100,7 +100,7 @@ As an example see this Hopper disassmebly snippet for `VZVirtualMachine`'s
 00007fff6efb47e4         call       imp___stubs__xpc_connection_create          ; xpc_connection_create
 ```
 
-## Reversing com.apple.Virtualization.VirtualMachine.xpc 
+# Reversing com.apple.Virtualization.VirtualMachine.xpc 
 
 After sorting out that the Hypervisor.Framework client seems to defer most of
 the interesting virtualization logic to an XPC service I started reversing that
@@ -181,7 +181,7 @@ but didn't find anything that was obviously bootstrapping code.
 I eventually started searching the binary for magic numbers referenced in this
 [Linux/x86 boot protocol
 documentation](https://www.kernel.org/doc/Documentation/x86/boot.txt) and
-eventually found checks like (This is using Hopper's ASM->C lifting):
+eventually found checks like (This is using Hopper's asm->C lifting):
 
 ```C
 loc_10008e0e8:
@@ -205,13 +205,12 @@ loc_10008e0fe:
 the boot protocol documentation (The 0x202 offset matches too). 
 
 The routine here is quite large and I assume it's some `kexec` implementation
-(or subroutine of `kexec`). While I cannot definitely say that this
-implementation isn't partially inspired by [xhyve's
-kexec](https://github.com/machyve/xhyve/blob/master/src/firmware/kexec.c), it
-does seem to vary somewhat!
+(or subroutine of `kexec`). I did not some variations between
+Virtualization.Framework's implementation and [xhyve's kexec
+implementation.](https://github.com/machyve/xhyve/blob/master/src/firmware/kexec.c)
 
-For example, xhyve's kexec seems to [reject booting
-kernel's](https://github.com/machyve/xhyve/blob/master/src/firmware/kexec.c#L97-L108)
+For example, xhyve's kexec [rejects booting
+kernels](https://github.com/machyve/xhyve/blob/master/src/firmware/kexec.c#L97-L108)
 under the following conditions:
 
 ```C
@@ -229,7 +228,7 @@ under the following conditions:
 	}
 ```
 
-However, it looks like the Virtualization.Framework implementation supports
+It looks like the Virtualization.Framework implementation supports
 boot protocol 2.04 and above (Unlike xhvye's supporting 2.10 and above):
 
 ```C
@@ -251,9 +250,7 @@ I haven't yet finished digging here and may spend some more time reading the
 VirtualMachine XPC implementation. Here are some other miscellaneous
 obvservations I made when poking around.
 
-## Misc Notes
-
-### Undocumented, potentially not yet implemented APIs
+# Undocumented, potentially not yet implemented APIs
 
 The Virtualization.framework implementation has references to bootloaders that
 aren't VZLinuxBootloaders such as VZEFIBootloader. These are not documented
@@ -288,7 +285,7 @@ $ nm -gU Virtualization | grep 'VZ.*Boot'
 $ 
 ```
 
-### Useful next steps
+# Useful next steps
 
 Attaching a debugger to the VirtualMachine XPC service is likely useful as it
 seems clear that most of the interesting bootstrapping code lives there.
@@ -303,10 +300,10 @@ schema of messages passed over XPC statically. Debugging XPC messages might be
 a useful next step as I don't need to hook into SIP protected processes
 (Assuming I just care about the 'client' view).
 
-### Gotcha in using Hopper's dead code removal
+# Gotcha in using Hopper's dead code removal
 
 Reversing Objective-C code that makes use of blocks took me some time. It was
-especially confusing to use Hopper's lifting of ASM to C which, by default,
+especially confusing to use Hopper's lifting of asm to C which, by default,
 would remove "dead" code. This would generate C like:
 
 ```C
@@ -318,7 +315,7 @@ would remove "dead" code. This would generate C like:
 ```
 
 Which is perplexing since `var_40` _should_ be a block but is clearly just a
-pointer to a 'type'. Looking at the ASM directly was more useful here:
+pointer to a 'type'. Looking at the asm directly was more useful here:
 
 ```markdown
 000000010001abd1         mov        rax, qword [__NSConcreteStackBlock_1000b4008] ; __NSConcreteStackBlock_1000b4008
@@ -332,7 +329,7 @@ pointer to a 'type'. Looking at the ASM directly was more useful here:
 000000010001ac16         call       imp___stubs__dispatch_async                 ; dispatch_async
 ```
 
-I eventually sorted out that that the ASM is probably building a [block literal
+I eventually sorted out that that the asm is probably building a [block literal
 struct](https://clang.llvm.org/docs/Block-ABI-Apple.html#high-level). Hopper
 seems to (understandbly) think the `sub_10001ac60` reference is unused so it
 will remove it as dead code. However, I believe this is the `invoke` field of
