@@ -7,9 +7,10 @@ tags: [
 summary: "Notes from reversing implmentation details of the macOS Virtualization.Framework"
 ---
 
-These are my notes from reversing implmentation details of the macOS
-Virtualization.Framework". This writeup doesn't lead to a notable outcome! It's
-loosely organized notes on a process with a few takeaways.
+> These are my notes from reversing implmentation details of the macOS
+[Virtualization.Framework](https://developer.apple.com/documentation/virtualization).
+This writeup doesn't lead to a notable outcome. It is loosely organized notes
+on a process with a few takeaways.
 
 # Background and Problem
 
